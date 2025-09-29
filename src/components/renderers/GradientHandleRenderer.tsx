@@ -113,9 +113,9 @@ export const GradientHandleRenderer: React.FC<GradientHandleRendererProps> = ({
       if (handleIndex === 2) return gradient.stops[gradient.stops.length - 1]?.color || '#ffffff';
     }
 
-    // For linear/radial, use start/end colors
-    if (handleIndex === 0) return gradient.stops[0]?.color || '#ffffff';
-    if (handleIndex === 1) return gradient.stops[gradient.stops.length - 1]?.color || '#ffffff';
+    // For linear/radial, use end/start colors (swapped because handles are swapped)
+    if (handleIndex === 0) return gradient.stops[gradient.stops.length - 1]?.color || '#ffffff';
+    if (handleIndex === 1) return gradient.stops[0]?.color || '#ffffff';
 
     // Third handle (width control) - use middle color
     return gradient.stops[Math.floor(gradient.stops.length / 2)]?.color || '#888888';
@@ -276,7 +276,7 @@ export const GradientHandleRenderer: React.FC<GradientHandleRendererProps> = ({
                       stroke="#000000"
                       strokeWidth={0.5}
                     >
-                      {handleIndex === 0 ? 'S' : handleIndex === 1 ? 'E' : 'W'}
+                      {handleIndex === 0 ? 'E' : handleIndex === 1 ? 'S' : 'W'}
                     </text>
                   </g>
                 );

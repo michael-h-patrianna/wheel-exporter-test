@@ -230,6 +230,17 @@ export function createSvgGradientDef(
     gradientUnits: 'objectBoundingBox'
   };
 
+  // Apply segment rotation transform if provided
+  if (segmentRotation !== undefined && segmentRotation !== 0) {
+    const cx = 0.5, cy = 0.5;
+    const rad = (segmentRotation * Math.PI) / 180;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+
+    // Create rotation matrix around center (0.5, 0.5)
+    commonProps.gradientTransform = `matrix(${cos} ${sin} ${-sin} ${cos} ${cx - cx * cos + cy * sin} ${cy - cx * sin - cy * cos})`;
+  }
+
   // Check if we have gradient handles (3 points from Figma)
   const handles = gradient.handles;
   const hasHandles = handles && handles.length >= 2;
@@ -295,35 +306,21 @@ export function createSvgGradientDef(
   let x1, y1, x2, y2;
 
   if (hasHandles && handles.length >= 2) {
-    // Use gradient handles directly for precise positioning
-    x1 = handles[0].x;
-    y1 = handles[0].y;
-    x2 = handles[1].x;
-    y2 = handles[1].y;
+    // Swap handles - handle[1] is start (0%), handle[0] is end (100%)
+    // This fixes the 180-degree reversal issue
+    x1 = handles[1].x;
+    y1 = handles[1].y;
+    x2 = handles[0].x;
+    y2 = handles[0].y;
 
-    // Apply segment rotation if provided
-    if (segmentRotation) {
-      const cx = 0.5, cy = 0.5;
-      const rad = (segmentRotation * Math.PI) / 180;
-      const cos = Math.cos(rad);
-      const sin = Math.sin(rad);
-
-      // Rotate points around center
-      const dx1 = x1 - cx;
-      const dy1 = y1 - cy;
-      x1 = cx + dx1 * cos - dy1 * sin;
-      y1 = cy + dx1 * sin + dy1 * cos;
-
-      const dx2 = x2 - cx;
-      const dy2 = y2 - cy;
-      x2 = cx + dx2 * cos - dy2 * sin;
-      y2 = cy + dx2 * sin + dy2 * cos;
-    }
+    // Don't apply segment rotation to handles - they are already in the correct
+    // coordinate space relative to the segment's bounding box
+    // The gradient should look the same on all segments regardless of rotation
   } else {
-    // Fallback to angle-based calculation
-    // Remove the +90 that was causing 180 degree offset (it was adding 90 twice effectively)
+    // Fallback to angle-based calculation when no handles are present
+    // Don't apply segment rotation - gradient should be consistent across segments
     const baseAngle = gradient.rotation || 0;
-    const totalAngle = baseAngle + (segmentRotation || 0) - 90;
+    const totalAngle = baseAngle - 90;
     const rad = (totalAngle * Math.PI) / 180;
 
     x1 = 0.5 - 0.5 * Math.cos(rad);
