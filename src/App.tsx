@@ -118,14 +118,34 @@ function App() {
 
               <h4>Components Included:</h4>
               <div className="components-list">
+                <span className={extractedAssets.backgroundImage ? 'component-present' : 'component-missing'}>
+                  Background {extractedAssets.backgroundImage ? '✓' : '✗'}
+                </span>
                 <span className={extractedAssets.wheelData.header ? 'component-present' : 'component-missing'}>
                   Header {extractedAssets.wheelData.header ? '✓' : '✗'}
+                </span>
+                <span className={extractedAssets.wheelData.wheelBg ? 'component-present' : 'component-missing'}>
+                  Wheel Bg {extractedAssets.wheelData.wheelBg ? '✓' : '✗'}
+                </span>
+                <span className={extractedAssets.wheelData.wheelTop1 ? 'component-present' : 'component-missing'}>
+                  Wheel Top 1 {extractedAssets.wheelData.wheelTop1 ? '✓' : '✗'}
+                </span>
+                <span className={extractedAssets.wheelData.wheelTop2 ? 'component-present' : 'component-missing'}>
+                  Wheel Top 2 {extractedAssets.wheelData.wheelTop2 ? '✓' : '✗'}
+                </span>
+                <span className={extractedAssets.wheelData.buttonSpin ? 'component-present' : 'component-missing'}>
+                  Button Spin {extractedAssets.wheelData.buttonSpin ? '✓' : '✗'}
+                </span>
+                <span className={extractedAssets.wheelData.center ? 'component-present' : 'component-missing'}>
+                  Center {extractedAssets.wheelData.center ? '✓' : '✗'}
                 </span>
               </div>
 
               <p className="interaction-help">
                 <strong>Interaction Guide:</strong><br />
                 • Click header to cycle: active → success → fail<br />
+                • Click spin button to simulate wheel spinning<br />
+                • Toggle "Show Center Point" for debugging<br />
                 • Adjust wheel dimensions using the sliders above
               </p>
             </div>

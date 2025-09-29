@@ -319,3 +319,210 @@
     grid-row: 3;
   }
 }
+
+/* =============================================================================
+   WHEEL VIEWER COMPONENTS
+   ============================================================================= */
+
+.wheel-viewer {
+  position: relative;
+}
+
+.wheel-container {
+  position: relative;
+  background: var(--pf-surface);
+  box-shadow: var(--elev-2);
+}
+
+/* Background Component */
+.background-component {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--bg-width);
+  height: var(--bg-height);
+  z-index: 1;
+}
+
+.background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Header Component */
+.header-component {
+  position: absolute;
+  left: var(--header-left);
+  top: var(--header-top);
+  width: var(--header-width);
+  height: var(--header-height);
+  transform: var(--header-transform);
+  cursor: pointer;
+  z-index: 10;
+  transition: opacity 0.2s ease;
+}
+
+.header-component:hover {
+  opacity: 0.9;
+}
+
+.header-component:active {
+  transform: var(--header-transform) scale(0.98);
+}
+
+.header-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Wheel Background Overlay */
+.wheelbg-component {
+  position: absolute;
+  left: var(--wheelbg-left);
+  top: var(--wheelbg-top);
+  width: var(--wheelbg-width);
+  height: var(--wheelbg-height);
+  z-index: 2;
+}
+
+.wheelbg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Wheel Top Overlays */
+.wheeltop-component {
+  position: absolute;
+  z-index: 15;
+}
+
+.wheeltop-1 {
+  left: var(--wheeltop1-left);
+  top: var(--wheeltop1-top);
+  width: var(--wheeltop1-width);
+  height: var(--wheeltop1-height);
+}
+
+.wheeltop-2 {
+  left: var(--wheeltop2-left);
+  top: var(--wheeltop2-top);
+  width: var(--wheeltop2-width);
+  height: var(--wheeltop2-height);
+  z-index: 16;
+}
+
+.wheeltop-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Button Spin Component */
+.button-spin-component {
+  position: absolute;
+  left: var(--button-left);
+  top: var(--button-top);
+  width: var(--button-width);
+  height: var(--button-height);
+  transform: var(--button-transform);
+  z-index: 20;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.button-spin-component:hover:not(:disabled) {
+  transform: var(--button-transform) scale(1.05);
+}
+
+.button-spin-component:active:not(:disabled) {
+  transform: var(--button-transform) scale(0.95);
+}
+
+.button-spin-component:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.button-spin-component[data-spinning="true"] .button-spin-image {
+  animation: wheelSpin 3s ease-in-out;
+}
+
+.button-spin-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@keyframes wheelSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(1080deg); }
+}
+
+/* Center Component */
+.center-component {
+  position: absolute;
+  left: var(--center-left);
+  top: var(--center-top);
+  width: var(--center-size);
+  height: var(--center-size);
+  z-index: 25;
+  pointer-events: none;
+}
+
+.center-indicator {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.center-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid rgba(255, 0, 255, 0.5);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+}
+
+.center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 0, 255, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 0, 255, 0.6);
+}
+
+/* Debug Controls */
+.debug-controls {
+  margin-top: 20px;
+  padding: 15px;
+  background: var(--pf-surface);
+  border-radius: 8px;
+  border: 1px solid var(--pf-border);
+  text-align: center;
+}
+
+.debug-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--pf-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.debug-controls input[type="checkbox"] {
+  cursor: pointer;
+}

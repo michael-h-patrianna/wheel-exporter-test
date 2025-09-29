@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useMemo, CSSProperties } from 'react';
-import { WheelExport, ExtractedAssets, HeaderState } from '../types';
+import { WheelExport, ExtractedAssets, HeaderState, ButtonSpinState } from '../types';
+
+// Import all renderer components
+import { BackgroundRenderer } from './renderers/BackgroundRenderer';
+import { HeaderRenderer } from './renderers/HeaderRenderer';
+import { WheelBgRenderer } from './renderers/WheelBgRenderer';
+import { WheelTopRenderer } from './renderers/WheelTopRenderer';
+import { ButtonSpinRenderer } from './renderers/ButtonSpinRenderer';
+import { CenterRenderer } from './renderers/CenterRenderer';
 
 interface WheelViewerProps {
   wheelData: WheelExport;
@@ -16,6 +24,9 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
 }) => {
   // Component state management
   const [headerState, setHeaderState] = useState<HeaderState>('active');
+  const [buttonSpinState, setButtonSpinState] = useState<ButtonSpinState>('default');
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [showCenter, setShowCenter] = useState(false); // Toggle for debugging
 
   // Calculate scale to maintain aspect ratio
   const scale = useMemo(() => {
@@ -34,97 +45,133 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
     borderRadius: '8px',
   };
 
-  // Scale transform for all child elements
-  const scaleStyle: CSSProperties = {
-    transform: `scale(${scale})`,
-    transformOrigin: 'top left',
-    position: 'absolute',
-    width: `${wheelData.frameSize.width}px`,
-    height: `${wheelData.frameSize.height}px`,
+  // Handle header state cycling
+  const handleHeaderCycle = () => {
+    const states: HeaderState[] = ['active', 'success', 'fail'];
+    const currentIndex = states.indexOf(headerState);
+    const nextIndex = (currentIndex + 1) % states.length;
+    setHeaderState(states[nextIndex]);
   };
 
-  // Render background
-  const renderBackground = () => {
-    if (!assets.backgroundImage) return null;
+  // Handle spin button click
+  const handleSpin = () => {
+    if (isSpinning) return;
 
-    return (
-      <img
-        src={assets.backgroundImage}
-        alt="Background"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-        }}
-      />
-    );
+    setIsSpinning(true);
+    setButtonSpinState('spinning');
+
+    // Simulate 3-second spin
+    setTimeout(() => {
+      setIsSpinning(false);
+      setButtonSpinState('default');
+    }, 3000);
   };
 
-  // Render header component with state cycling
-  const renderHeader = () => {
-    if (!wheelData.header || !assets.headerImages) return null;
-
-    const { header } = wheelData;
-    const bounds = header.stateBounds[headerState];
-    let imageSrc: string | undefined;
-
+  // Get current header image
+  const getCurrentHeaderImage = () => {
+    if (!assets.headerImages) return undefined;
     switch (headerState) {
       case 'active':
-        imageSrc = assets.headerImages.active;
-        break;
+        return assets.headerImages.active;
       case 'success':
-        imageSrc = assets.headerImages.success;
-        break;
+        return assets.headerImages.success;
       case 'fail':
-        imageSrc = assets.headerImages.fail;
-        break;
+        return assets.headerImages.fail;
+      default:
+        return undefined;
     }
+  };
 
-    if (!imageSrc || !bounds) return null;
-
-    const handleHeaderClick = () => {
-      // Cycle through states: active -> success -> fail -> active
-      const states: HeaderState[] = ['active', 'success', 'fail'];
-      const currentIndex = states.indexOf(headerState);
-      const nextIndex = (currentIndex + 1) % states.length;
-      setHeaderState(states[nextIndex]);
-    };
-
-    // Calculate position treating x,y as center (like questline-exporter-test)
-    const left = bounds.x - (bounds.width / 2);
-    const top = bounds.y - (bounds.height / 2);
-
-    return (
-      <img
-        src={imageSrc}
-        alt={`Header ${headerState}`}
-        onClick={handleHeaderClick}
-        style={{
-          position: 'absolute',
-          left: `${left}px`,
-          top: `${top}px`,
-          width: `${bounds.width}px`,
-          height: `${bounds.height}px`,
-          transform: bounds.rotation ? `rotate(${bounds.rotation}deg)` : undefined,
-          cursor: 'pointer',
-        }}
-      />
-    );
+  // Get current button image
+  const getCurrentButtonImage = () => {
+    if (!assets.buttonSpinImages) return undefined;
+    return buttonSpinState === 'default'
+      ? assets.buttonSpinImages.default
+      : assets.buttonSpinImages.spinning;
   };
 
   // Reset states when wheel data changes
   useEffect(() => {
     setHeaderState('active');
+    setButtonSpinState('default');
+    setIsSpinning(false);
   }, [wheelData.wheelId]);
 
   return (
-    <div style={containerStyle}>
-      <div style={scaleStyle}>
-        {renderBackground()}
-        {renderHeader()}
+    <div className="wheel-viewer">
+      <div style={containerStyle} className="wheel-container">
+        {/* Layer 1: Main Background */}
+        <BackgroundRenderer
+          backgroundImage={assets.backgroundImage}
+          scale={scale}
+          frameWidth={wheelData.frameSize.width}
+          frameHeight={wheelData.frameSize.height}
+        />
+
+        {/* Layer 2: Wheel Background Overlay */}
+        <WheelBgRenderer
+          wheelBg={wheelData.wheelBg}
+          wheelBgImage={assets.wheelBgImage}
+          scale={scale}
+        />
+
+        {/* Layer 3: Header Component */}
+        {wheelData.header && (
+          <HeaderRenderer
+            header={wheelData.header}
+            currentState={headerState}
+            scale={scale}
+            headerImage={getCurrentHeaderImage()}
+            onCycleState={handleHeaderCycle}
+          />
+        )}
+
+        {/* Layer 4: Wheel Top Layer 1 */}
+        <WheelTopRenderer
+          wheelTop={wheelData.wheelTop1}
+          wheelTopImage={assets.wheelTop1Image}
+          scale={scale}
+          layerNumber={1}
+        />
+
+        {/* Layer 5: Wheel Top Layer 2 */}
+        <WheelTopRenderer
+          wheelTop={wheelData.wheelTop2}
+          wheelTopImage={assets.wheelTop2Image}
+          scale={scale}
+          layerNumber={2}
+        />
+
+        {/* Layer 6: Spin Button */}
+        {wheelData.buttonSpin && (
+          <ButtonSpinRenderer
+            buttonSpin={wheelData.buttonSpin}
+            currentState={buttonSpinState}
+            buttonImage={getCurrentButtonImage()}
+            scale={scale}
+            onSpin={handleSpin}
+            isSpinning={isSpinning}
+          />
+        )}
+
+        {/* Layer 7: Center Indicator (for debugging) */}
+        <CenterRenderer
+          center={wheelData.center}
+          scale={scale}
+          showCenter={showCenter}
+        />
+      </div>
+
+      {/* Debug Controls */}
+      <div className="debug-controls">
+        <label>
+          <input
+            type="checkbox"
+            checked={showCenter}
+            onChange={(e) => setShowCenter(e.target.checked)}
+          />
+          Show Center Point
+        </label>
       </div>
     </div>
   );

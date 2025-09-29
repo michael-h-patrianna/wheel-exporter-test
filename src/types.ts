@@ -1,7 +1,8 @@
-// Core types for the wheel format (excludes quests, rewards, button, timer)
+// Core types for the wheel format
 
 // Component state types
 export type HeaderState = 'active' | 'success' | 'fail';
+export type ButtonSpinState = 'default' | 'spinning';
 
 // Base interface for image-based component positioning
 export interface ImageBounds {
@@ -10,6 +11,14 @@ export interface ImageBounds {
   width: number;
   height: number;
   rotation?: number;
+}
+
+// Wheel element bounds (center-based positioning)
+export interface WheelElementBounds {
+  x: number; // center X
+  y: number; // center Y
+  width: number;
+  height: number;
 }
 
 // Header component
@@ -24,6 +33,29 @@ export interface HeaderComponent {
   failImg: string;
 }
 
+// Wheel background overlay
+export interface WheelOverlay {
+  bounds: WheelElementBounds;
+  img: string;
+}
+
+// Button spin component with two states
+export interface ButtonSpinComponent {
+  stateBounds: {
+    default: ImageBounds;
+    spinning: ImageBounds;
+  };
+  defaultImg: string;
+  spinningImg: string;
+}
+
+// Center component (no image, just position data)
+export interface CenterComponent {
+  x: number;
+  y: number;
+  radius: number;
+}
+
 // Main wheel export format
 export interface WheelExport {
   wheelId: string;
@@ -35,6 +67,11 @@ export interface WheelExport {
     exportUrl: string;
   };
   header?: HeaderComponent;
+  wheelBg?: WheelOverlay;
+  wheelTop1?: WheelOverlay;
+  wheelTop2?: WheelOverlay;
+  buttonSpin?: ButtonSpinComponent;
+  center?: CenterComponent;
   exportedAt: string;
   metadata: {
     exportFormat?: string;
@@ -56,5 +93,12 @@ export interface ExtractedAssets {
     active?: string;
     success?: string;
     fail?: string;
+  };
+  wheelBgImage?: string;
+  wheelTop1Image?: string;
+  wheelTop2Image?: string;
+  buttonSpinImages?: {
+    default?: string;
+    spinning?: string;
   };
 }
