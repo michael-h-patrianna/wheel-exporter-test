@@ -93,6 +93,10 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
       setHeaderState(states[nextIndex]);
     };
 
+    // Calculate position treating x,y as center (like questline-exporter-test)
+    const left = bounds.x - (bounds.width / 2);
+    const top = bounds.y - (bounds.height / 2);
+
     return (
       <img
         src={imageSrc}
@@ -100,8 +104,8 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
         onClick={handleHeaderClick}
         style={{
           position: 'absolute',
-          left: `${bounds.x}px`,
-          top: `${bounds.y}px`,
+          left: `${left}px`,
+          top: `${top}px`,
           width: `${bounds.width}px`,
           height: `${bounds.height}px`,
           transform: bounds.rotation ? `rotate(${bounds.rotation}deg)` : undefined,

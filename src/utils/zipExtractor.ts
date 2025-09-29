@@ -2,87 +2,71 @@ import JSZip from 'jszip';
 import { ExtractedAssets, WheelExport } from '../types';
 
 /**
- * Converts a file from the zip to a base64 data URL
- */
-async function fileToDataUrl(file: JSZip.JSZipObject, mimeType: string): Promise<string> {
-  const data = await file.async('base64');
-  return `data:${mimeType};base64,${data}`;
-}
-
-/**
  * Extracts and processes a wheel theme ZIP file
  */
-export async function extractWheelZip(file: File): Promise<ExtractedAssets> {
+export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
   const zip = new JSZip();
-  const contents = await zip.loadAsync(file);
+  const zipContent = await zip.loadAsync(zipFile);
 
-  // Find and parse the wheel JSON positions file
-  const positionsFile = contents.file(/positions\.json$/i)[0];
-  if (!positionsFile) {
-    throw new Error('No positions.json file found in ZIP');
+  // Debug: Log all files in the ZIP
+  console.log('Files in ZIP:', Object.keys(zipContent.files));
+
+  // Extract positions.json
+  const dataFile = zipContent.file('positions.json');
+
+  if (!dataFile) {
+    throw new Error('No positions.json file found in ZIP. Available files: ' + Object.keys(zipContent.files).join(', '));
   }
 
-  const positionsContent = await positionsFile.async('string');
-  const wheelData: WheelExport = JSON.parse(positionsContent);
+  const dataContent = await dataFile.async('string');
+  const wheelData: WheelExport = JSON.parse(dataContent);
 
-  // Initialize the extracted assets structure
-  const extractedAssets: ExtractedAssets = {
-    wheelData,
-    backgroundImage: undefined,
-    headerImages: undefined,
-  };
-
-  // Process background image
+  // Extract background image (at root level)
+  let backgroundImage: string | undefined;
   if (wheelData.background?.exportUrl) {
-    const bgFileName = wheelData.background.exportUrl.replace('exports/', '');
-    const bgFile = contents.file(new RegExp(bgFileName, 'i'))[0];
+    const bgFile = zipContent.file(wheelData.background.exportUrl);
     if (bgFile) {
-      const mimeType = bgFileName.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
-      extractedAssets.backgroundImage = await fileToDataUrl(bgFile, mimeType);
+      const bgBlob = await bgFile.async('blob');
+      backgroundImage = URL.createObjectURL(bgBlob);
+      console.log('Found background image:', wheelData.background.exportUrl);
+    } else {
+      console.warn('Background image not found:', wheelData.background.exportUrl);
     }
   }
 
-  // Process header images if header component exists
+  // Extract header images (optional)
+  let headerImages: ExtractedAssets['headerImages'] | undefined;
   if (wheelData.header) {
-    extractedAssets.headerImages = {};
+    headerImages = {};
+    const headerImageStates = [
+      { state: 'active', filename: wheelData.header.activeImg },
+      { state: 'success', filename: wheelData.header.successImg },
+      { state: 'fail', filename: wheelData.header.failImg }
+    ] as const;
 
-    // Process header active image
-    if (wheelData.header.activeImg) {
-      const fileName = wheelData.header.activeImg.replace('exports/', '');
-      const imgFile = contents.file(new RegExp(fileName, 'i'))[0];
-      if (imgFile) {
-        const mimeType = fileName.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
-        extractedAssets.headerImages.active = await fileToDataUrl(imgFile, mimeType);
-      }
-    }
-
-    // Process header success image
-    if (wheelData.header.successImg) {
-      const fileName = wheelData.header.successImg.replace('exports/', '');
-      const imgFile = contents.file(new RegExp(fileName, 'i'))[0];
-      if (imgFile) {
-        const mimeType = fileName.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
-        extractedAssets.headerImages.success = await fileToDataUrl(imgFile, mimeType);
-      }
-    }
-
-    // Process header fail image
-    if (wheelData.header.failImg) {
-      const fileName = wheelData.header.failImg.replace('exports/', '');
-      const imgFile = contents.file(new RegExp(fileName, 'i'))[0];
-      if (imgFile) {
-        const mimeType = fileName.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
-        extractedAssets.headerImages.fail = await fileToDataUrl(imgFile, mimeType);
+    for (const { state, filename } of headerImageStates) {
+      if (filename) {
+        const file = zipContent.file(filename);
+        if (file) {
+          const blob = await file.async('blob');
+          headerImages[state] = URL.createObjectURL(blob);
+          console.log(`Found header image: ${state} -> ${filename}`);
+        } else {
+          console.warn(`Missing header image: ${state} -> ${filename}`);
+        }
       }
     }
   }
 
-  console.log('Extracted wheel assets:', {
-    wheelId: wheelData.wheelId,
-    hasBackground: !!extractedAssets.backgroundImage,
-    hasHeader: !!wheelData.header,
-    headerImages: extractedAssets.headerImages ? Object.keys(extractedAssets.headerImages) : [],
+  console.log('Extraction complete:', {
+    wheelData,
+    headerImages,
+    backgroundImage: !!backgroundImage
   });
 
-  return extractedAssets;
+  return {
+    wheelData,
+    backgroundImage,
+    headerImages
+  };
 }
