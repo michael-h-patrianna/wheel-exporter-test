@@ -145,6 +145,7 @@ function App() {
                 <strong>Interaction Guide:</strong><br />
                 • Click header to cycle: active → success → fail<br />
                 • Click spin button to simulate wheel spinning<br />
+                • Toggle "Show Center" to show/hide center overlay<br />
                 • Adjust wheel dimensions using the sliders above
               </p>
             </div>
