@@ -489,7 +489,7 @@
 }
 
 .button-spin-component[data-spinning="true"] .button-spin-image {
-  animation: wheelSpin 3s ease-in-out;
+  animation: wheelSpin 5s cubic-bezier(0.15, 0, 0.25, 1);
 }
 
 .button-spin-image {
@@ -499,6 +499,12 @@
 }
 
 @keyframes wheelSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(2160deg); }
+}
+
+/* Wheel segments spinning animation */
+@keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(1080deg); }
 }

@@ -14,13 +14,17 @@ interface SegmentRendererProps {
   center?: CenterComponent;
   segmentCount: number;
   scale: number;
+  isSpinning?: boolean;
+  targetRotation?: number;
 }
 
 export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
   segments,
   center,
   segmentCount,
-  scale
+  scale,
+  isSpinning = false,
+  targetRotation = 0
 }) => {
   // Calculate segment angles
   const segmentAngle = (Math.PI * 2) / segmentCount;
@@ -137,7 +141,14 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
       <svg
         width="100%"
         height="100%"
-        style={{ display: 'block' }}
+        style={{
+          display: 'block',
+          transformOrigin: `${cx}px ${cy}px`,
+          transform: `rotate(${targetRotation}deg)`,
+          transition: isSpinning
+            ? 'transform 5s cubic-bezier(0.15, 0, 0.25, 1)'
+            : 'transform 1.5s cubic-bezier(0.35, 0, 0.25, 1)'
+        }}
       >
         {/* Gradient definitions */}
         {gradientDefs.length > 0 && (
@@ -147,7 +158,7 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
         )}
 
         {/* Render segments */}
-        {segmentData.map((segment) => {
+          {segmentData.map((segment) => {
           const styles = segments[segment.kind];
           if (!styles) return null;
 

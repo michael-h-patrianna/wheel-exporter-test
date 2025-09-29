@@ -46,7 +46,8 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   const [buttonSpinState, setButtonSpinState] = useState<ButtonSpinState>('default');
   const [isSpinning, setIsSpinning] = useState(false);
   const [showGradientHandles, setShowGradientHandles] = useState(false);
-  // Remove local showCenter state as it's now managed by parent
+  const [targetRotation, setTargetRotation] = useState(0);
+  const [currentRotation, setCurrentRotation] = useState(0);
 
   // Calculate scale to maintain aspect ratio
   const scale = useMemo(() => {
@@ -77,14 +78,47 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   const handleSpin = () => {
     if (isSpinning) return;
 
+    // Pick random segment (0 to segmentCount-1)
+    const randomSegment = Math.floor(Math.random() * segmentCount);
+    console.log('Landing on segment:', randomSegment);
+
+    // Calculate angle for each segment
+    const segmentAngle = 360 / segmentCount;
+
+    // Calculate where the chosen segment should end up
+    // First segment starts at top, segments go clockwise
+    // To land on segment N, we need to rotate so it's at top
+    const targetSegmentAngle = randomSegment * segmentAngle;
+
+    // Add multiple full rotations (5-7 spins) for excitement
+    const fullSpins = 5 + Math.floor(Math.random() * 3);
+
+    // Total rotation: spin multiple times and land on target
+    const baseRotation = fullSpins * 360 - targetSegmentAngle;
+
+    // Add overshoot (15-25 degrees)
+    const overshoot = 15 + Math.random() * 10;
+    const totalRotation = baseRotation + overshoot;
+
+    // Set the new target rotation with overshoot
+    const rotationWithOvershoot = currentRotation + totalRotation;
+    const finalRotation = currentRotation + baseRotation;
+
+    setTargetRotation(rotationWithOvershoot);
     setIsSpinning(true);
     setButtonSpinState('spinning');
 
-    // Simulate 3-second spin
+    // After main animation (5s), bounce back from overshoot
     setTimeout(() => {
-      setIsSpinning(false);
+      setTargetRotation(finalRotation);
+      setIsSpinning(false); // Mark as not spinning for bounce-back transition
+    }, 5000);
+
+    // Complete after bounce back (1.5s for the bounce)
+    setTimeout(() => {
       setButtonSpinState('default');
-    }, 3000);
+      setCurrentRotation(finalRotation);
+    }, 6500);
   };
 
   // Get current header image
@@ -146,6 +180,8 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
             center={wheelData.center}
             segmentCount={segmentCount}
             scale={scale}
+            isSpinning={isSpinning}
+            targetRotation={targetRotation}
           />
         )}
 
