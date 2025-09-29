@@ -1,3 +1,17 @@
+/* Dark Theme Variables - Global */
+:root {
+  --pf-bg: #3a125d;
+  --pf-surface: #3a125d;
+  --pf-border: #a96aff;
+  --pf-fg: #ecc3ff;
+  --pf-fg-strong: #efd7fa;
+  --pf-muted: #ceb6d8;
+  --secondary: #4a9d2e;
+  --elev-1: 0 6px 18px color-mix(in srgb, var(--pf-fg-strong) 10%, transparent);
+  --elev-2: 0 12px 36px color-mix(in srgb, var(--pf-fg-strong) 14%, transparent);
+  --elev-inset: inset 0 1px 0 color-mix(in srgb, #fff 10%, transparent);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +19,15 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--pf-bg);
+  color: var(--pf-fg);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+  background: color-mix(in srgb, var(--pf-border) 10%, var(--pf-surface));
+  color: var(--pf-fg-strong);
+  padding: 2px 4px;
+  border-radius: 3px;
 }
