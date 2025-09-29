@@ -210,7 +210,7 @@ export function fillToSvgPaint(fill: Fill | undefined, gradientId?: string): str
 export function createSvgGradientDef(
   gradient: Gradient,
   gradientId: string,
-  templateBounds?: { minX: number; minY: number; width: number; height: number }
+  segmentRotation?: number // Rotation angle in degrees for the segment
 ): React.ReactElement | null {
   const stops = gradient.stops?.map((stop, index) => (
     <stop
@@ -239,8 +239,10 @@ export function createSvgGradientDef(
   }
 
   // For linear gradients, calculate the angle from rotation
-  const angle = gradient.rotation || 0;
-  const rad = (angle * Math.PI) / 180;
+  // Add the segment's rotation to the gradient's base rotation
+  const baseAngle = gradient.rotation || 0;
+  const totalAngle = baseAngle + (segmentRotation || 0);
+  const rad = (totalAngle * Math.PI) / 180;
 
   // Calculate gradient vector from angle
   // This creates a gradient from center going in the direction of the angle

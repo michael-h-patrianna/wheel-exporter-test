@@ -66,9 +66,13 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
     // Process outer fill gradient
     if (styles.outer?.fill?.type === 'gradient' && styles.outer.fill.gradient) {
       const gradientId = `segment-outer-fill-${segment.index}`;
+      // Calculate the rotation offset for this segment
+      // Each segment needs its gradient rotated by its position angle
+      const segmentRotation = (segment.startAngle + segment.endAngle) / 2 * (180 / Math.PI);
       const gradientDef = createSvgGradientDef(
         styles.outer.fill.gradient,
-        gradientId
+        gradientId,
+        segmentRotation
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
@@ -78,9 +82,11 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
     // Process outer stroke gradient
     if (styles.outer?.stroke?.fill?.type === 'gradient' && styles.outer.stroke.fill.gradient) {
       const gradientId = `segment-outer-stroke-${segment.index}`;
+      const segmentRotation = (segment.startAngle + segment.endAngle) / 2 * (180 / Math.PI);
       const gradientDef = createSvgGradientDef(
         styles.outer.stroke.fill.gradient,
-        gradientId
+        gradientId,
+        segmentRotation
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
@@ -90,9 +96,11 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
     // Process inner fill gradient
     if (styles.inner?.fill?.type === 'gradient' && styles.inner.fill.gradient) {
       const gradientId = `segment-inner-fill-${segment.index}`;
+      const segmentRotation = (segment.startAngle + segment.endAngle) / 2 * (180 / Math.PI);
       const gradientDef = createSvgGradientDef(
         styles.inner.fill.gradient,
-        gradientId
+        gradientId,
+        segmentRotation
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
@@ -102,9 +110,11 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
     // Process inner stroke gradient
     if (styles.inner?.stroke?.fill?.type === 'gradient' && styles.inner.stroke.fill.gradient) {
       const gradientId = `segment-inner-stroke-${segment.index}`;
+      const segmentRotation = (segment.startAngle + segment.endAngle) / 2 * (180 / Math.PI);
       const gradientDef = createSvgGradientDef(
         styles.inner.stroke.fill.gradient,
-        gradientId
+        gradientId,
+        segmentRotation
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
