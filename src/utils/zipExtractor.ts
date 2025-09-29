@@ -16,14 +16,14 @@ export async function extractWheelZip(file: File): Promise<ExtractedAssets> {
   const zip = new JSZip();
   const contents = await zip.loadAsync(file);
 
-  // Find and parse the wheel JSON data file
-  const dataFile = contents.file(/data\.json$/i)[0];
-  if (!dataFile) {
-    throw new Error('No data.json file found in ZIP');
+  // Find and parse the wheel JSON positions file
+  const positionsFile = contents.file(/positions\.json$/i)[0];
+  if (!positionsFile) {
+    throw new Error('No positions.json file found in ZIP');
   }
 
-  const dataContent = await dataFile.async('string');
-  const wheelData: WheelExport = JSON.parse(dataContent);
+  const positionsContent = await positionsFile.async('string');
+  const wheelData: WheelExport = JSON.parse(positionsContent);
 
   // Initialize the extracted assets structure
   const extractedAssets: ExtractedAssets = {
