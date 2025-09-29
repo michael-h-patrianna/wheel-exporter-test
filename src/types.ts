@@ -4,6 +4,56 @@
 export type HeaderState = 'active' | 'success' | 'fail';
 export type ButtonSpinState = 'default' | 'spinning';
 
+// Segment types
+export type WheelSegmentKind = 'odd' | 'even' | 'nowin' | 'jackpot';
+
+// Color and gradient types
+export interface GradientStop {
+  color: string; // Hex color like "#FF0000" or rgba string
+  position: number; // 0-1
+}
+
+export interface GradientHandle {
+  x: number; // Normalized position
+  y: number; // Normalized position
+}
+
+export type GradientTransform = readonly [
+  readonly [number, number, number],
+  readonly [number, number, number]
+];
+
+export interface Gradient {
+  type: 'linear' | 'radial' | 'angular' | 'diamond';
+  stops: GradientStop[];
+  transform: GradientTransform;
+  rotation: number; // Degrees
+  handles?: readonly GradientHandle[];
+}
+
+export interface Fill {
+  type: 'solid' | 'gradient';
+  color?: string; // Hex color like "#FF0000" or rgba string
+  gradient?: Gradient;
+}
+
+export interface WheelSegmentStrokeStyle {
+  width: number;
+  fill: Fill;
+}
+
+export interface WheelSegmentVectorStyle {
+  fill?: Fill;
+  stroke?: WheelSegmentStrokeStyle;
+}
+
+export interface WheelSegmentTypeStyles {
+  inner?: WheelSegmentVectorStyle;
+  outer?: WheelSegmentVectorStyle;
+}
+
+export type WheelSegmentStyles = Partial<Record<WheelSegmentKind, WheelSegmentTypeStyles>>;
+
 // Base interface for image-based component positioning
 export interface ImageBounds {
   x: number;
@@ -72,6 +122,7 @@ export interface WheelExport {
   wheelTop2?: WheelOverlay;
   buttonSpin?: ButtonSpinComponent;
   center?: CenterComponent;
+  segments?: WheelSegmentStyles;
   exportedAt: string;
   metadata: {
     exportFormat?: string;

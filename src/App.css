@@ -56,7 +56,17 @@
   border-color: color-mix(in srgb, var(--pf-border) 80%, var(--pf-fg-strong));
 }
 
-.file-input {
+.file-input-label {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.file-input-button {
+  display: inline-block;
   padding: 12px 24px;
   border: 2px solid var(--pf-border);
   border-radius: 8px;
@@ -67,14 +77,15 @@
   transition: all 0.3s ease;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+  user-select: none;
 }
 
-.file-input:hover {
+.file-input-button:hover {
   background: color-mix(in srgb, var(--pf-border) 20%, var(--pf-surface));
   border-color: var(--pf-fg-strong);
 }
 
-.file-input:disabled {
+.file-input-label input:disabled + .file-input-button {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -236,7 +247,7 @@
   margin-bottom: 20px;
 }
 
-.component-present {
+.component-toggle {
   background: color-mix(in srgb, var(--secondary) 20%, var(--pf-surface));
   color: var(--secondary);
   padding: 8px 12px;
@@ -244,16 +255,45 @@
   font-weight: 600;
   font-size: 0.9rem;
   border: 1px solid color-mix(in srgb, var(--secondary) 30%, transparent);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
 }
 
-.component-missing {
+.component-toggle:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--secondary) 30%, var(--pf-surface));
+  border-color: var(--secondary);
+  transform: translateY(-1px);
+}
+
+.component-toggle:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.component-toggle.component-present {
+  background: color-mix(in srgb, var(--secondary) 20%, var(--pf-surface));
+  color: var(--secondary);
+  border: 1px solid color-mix(in srgb, var(--secondary) 30%, transparent);
+}
+
+.component-toggle.component-present.component-hidden {
+  background: color-mix(in srgb, var(--pf-muted) 20%, var(--pf-surface));
+  color: var(--pf-muted);
+  border-color: color-mix(in srgb, var(--pf-muted) 30%, transparent);
+  opacity: 0.7;
+}
+
+.component-toggle.component-missing {
   background: color-mix(in srgb, #f56565 20%, var(--pf-surface));
   color: #f56565;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
   border: 1px solid color-mix(in srgb, #f56565 30%, transparent);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.component-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .interaction-help {

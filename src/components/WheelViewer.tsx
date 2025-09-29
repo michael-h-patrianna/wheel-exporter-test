@@ -8,12 +8,27 @@ import { WheelBgRenderer } from './renderers/WheelBgRenderer';
 import { WheelTopRenderer } from './renderers/WheelTopRenderer';
 import { ButtonSpinRenderer } from './renderers/ButtonSpinRenderer';
 import { CenterRenderer } from './renderers/CenterRenderer';
+import { SegmentRenderer } from './renderers/SegmentRenderer';
+
+interface ComponentVisibility {
+  background: boolean;
+  header: boolean;
+  wheelBg: boolean;
+  wheelTop1: boolean;
+  wheelTop2: boolean;
+  buttonSpin: boolean;
+  center: boolean;
+  segments: boolean;
+}
 
 interface WheelViewerProps {
   wheelData: WheelExport;
   assets: ExtractedAssets;
   wheelWidth: number;
   wheelHeight: number;
+  segmentCount: number;
+  componentVisibility: ComponentVisibility;
+  onToggleCenter: (show: boolean) => void;
 }
 
 export const WheelViewer: React.FC<WheelViewerProps> = ({
@@ -21,12 +36,15 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   assets,
   wheelWidth,
   wheelHeight,
+  segmentCount,
+  componentVisibility,
+  onToggleCenter,
 }) => {
   // Component state management
   const [headerState, setHeaderState] = useState<HeaderState>('active');
   const [buttonSpinState, setButtonSpinState] = useState<ButtonSpinState>('default');
   const [isSpinning, setIsSpinning] = useState(false);
-  const [showCenter, setShowCenter] = useState(true);
+  // Remove local showCenter state as it's now managed by parent
 
   // Calculate scale to maintain aspect ratio
   const scale = useMemo(() => {
@@ -101,22 +119,36 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
     <div className="wheel-viewer">
       <div style={containerStyle} className="wheel-container">
         {/* Layer 1: Main Background */}
-        <BackgroundRenderer
-          backgroundImage={assets.backgroundImage}
-          scale={scale}
-          frameWidth={wheelData.frameSize.width}
-          frameHeight={wheelData.frameSize.height}
-        />
+        {componentVisibility.background && (
+          <BackgroundRenderer
+            backgroundImage={assets.backgroundImage}
+            scale={scale}
+            frameWidth={wheelData.frameSize.width}
+            frameHeight={wheelData.frameSize.height}
+          />
+        )}
 
         {/* Layer 2: Wheel Background Overlay */}
-        <WheelBgRenderer
-          wheelBg={wheelData.wheelBg}
-          wheelBgImage={assets.wheelBgImage}
-          scale={scale}
-        />
+        {componentVisibility.wheelBg && (
+          <WheelBgRenderer
+            wheelBg={wheelData.wheelBg}
+            wheelBgImage={assets.wheelBgImage}
+            scale={scale}
+          />
+        )}
 
-        {/* Layer 3: Header Component */}
-        {wheelData.header && (
+        {/* Layer 3: Wheel Segments */}
+        {componentVisibility.segments && (
+          <SegmentRenderer
+            segments={wheelData.segments}
+            center={wheelData.center}
+            segmentCount={segmentCount}
+            scale={scale}
+          />
+        )}
+
+        {/* Layer 4: Header Component */}
+        {componentVisibility.header && wheelData.header && (
           <HeaderRenderer
             header={wheelData.header}
             currentState={headerState}
@@ -126,24 +158,28 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
           />
         )}
 
-        {/* Layer 4: Wheel Top Layer 1 */}
-        <WheelTopRenderer
-          wheelTop={wheelData.wheelTop1}
-          wheelTopImage={assets.wheelTop1Image}
-          scale={scale}
-          layerNumber={1}
-        />
+        {/* Layer 5: Wheel Top Layer 1 */}
+        {componentVisibility.wheelTop1 && (
+          <WheelTopRenderer
+            wheelTop={wheelData.wheelTop1}
+            wheelTopImage={assets.wheelTop1Image}
+            scale={scale}
+            layerNumber={1}
+          />
+        )}
 
-        {/* Layer 5: Wheel Top Layer 2 */}
-        <WheelTopRenderer
-          wheelTop={wheelData.wheelTop2}
-          wheelTopImage={assets.wheelTop2Image}
-          scale={scale}
-          layerNumber={2}
-        />
+        {/* Layer 6: Wheel Top Layer 2 */}
+        {componentVisibility.wheelTop2 && (
+          <WheelTopRenderer
+            wheelTop={wheelData.wheelTop2}
+            wheelTopImage={assets.wheelTop2Image}
+            scale={scale}
+            layerNumber={2}
+          />
+        )}
 
-        {/* Layer 6: Spin Button */}
-        {wheelData.buttonSpin && (
+        {/* Layer 7: Spin Button */}
+        {componentVisibility.buttonSpin && wheelData.buttonSpin && (
           <ButtonSpinRenderer
             buttonSpin={wheelData.buttonSpin}
             currentState={buttonSpinState}
@@ -154,8 +190,8 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
           />
         )}
 
-        {/* Layer 7: Center Circle */}
-        {showCenter && (
+        {/* Layer 8: Center Circle */}
+        {componentVisibility.center && (
           <CenterRenderer
             center={wheelData.center}
             scale={scale}
@@ -170,8 +206,8 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
           <div className="switch">
             <input
               type="checkbox"
-              checked={showCenter}
-              onChange={(e) => setShowCenter(e.target.checked)}
+              checked={componentVisibility.center}
+              onChange={(e) => onToggleCenter(e.target.checked)}
             />
             <span className="switch-slider"></span>
           </div>

@@ -8,8 +8,28 @@ function App() {
   const [extractedAssets, setExtractedAssets] = useState<ExtractedAssets | null>(null);
   const [wheelWidth, setWheelWidth] = useState(800);
   const [wheelHeight, setWheelHeight] = useState(600);
+  const [segmentCount, setSegmentCount] = useState(6);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Component visibility state
+  const [componentVisibility, setComponentVisibility] = useState({
+    background: true,
+    header: true,
+    wheelBg: true,
+    wheelTop1: true,
+    wheelTop2: true,
+    buttonSpin: true,
+    center: true,
+    segments: true,
+  });
+
+  const toggleComponentVisibility = (component: keyof typeof componentVisibility) => {
+    setComponentVisibility(prev => ({
+      ...prev,
+      [component]: !prev[component]
+    }));
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -48,14 +68,18 @@ function App() {
 
       <main className="App-main">
         <div className="upload-section">
-          <input
-            type="file"
-            accept=".zip"
-            onChange={handleFileUpload}
-            className="file-input"
-            disabled={isLoading}
-            title="Choose a ZIP file exported from the Figma Wheel Plugin"
-          />
+          <label className="file-input-label">
+            <input
+              type="file"
+              accept=".zip"
+              onChange={handleFileUpload}
+              className="file-input-hidden"
+              disabled={isLoading}
+            />
+            <span className="file-input-button">
+              {isLoading ? 'Loading...' : 'Choose ZIP File'}
+            </span>
+          </label>
           {isLoading && <div className="loading-message">Loading wheel theme...</div>}
           {error && <div className="error-message">{error}</div>}
         </div>
@@ -88,6 +112,18 @@ function App() {
                     />
                   </label>
                 </div>
+                <div className="control-group">
+                  <label>
+                    Segments: {segmentCount}
+                    <input
+                      type="range"
+                      min="3"
+                      max="8"
+                      value={segmentCount}
+                      onChange={(e) => setSegmentCount(Number(e.target.value))}
+                    />
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -98,6 +134,9 @@ function App() {
                 assets={extractedAssets}
                 wheelWidth={wheelWidth}
                 wheelHeight={wheelHeight}
+                segmentCount={segmentCount}
+                componentVisibility={componentVisibility}
+                onToggleCenter={(show) => setComponentVisibility(prev => ({ ...prev, center: show }))}
               />
             </div>
 
@@ -118,27 +157,62 @@ function App() {
 
               <h4>Components Included:</h4>
               <div className="components-list">
-                <span className={extractedAssets.backgroundImage ? 'component-present' : 'component-missing'}>
-                  Background {extractedAssets.backgroundImage ? '✓' : '✗'}
-                </span>
-                <span className={extractedAssets.wheelData.header ? 'component-present' : 'component-missing'}>
-                  Header {extractedAssets.wheelData.header ? '✓' : '✗'}
-                </span>
-                <span className={extractedAssets.wheelData.wheelBg ? 'component-present' : 'component-missing'}>
-                  Wheel Bg {extractedAssets.wheelData.wheelBg ? '✓' : '✗'}
-                </span>
-                <span className={extractedAssets.wheelData.wheelTop1 ? 'component-present' : 'component-missing'}>
-                  Wheel Top 1 {extractedAssets.wheelData.wheelTop1 ? '✓' : '✗'}
-                </span>
-                <span className={extractedAssets.wheelData.wheelTop2 ? 'component-present' : 'component-missing'}>
-                  Wheel Top 2 {extractedAssets.wheelData.wheelTop2 ? '✓' : '✗'}
-                </span>
-                <span className={extractedAssets.wheelData.buttonSpin ? 'component-present' : 'component-missing'}>
-                  Button Spin {extractedAssets.wheelData.buttonSpin ? '✓' : '✗'}
-                </span>
-                <span className={extractedAssets.wheelData.center ? 'component-present' : 'component-missing'}>
-                  Center {extractedAssets.wheelData.center ? '✓' : '✗'}
-                </span>
+                <button
+                  className={`component-toggle ${extractedAssets.backgroundImage ? 'component-present' : 'component-missing'} ${!componentVisibility.background ? 'component-hidden' : ''}`}
+                  onClick={() => toggleComponentVisibility('background')}
+                  disabled={!extractedAssets.backgroundImage}
+                >
+                  Background {extractedAssets.backgroundImage ? (componentVisibility.background ? '👁' : '👁‍🗨') : '✗'}
+                </button>
+                <button
+                  className={`component-toggle ${extractedAssets.wheelData.header ? 'component-present' : 'component-missing'} ${!componentVisibility.header ? 'component-hidden' : ''}`}
+                  onClick={() => toggleComponentVisibility('header')}
+                  disabled={!extractedAssets.wheelData.header}
+                >
+                  Header {extractedAssets.wheelData.header ? (componentVisibility.header ? '👁' : '👁‍🗨') : '✗'}
+                </button>
+                <button
+                  className={`component-toggle ${extractedAssets.wheelData.wheelBg ? 'component-present' : 'component-missing'} ${!componentVisibility.wheelBg ? 'component-hidden' : ''}`}
+                  onClick={() => toggleComponentVisibility('wheelBg')}
+                  disabled={!extractedAssets.wheelData.wheelBg}
+                >
+                  Wheel Bg {extractedAssets.wheelData.wheelBg ? (componentVisibility.wheelBg ? '👁' : '👁‍🗨') : '✗'}
+                </button>
+                <button
+                  className={`component-toggle ${extractedAssets.wheelData.segments ? 'component-present' : 'component-missing'} ${!componentVisibility.segments ? 'component-hidden' : ''}`}
+                  onClick={() => toggleComponentVisibility('segments')}
+                  disabled={!extractedAssets.wheelData.segments}
+                >
+                  Segments {extractedAssets.wheelData.segments ? (componentVisibility.segments ? '👁' : '👁‍🗨') : '✗'}
+                </button>
+                <button
+                  className={`component-toggle ${extractedAssets.wheelData.wheelTop1 ? 'component-present' : 'component-missing'} ${!componentVisibility.wheelTop1 ? 'component-hidden' : ''}`}
+                  onClick={() => toggleComponentVisibility('wheelTop1')}
+                  disabled={!extractedAssets.wheelData.wheelTop1}
+                >
+                  Wheel Top 1 {extractedAssets.wheelData.wheelTop1 ? (componentVisibility.wheelTop1 ? '👁' : '👁‍🗨') : '✗'}
+                </button>
+                <button
+                  className={`component-toggle ${extractedAssets.wheelData.wheelTop2 ? 'component-present' : 'component-missing'} ${!componentVisibility.wheelTop2 ? 'component-hidden' : ''}`}
+                  onClick={() => toggleComponentVisibility('wheelTop2')}
+                  disabled={!extractedAssets.wheelData.wheelTop2}
+                >
+                  Wheel Top 2 {extractedAssets.wheelData.wheelTop2 ? (componentVisibility.wheelTop2 ? '👁' : '👁‍🗨') : '✗'}
+                </button>
+                <button
+                  className={`component-toggle ${extractedAssets.wheelData.buttonSpin ? 'component-present' : 'component-missing'} ${!componentVisibility.buttonSpin ? 'component-hidden' : ''}`}
+                  onClick={() => toggleComponentVisibility('buttonSpin')}
+                  disabled={!extractedAssets.wheelData.buttonSpin}
+                >
+                  Button Spin {extractedAssets.wheelData.buttonSpin ? (componentVisibility.buttonSpin ? '👁' : '👁‍🗨') : '✗'}
+                </button>
+                <button
+                  className={`component-toggle ${extractedAssets.wheelData.center ? 'component-present' : 'component-missing'} ${!componentVisibility.center ? 'component-hidden' : ''}`}
+                  onClick={() => toggleComponentVisibility('center')}
+                  disabled={!extractedAssets.wheelData.center}
+                >
+                  Center {extractedAssets.wheelData.center ? (componentVisibility.center ? '👁' : '👁‍🗨') : '✗'}
+                </button>
               </div>
 
               <p className="interaction-help">
