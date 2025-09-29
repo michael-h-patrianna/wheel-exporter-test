@@ -240,8 +240,9 @@ export function createSvgGradientDef(
 
   // For linear gradients, calculate the angle from rotation
   // Add the segment's rotation to the gradient's base rotation
+  // Subtract 90 degrees to align with Figma's coordinate system
   const baseAngle = gradient.rotation || 0;
-  const totalAngle = baseAngle + (segmentRotation || 0);
+  const totalAngle = baseAngle + (segmentRotation || 0) - 90;
   const rad = (totalAngle * Math.PI) / 180;
 
   // Calculate gradient vector from angle
