@@ -230,7 +230,27 @@ export function createSvgGradientDef(
     gradientUnits: 'objectBoundingBox'
   };
 
+  // Check if we have gradient handles (3 points from Figma)
+  const handles = gradient.handles;
+  const hasHandles = handles && handles.length >= 2;
+
   if (gradient.type === 'radial') {
+    if (hasHandles && handles.length >= 2) {
+      // Use handles to position radial gradient
+      // First handle is center, second handle defines radius
+      const cx = handles[0].x;
+      const cy = handles[0].y;
+      const dx = handles[1].x - handles[0].x;
+      const dy = handles[1].y - handles[0].y;
+      const r = Math.sqrt(dx * dx + dy * dy);
+
+      return (
+        <radialGradient {...commonProps} cx={cx} cy={cy} r={r}>
+          {stops}
+        </radialGradient>
+      );
+    }
+    // Fallback to centered radial gradient
     return (
       <radialGradient {...commonProps} cx="0.5" cy="0.5" r="0.5">
         {stops}
@@ -238,19 +258,85 @@ export function createSvgGradientDef(
     );
   }
 
-  // For linear gradients, calculate the angle from rotation
-  // Add the segment's rotation to the gradient's base rotation
-  // Add 90 degrees to align with Figma's coordinate system
-  const baseAngle = gradient.rotation || 0;
-  const totalAngle = baseAngle + (segmentRotation || 0) + 90;
-  const rad = (totalAngle * Math.PI) / 180;
+  if (gradient.type === 'angular') {
+    // Angular (conic) gradients - SVG doesn't support natively
+    // Create a mask-based approximation using multiple stops
+    const angleStops = stops.map((stop, i) => {
+      const angle = stop.position * 360;
+      return React.cloneElement(stop, {
+        key: `${gradientId}-angular-stop-${i}`
+      });
+    });
 
-  // Calculate gradient vector from angle
-  // This creates a gradient from center going in the direction of the angle
-  const x1 = 0.5 - 0.5 * Math.cos(rad);
-  const y1 = 0.5 - 0.5 * Math.sin(rad);
-  const x2 = 0.5 + 0.5 * Math.cos(rad);
-  const y2 = 0.5 + 0.5 * Math.sin(rad);
+    return (
+      <radialGradient {...commonProps} cx="0.5" cy="0.5" r="0.7" spreadMethod="repeat">
+        {angleStops}
+      </radialGradient>
+    );
+  }
+
+  if (gradient.type === 'diamond') {
+    // Diamond gradients - create using radial gradient with square aspect
+    if (hasHandles && handles.length >= 2) {
+      const cx = handles[0].x;
+      const cy = handles[0].y;
+      const dx = Math.abs(handles[1].x - handles[0].x);
+      const dy = Math.abs(handles[1].y - handles[0].y);
+      const r = Math.max(dx, dy);
+
+      return (
+        <radialGradient {...commonProps} cx={cx} cy={cy} r={r} gradientUnits="objectBoundingBox">
+          {stops}
+        </radialGradient>
+      );
+    }
+    // Fallback diamond gradient
+    return (
+      <radialGradient {...commonProps} cx="0.5" cy="0.5" r="0.7" gradientUnits="objectBoundingBox">
+        {stops}
+      </radialGradient>
+    );
+  }
+
+  // Linear gradient
+  let x1, y1, x2, y2;
+
+  if (hasHandles && handles.length >= 2) {
+    // Use gradient handles directly for precise positioning
+    x1 = handles[0].x;
+    y1 = handles[0].y;
+    x2 = handles[1].x;
+    y2 = handles[1].y;
+
+    // Apply segment rotation if provided
+    if (segmentRotation) {
+      const cx = 0.5, cy = 0.5;
+      const rad = (segmentRotation * Math.PI) / 180;
+      const cos = Math.cos(rad);
+      const sin = Math.sin(rad);
+
+      // Rotate points around center
+      const dx1 = x1 - cx;
+      const dy1 = y1 - cy;
+      x1 = cx + dx1 * cos - dy1 * sin;
+      y1 = cy + dx1 * sin + dy1 * cos;
+
+      const dx2 = x2 - cx;
+      const dy2 = y2 - cy;
+      x2 = cx + dx2 * cos - dy2 * sin;
+      y2 = cy + dx2 * sin + dy2 * cos;
+    }
+  } else {
+    // Fallback to angle-based calculation
+    const baseAngle = gradient.rotation || 0;
+    const totalAngle = baseAngle + (segmentRotation || 0) + 90;
+    const rad = (totalAngle * Math.PI) / 180;
+
+    x1 = 0.5 - 0.5 * Math.cos(rad);
+    y1 = 0.5 - 0.5 * Math.sin(rad);
+    x2 = 0.5 + 0.5 * Math.cos(rad);
+    y2 = 0.5 + 0.5 * Math.sin(rad);
+  }
 
   return (
     <linearGradient {...commonProps} x1={x1} y1={y1} x2={x2} y2={y2}>
