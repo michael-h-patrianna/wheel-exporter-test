@@ -37,7 +37,7 @@ export const GradientHandleRenderer: React.FC<GradientHandleRendererProps> = ({
   const outerRadius = center.radius * scale;
   const innerRadius = outerRadius * 0.6; // Match SEGMENT_PREVIEW_INNER_RADIUS_RATIO
 
-  // Collect all gradients with handles
+  // Collect all gradients with handles (only outer vector)
   const handleVisualizations: HandleVisualization[] = [];
 
   for (let i = 0; i < segmentCount; i++) {
@@ -48,58 +48,16 @@ export const GradientHandleRenderer: React.FC<GradientHandleRendererProps> = ({
     const segmentKind = ['odd', 'even', 'nowin', 'jackpot'][i % 4] as keyof WheelSegmentStyles;
     const styles = segments[segmentKind];
 
-    if (!styles) continue;
+    if (!styles?.outer) continue;
 
-    // Check outer fill gradient
-    if (styles.outer?.fill?.type === 'gradient' && styles.outer.fill.gradient?.handles) {
+    // Only show handles for outer gradient fills (not solid fills, not strokes)
+    if (styles.outer?.fill?.type === 'gradient' && styles.outer.fill.gradient) {
       handleVisualizations.push({
         segmentIndex: i,
         type: 'outer',
         fillOrStroke: 'fill',
         gradient: styles.outer.fill.gradient,
-        handles: styles.outer.fill.gradient.handles,
-        segmentAngle: segmentRotation,
-        startAngle,
-        endAngle
-      });
-    }
-
-    // Check outer stroke gradient
-    if (styles.outer?.stroke?.fill?.type === 'gradient' && styles.outer.stroke.fill.gradient?.handles) {
-      handleVisualizations.push({
-        segmentIndex: i,
-        type: 'outer',
-        fillOrStroke: 'stroke',
-        gradient: styles.outer.stroke.fill.gradient,
-        handles: styles.outer.stroke.fill.gradient.handles,
-        segmentAngle: segmentRotation,
-        startAngle,
-        endAngle
-      });
-    }
-
-    // Check inner fill gradient (if enabled)
-    if (styles.inner?.fill?.type === 'gradient' && styles.inner.fill.gradient?.handles) {
-      handleVisualizations.push({
-        segmentIndex: i,
-        type: 'inner',
-        fillOrStroke: 'fill',
-        gradient: styles.inner.fill.gradient,
-        handles: styles.inner.fill.gradient.handles,
-        segmentAngle: segmentRotation,
-        startAngle,
-        endAngle
-      });
-    }
-
-    // Check inner stroke gradient (if enabled)
-    if (styles.inner?.stroke?.fill?.type === 'gradient' && styles.inner.stroke.fill.gradient?.handles) {
-      handleVisualizations.push({
-        segmentIndex: i,
-        type: 'inner',
-        fillOrStroke: 'stroke',
-        gradient: styles.inner.stroke.fill.gradient,
-        handles: styles.inner.stroke.fill.gradient.handles,
+        handles: styles.outer.fill.gradient.handles || [],
         segmentAngle: segmentRotation,
         startAngle,
         endAngle
@@ -234,18 +192,35 @@ export const GradientHandleRenderer: React.FC<GradientHandleRendererProps> = ({
                 />
               )}
 
-              {/* Draw arc for angular gradients */}
-              {viz.gradient.type === 'angular' && (
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={viz.type === 'outer' ? outerRadius * 0.5 : (innerRadius + outerRadius) * 0.5}
-                  fill="none"
-                  stroke="#ffffff"
-                  strokeWidth={2}
-                  strokeDasharray="4,2"
-                  opacity={0.5}
-                />
+              {/* Draw circle for angular gradients described by handles */}
+              {viz.gradient.type === 'angular' && transformedHandles.length >= 3 && (
+                <>
+                  {/* Angular gradients use 3 handles to describe a circle */}
+                  {/* Handle 0: center, Handle 1: radius point, Handle 2: rotation point */}
+                  <circle
+                    cx={transformedHandles[0].x}
+                    cy={transformedHandles[0].y}
+                    r={Math.sqrt(
+                      Math.pow(transformedHandles[1].x - transformedHandles[0].x, 2) +
+                      Math.pow(transformedHandles[1].y - transformedHandles[0].y, 2)
+                    )}
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth={2}
+                    strokeDasharray="4,2"
+                  />
+                  {/* Show rotation angle line from center through third handle */}
+                  <line
+                    x1={transformedHandles[0].x}
+                    y1={transformedHandles[0].y}
+                    x2={transformedHandles[2].x}
+                    y2={transformedHandles[2].y}
+                    stroke="#ffff00"
+                    strokeWidth={1}
+                    strokeDasharray="2,2"
+                    opacity={0.7}
+                  />
+                </>
               )}
 
               {/* Draw diamond shape for diamond gradients */}
@@ -263,20 +238,6 @@ export const GradientHandleRenderer: React.FC<GradientHandleRendererProps> = ({
                 />
               )}
 
-              {/* Draw lines from handles to center for all types */}
-              {transformedHandles.map((handle, handleIndex) => (
-                <g key={`handle-${handleIndex}`}>
-                  <line
-                    x1={cx}
-                    y1={cy}
-                    x2={handle.x}
-                    y2={handle.y}
-                    stroke={getHandleColor(viz.gradient, handleIndex)}
-                    strokeWidth={1}
-                    opacity={0.5}
-                  />
-                </g>
-              ))}
 
               {/* Draw handle points */}
               {transformedHandles.map((handle, handleIndex) => {

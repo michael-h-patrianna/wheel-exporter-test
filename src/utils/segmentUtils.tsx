@@ -260,17 +260,10 @@ export function createSvgGradientDef(
 
   if (gradient.type === 'angular') {
     // Angular (conic) gradients - SVG doesn't support natively
-    // Create a mask-based approximation using multiple stops
-    const angleStops = stops.map((stop, i) => {
-      const angle = stop.position * 360;
-      return React.cloneElement(stop, {
-        key: `${gradientId}-angular-stop-${i}`
-      });
-    });
-
+    // We'll approximate with a radial gradient
     return (
       <radialGradient {...commonProps} cx="0.5" cy="0.5" r="0.7" spreadMethod="repeat">
-        {angleStops}
+        {stops}
       </radialGradient>
     );
   }
