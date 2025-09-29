@@ -72,26 +72,28 @@ export const GradientHandleRenderer: React.FC<GradientHandleRendererProps> = ({
     startAngle: number,
     endAngle: number
   ): { x: number; y: number } => {
-    // Calculate segment bounds
-    const radius = type === 'outer' ? outerRadius : innerRadius;
-    const innerR = type === 'outer' ? 0 : innerRadius;
-    const outerR = type === 'outer' ? outerRadius : outerRadius;
+    // The handles are in normalized space (0-1) relative to the segment's bounding box
+    // We need to transform them to the actual segment position
 
-    // For wedge (outer), interpolate between center and arc
-    // For ring (inner), interpolate within the ring bounds
+    // Calculate the middle angle of the segment
+    const midAngle = (startAngle + endAngle) / 2;
+
+    // For a wedge segment, map the normalized coordinates
     if (type === 'outer') {
-      // Map normalized handle position to wedge segment
+      // Transform normalized handle to segment space
+      // x maps to angle position within segment
+      // y maps to radius from center
       const angle = startAngle + (endAngle - startAngle) * handle.x;
-      const r = handle.y * radius;
+      const r = handle.y * outerRadius;
 
       return {
         x: cx + r * Math.cos(angle),
         y: cy + r * Math.sin(angle)
       };
     } else {
-      // Map normalized handle position to ring segment
+      // For ring segments (inner)
       const angle = startAngle + (endAngle - startAngle) * handle.x;
-      const r = innerR + (outerR - innerR) * handle.y;
+      const r = innerRadius + (outerRadius - innerRadius) * handle.y;
 
       return {
         x: cx + r * Math.cos(angle),

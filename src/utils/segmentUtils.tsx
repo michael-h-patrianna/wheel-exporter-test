@@ -321,8 +321,9 @@ export function createSvgGradientDef(
     }
   } else {
     // Fallback to angle-based calculation
+    // Remove the +90 that was causing 180 degree offset (it was adding 90 twice effectively)
     const baseAngle = gradient.rotation || 0;
-    const totalAngle = baseAngle + (segmentRotation || 0) + 90;
+    const totalAngle = baseAngle + (segmentRotation || 0) - 90;
     const rad = (totalAngle * Math.PI) / 180;
 
     x1 = 0.5 - 0.5 * Math.cos(rad);
