@@ -470,14 +470,15 @@
   top: var(--center-top);
   width: var(--center-size);
   height: var(--center-size);
-  z-index: 3; /* Above wheelBg but below other elements */
-  pointer-events: none;
+  z-index: 100; /* Above all other elements */
+  pointer-events: none; /* Allow clicks to pass through */
 }
 
 .center-svg {
   width: 100%;
   height: 100%;
   display: block;
+  pointer-events: none; /* Ensure SVG also doesn't block clicks */
 }
 
 /* Debug Controls */
