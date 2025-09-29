@@ -145,7 +145,6 @@ function App() {
                 <strong>Interaction Guide:</strong><br />
                 • Click header to cycle: active → success → fail<br />
                 • Click spin button to simulate wheel spinning<br />
-                • Toggle "Show Center Point" for debugging<br />
                 • Adjust wheel dimensions using the sliders above
               </p>
             </div>

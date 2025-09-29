@@ -26,7 +26,6 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   const [headerState, setHeaderState] = useState<HeaderState>('active');
   const [buttonSpinState, setButtonSpinState] = useState<ButtonSpinState>('default');
   const [isSpinning, setIsSpinning] = useState(false);
-  const [showCenter, setShowCenter] = useState(false); // Toggle for debugging
 
   // Calculate scale to maintain aspect ratio
   const scale = useMemo(() => {
@@ -154,24 +153,11 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
           />
         )}
 
-        {/* Layer 7: Center Indicator (for debugging) */}
+        {/* Layer 7: Center Circle */}
         <CenterRenderer
           center={wheelData.center}
           scale={scale}
-          showCenter={showCenter}
         />
-      </div>
-
-      {/* Debug Controls */}
-      <div className="debug-controls">
-        <label>
-          <input
-            type="checkbox"
-            checked={showCenter}
-            onChange={(e) => setShowCenter(e.target.checked)}
-          />
-          Show Center Point
-        </label>
       </div>
     </div>
   );

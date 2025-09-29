@@ -4,18 +4,18 @@ import { CenterComponent } from '../../types';
 /**
  * CenterRenderer Component
  *
- * PURPOSE: Displays a visual indicator for the wheel's center point
+ * PURPOSE: Displays the wheel's center with a semi-transparent filled circle
  *
- * This component renders a circular indicator at the center of the wheel.
- * It's primarily used for development/debugging to show the exact center
- * point and rotation axis of the wheel. Unlike other components, the center
- * doesn't have an image - it's just position and radius data.
+ * This component renders a semi-transparent filled circle at the center of the wheel,
+ * with crosshair lines (horizontal and vertical) through the center point.
+ * This matches the wheel preview in figma-questline-exporter and helps visualize
+ * the wheel's rotation center and boundaries.
  *
  * What this does:
- * - Displays a semi-transparent circle at the wheel's center
- * - Shows the rotation point of the wheel
- * - Useful for developers to understand wheel positioning
- * - Can be toggled on/off for debugging purposes
+ * - Displays a semi-transparent filled circle with the specified radius
+ * - Shows horizontal and vertical lines through the center point
+ * - Helps developers understand wheel positioning and rotation axis
+ * - Always visible as part of the wheel theme
  */
 
 interface CenterRendererProps {
@@ -23,20 +23,17 @@ interface CenterRendererProps {
   center?: CenterComponent;
   /** Scale factor for responsive sizing */
   scale: number;
-  /** Whether to show the center indicator (for debugging) */
-  showCenter?: boolean;
 }
 
 export const CenterRenderer: React.FC<CenterRendererProps> = ({
   center,
-  scale,
-  showCenter = true
+  scale
 }) => {
   // ============================================================================
   // EARLY RETURNS & VALIDATION
   // ============================================================================
 
-  if (!center || !showCenter) return null;
+  if (!center) return null;
 
   // ============================================================================
   // DIMENSION CALCULATION
@@ -75,16 +72,54 @@ export const CenterRenderer: React.FC<CenterRendererProps> = ({
     <div
       className="center-component"
       style={cssVariables}
-      title="Wheel Center Point"
+      title="Wheel Center"
       role="img"
-      aria-label="Wheel center indicator"
+      aria-label="Wheel center circle"
     >
-      <div className="center-indicator">
-        {/* Outer ring */}
-        <div className="center-ring" />
-        {/* Inner dot */}
-        <div className="center-dot" />
-      </div>
+      {/* Semi-transparent filled circle */}
+      <svg
+        className="center-svg"
+        width={diameter}
+        height={diameter}
+        viewBox={`0 0 ${diameter} ${diameter}`}
+      >
+        {/* Filled circle with semi-transparency */}
+        <circle
+          cx={radius}
+          cy={radius}
+          r={radius}
+          fill="rgba(128, 128, 128, 0.3)"
+          stroke="none"
+        />
+
+        {/* Horizontal line through center */}
+        <line
+          x1="0"
+          y1={radius}
+          x2={diameter}
+          y2={radius}
+          stroke="rgba(255, 255, 255, 0.5)"
+          strokeWidth="1"
+        />
+
+        {/* Vertical line through center */}
+        <line
+          x1={radius}
+          y1="0"
+          x2={radius}
+          y2={diameter}
+          stroke="rgba(255, 255, 255, 0.5)"
+          strokeWidth="1"
+        />
+
+        {/* Center point dot */}
+        <circle
+          cx={radius}
+          cy={radius}
+          r="2"
+          fill="rgba(255, 255, 255, 0.8)"
+        />
+      </svg>
     </div>
   );
 };
