@@ -10,6 +10,7 @@ import { ButtonSpinRenderer } from './renderers/ButtonSpinRenderer';
 import { CenterRenderer } from './renderers/CenterRenderer';
 import { SegmentRenderer } from './renderers/SegmentRenderer';
 import { GradientHandleRenderer } from './renderers/GradientHandleRenderer';
+import { PointerRenderer } from './renderers/PointerRenderer';
 
 interface ComponentVisibility {
   background: boolean;
@@ -236,7 +237,14 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
           />
         )}
 
-        {/* Layer 9: Gradient Handle Visualization (Debug) */}
+        {/* Layer 9: Pointer */}
+        <PointerRenderer
+          pointer={wheelData.pointer}
+          pointerImage={assets.pointerImage}
+          scale={scale}
+        />
+
+        {/* Layer 10: Gradient Handle Visualization (Debug) */}
         <GradientHandleRenderer
           segments={wheelData.segments}
           center={wheelData.center}

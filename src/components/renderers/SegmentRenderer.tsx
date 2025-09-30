@@ -2,9 +2,10 @@ import React, { useMemo } from 'react';
 import { WheelSegmentStyles, CenterComponent } from '../../types';
 import {
   buildSegmentWedgePath,
-  buildSegmentRingPath,
   fillToSvgPaint,
   createSvgGradientDef,
+  reconstructHandles,
+  computeTemplateBounds,
   SEGMENT_KINDS,
   SEGMENT_PREVIEW_INNER_RADIUS_RATIO
 } from '../../utils/segmentUtils';
@@ -60,22 +61,36 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
   const outerRadius = center.radius * scale;
   const innerRadius = outerRadius * SEGMENT_PREVIEW_INNER_RADIUS_RATIO;
 
-  // Collect all gradients for defs
+  // Compute canonical 4-segment template bounds (90° wedge)
+  // All gradients MUST use template bounds, not runtime segment bounds
+  const outerTemplate = computeTemplateBounds(cx, cy, outerRadius);
+  const innerTemplate = computeTemplateBounds(cx, cy, innerRadius);
+
+  // Collect all gradients for defs with proper handle reconstruction
   const gradientDefs: React.ReactElement[] = [];
 
   segmentData.forEach((segment) => {
     const styles = segments[segment.kind];
     if (!styles) return;
 
+    // Calculate segment rotation for this specific segment
+    const segmentRotation = (segment.startAngle + segment.endAngle) / 2; // radians
+
     // Process outer fill gradient
     if (styles.outer?.fill?.type === 'gradient' && styles.outer.fill.gradient) {
       const gradientId = `segment-outer-fill-${segment.index}`;
-      // Calculate segment rotation angle
-      const segmentRotation = (segment.startAngle + segment.endAngle) / 2 * (180 / Math.PI);
+      const handles = reconstructHandles(
+        styles.outer.fill.gradient,
+        outerTemplate.centerX,
+        outerTemplate.centerY,
+        outerTemplate.width,
+        outerTemplate.height,
+        segmentRotation
+      );
       const gradientDef = createSvgGradientDef(
         styles.outer.fill.gradient,
         gradientId,
-        segmentRotation
+        handles
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
@@ -85,39 +100,60 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
     // Process outer stroke gradient
     if (styles.outer?.stroke?.fill?.type === 'gradient' && styles.outer.stroke.fill.gradient) {
       const gradientId = `segment-outer-stroke-${segment.index}`;
-      const segmentRotation = (segment.startAngle + segment.endAngle) / 2 * (180 / Math.PI);
+      const handles = reconstructHandles(
+        styles.outer.stroke.fill.gradient,
+        outerTemplate.centerX,
+        outerTemplate.centerY,
+        outerTemplate.width,
+        outerTemplate.height,
+        segmentRotation
+      );
       const gradientDef = createSvgGradientDef(
         styles.outer.stroke.fill.gradient,
         gradientId,
-        segmentRotation
+        handles
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
       }
     }
 
-    // Process inner fill gradient
+    // Process inner fill gradient (uses inner template)
     if (styles.inner?.fill?.type === 'gradient' && styles.inner.fill.gradient) {
       const gradientId = `segment-inner-fill-${segment.index}`;
-      const segmentRotation = (segment.startAngle + segment.endAngle) / 2 * (180 / Math.PI);
+      const handles = reconstructHandles(
+        styles.inner.fill.gradient,
+        innerTemplate.centerX,
+        innerTemplate.centerY,
+        innerTemplate.width,
+        innerTemplate.height,
+        segmentRotation
+      );
       const gradientDef = createSvgGradientDef(
         styles.inner.fill.gradient,
         gradientId,
-        segmentRotation
+        handles
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
       }
     }
 
-    // Process inner stroke gradient
+    // Process inner stroke gradient (uses inner template)
     if (styles.inner?.stroke?.fill?.type === 'gradient' && styles.inner.stroke.fill.gradient) {
       const gradientId = `segment-inner-stroke-${segment.index}`;
-      const segmentRotation = (segment.startAngle + segment.endAngle) / 2 * (180 / Math.PI);
+      const handles = reconstructHandles(
+        styles.inner.stroke.fill.gradient,
+        innerTemplate.centerX,
+        innerTemplate.centerY,
+        innerTemplate.width,
+        innerTemplate.height,
+        segmentRotation
+      );
       const gradientDef = createSvgGradientDef(
         styles.inner.stroke.fill.gradient,
         gradientId,
-        segmentRotation
+        handles
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
@@ -171,38 +207,16 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
             segment.endAngle
           );
 
-          const innerPath = buildSegmentRingPath(
-            cx,
-            cy,
-            innerRadius,
-            outerRadius,
-            segment.startAngle,
-            segment.endAngle
-          );
-
-          // Get paint values
+          // Get paint values for outer segment
           const outerFillPaint = fillToSvgPaint(
             styles.outer?.fill,
             `segment-outer-fill-${segment.index}`
           );
 
-
           const outerStrokePaint = styles.outer?.stroke
             ? fillToSvgPaint(
                 styles.outer.stroke.fill,
                 `segment-outer-stroke-${segment.index}`
-              )
-            : 'none';
-
-          const innerFillPaint = fillToSvgPaint(
-            styles.inner?.fill,
-            `segment-inner-fill-${segment.index}`
-          );
-
-          const innerStrokePaint = styles.inner?.stroke
-            ? fillToSvgPaint(
-                styles.inner.stroke.fill,
-                `segment-inner-stroke-${segment.index}`
               )
             : 'none';
 

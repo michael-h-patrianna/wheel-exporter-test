@@ -1,5 +1,5 @@
 import React from 'react';
-import { Fill, Gradient, GradientTransform, WheelSegmentKind, GradientHandle } from '../types';
+import { Fill, Gradient, GradientTransform, WheelSegmentKind } from '../types';
 
 // Constants for segment rendering
 export const SEGMENT_KINDS: WheelSegmentKind[] = ['odd', 'even', 'nowin', 'jackpot'];
@@ -176,13 +176,106 @@ export function gradientTransformToString(transform: GradientTransform): string 
 }
 
 /**
- * Get gradient handles from gradient data
+ * Reconstruct absolute handle positions from gradient vectors
+ * Following the algorithm in docs/fill.md (Section 3)
+ *
+ * Key points:
+ * - Gradients are authored on a canonical 4-segment wheel (90° wedges)
+ * - Must use TEMPLATE bounds (90° wedge), not runtime segment bounds
+ * - Gradient basis is rotated 45° counterclockwise relative to template wedge
+ * - Then rotate entire gradient to target segment position
  */
-export function getGradientHandles(gradient: Gradient): readonly [GradientHandle, GradientHandle, GradientHandle] | null {
-  if (!gradient.handles || gradient.handles.length < 3) {
+export function reconstructHandles(
+  gradient: Gradient,
+  templateCenterX: number,
+  templateCenterY: number,
+  templateWidth: number,
+  templateHeight: number,
+  segmentRotationRad: number
+): [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }] | null {
+  const vectors = gradient.handleVectors;
+
+  if (!vectors || vectors.length < 3) {
+    // Fallback to legacy handles if handleVectors not present
+    if (gradient.handles && gradient.handles.length >= 3) {
+      console.warn('Using legacy handles - export may be outdated');
+      const handles = gradient.handles;
+      return [
+        { x: handles[0].x, y: handles[0].y },
+        { x: handles[1].x, y: handles[1].y },
+        { x: handles[2].x, y: handles[2].y }
+      ];
+    }
     return null;
   }
-  return [gradient.handles[0], gradient.handles[1], gradient.handles[2]];
+
+  // 45° counterclockwise offset for gradient basis (per docs/fill.md section 3)
+  const gradientBasisOffset = -Math.PI / 4; // -45° in radians
+  const totalRotation = segmentRotationRad + gradientBasisOffset;
+
+  const cos = Math.cos(totalRotation);
+  const sin = Math.sin(totalRotation);
+
+  return vectors.slice(0, 3).map((vector) => {
+    // Convert vector to local space using TEMPLATE bounds
+    const localX = vector.x * templateWidth;
+    const localY = vector.y * templateHeight;
+
+    // Apply total rotation (segment rotation + 45° gradient basis offset)
+    const rotatedX = cos * localX - sin * localY;
+    const rotatedY = sin * localX + cos * localY;
+
+    // Translate to world space
+    return {
+      x: templateCenterX + rotatedX,
+      y: templateCenterY + rotatedY,
+    };
+  }) as [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }];
+}
+
+/**
+ * Compute the canonical 4-segment template wedge bounds
+ * Used as reference geometry for gradient reconstruction
+ */
+export function computeTemplateBounds(
+  cx: number,
+  cy: number,
+  radius: number
+): { width: number; height: number; centerX: number; centerY: number } {
+  // Template: 90° wedge starting at -90° (top)
+  const templateStartAngle = -Math.PI / 2;
+  const templateSweep = Math.PI / 2; // 90°
+  const templateEndAngle = templateStartAngle + templateSweep;
+
+  const bounds = computeWedgeBounds(cx, cy, radius, templateStartAngle, templateEndAngle);
+
+  return {
+    width: bounds.width,
+    height: bounds.height,
+    centerX: bounds.minX + bounds.width / 2,
+    centerY: bounds.minY + bounds.height / 2
+  };
+}
+
+/**
+ * Build gradient affine transform matrix from three reconstructed handles
+ * Following Section 4 of docs/fill.md
+ */
+export function buildGradientMatrix(
+  p0: { x: number; y: number },
+  p1: { x: number; y: number },
+  p2: { x: number; y: number }
+): string {
+  // Matrix form: [[p1.x - p0.x, p2.x - p0.x, p0.x], [p1.y - p0.y, p2.y - p0.y, p0.y]]
+  // SVG matrix format: matrix(a b c d e f)
+  const a = p1.x - p0.x;
+  const b = p1.y - p0.y;
+  const c = p2.x - p0.x;
+  const d = p2.y - p0.y;
+  const e = p0.x;
+  const f = p0.y;
+
+  return `matrix(${formatNumber(a)} ${formatNumber(b)} ${formatNumber(c)} ${formatNumber(d)} ${formatNumber(e)} ${formatNumber(f)})`;
 }
 
 /**
@@ -205,12 +298,13 @@ export function fillToSvgPaint(fill: Fill | undefined, gradientId?: string): str
 }
 
 /**
- * Create SVG gradient definition element
+ * Create SVG gradient definition element with proper handle-based transforms
+ * Now uses userSpaceOnUse and reconstructed handles
  */
 export function createSvgGradientDef(
   gradient: Gradient,
   gradientId: string,
-  segmentRotation?: number // Rotation angle in degrees for the segment
+  reconstructedHandles: [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }] | null
 ): React.ReactElement | null {
   const stops = gradient.stops?.map((stop, index) => (
     <stop
@@ -224,46 +318,30 @@ export function createSvgGradientDef(
     return null;
   }
 
-  // Use objectBoundingBox for simpler coordinate handling
+  // Use userSpaceOnUse for absolute positioning with handle-based transform
   const commonProps: Record<string, any> = {
     id: gradientId,
-    gradientUnits: 'objectBoundingBox'
+    gradientUnits: 'userSpaceOnUse'
   };
 
-  // Apply segment rotation transform if provided
-  if (segmentRotation !== undefined && segmentRotation !== 0) {
-    const cx = 0.5, cy = 0.5;
-    const rad = (segmentRotation * Math.PI) / 180;
-    const cos = Math.cos(rad);
-    const sin = Math.sin(rad);
-
-    // Create rotation matrix around center (0.5, 0.5)
-    commonProps.gradientTransform = `matrix(${cos} ${sin} ${-sin} ${cos} ${cx - cx * cos + cy * sin} ${cy - cx * sin - cy * cos})`;
+  // If we have reconstructed handles, build the gradient transform matrix
+  if (reconstructedHandles) {
+    const [p0, p1, p2] = reconstructedHandles;
+    commonProps.gradientTransform = buildGradientMatrix(p0, p1, p2);
   }
 
-  // Check if we have gradient handles (3 points from Figma)
-  const handles = gradient.handles;
-  const hasHandles = handles && handles.length >= 2;
-
   if (gradient.type === 'radial') {
-    if (hasHandles && handles.length >= 2) {
-      // Use handles to position radial gradient
-      // First handle is center, second handle defines radius
-      const cx = handles[0].x;
-      const cy = handles[0].y;
-      const dx = handles[1].x - handles[0].x;
-      const dy = handles[1].y - handles[0].y;
-      const r = Math.sqrt(dx * dx + dy * dy);
-
+    // Radial gradient: p0 is center, distance to p1 defines radius
+    if (reconstructedHandles) {
       return (
-        <radialGradient {...commonProps} cx={cx} cy={cy} r={r}>
+        <radialGradient {...commonProps} cx={0} cy={0} r={1} fx={0} fy={0}>
           {stops}
         </radialGradient>
       );
     }
-    // Fallback to centered radial gradient
+    // Fallback without handles
     return (
-      <radialGradient {...commonProps} cx="0.5" cy="0.5" r="0.5">
+      <radialGradient {...commonProps} cx={0} cy={0} r={1}>
         {stops}
       </radialGradient>
     );
@@ -271,66 +349,30 @@ export function createSvgGradientDef(
 
   if (gradient.type === 'angular') {
     // Angular (conic) gradients - SVG doesn't support natively
-    // We'll approximate with a radial gradient
+    // Approximate with radial gradient
+    console.warn('Angular gradients not fully supported in SVG, using radial approximation');
     return (
-      <radialGradient {...commonProps} cx="0.5" cy="0.5" r="0.7" spreadMethod="repeat">
+      <radialGradient {...commonProps} cx={0} cy={0} r={1} spreadMethod="repeat">
         {stops}
       </radialGradient>
     );
   }
 
   if (gradient.type === 'diamond') {
-    // Diamond gradients - create using radial gradient with square aspect
-    if (hasHandles && handles.length >= 2) {
-      const cx = handles[0].x;
-      const cy = handles[0].y;
-      const dx = Math.abs(handles[1].x - handles[0].x);
-      const dy = Math.abs(handles[1].y - handles[0].y);
-      const r = Math.max(dx, dy);
-
-      return (
-        <radialGradient {...commonProps} cx={cx} cy={cy} r={r} gradientUnits="objectBoundingBox">
-          {stops}
-        </radialGradient>
-      );
-    }
-    // Fallback diamond gradient
+    // Diamond gradients - approximate with radial
+    console.warn('Diamond gradients not fully supported in SVG, using radial approximation');
     return (
-      <radialGradient {...commonProps} cx="0.5" cy="0.5" r="0.7" gradientUnits="objectBoundingBox">
+      <radialGradient {...commonProps} cx={0} cy={0} r={1}>
         {stops}
       </radialGradient>
     );
   }
 
-  // Linear gradient
-  let x1, y1, x2, y2;
-
-  if (hasHandles && handles.length >= 2) {
-    // Swap handles - handle[1] is start (0%), handle[0] is end (100%)
-    // This fixes the 180-degree reversal issue
-    x1 = handles[1].x;
-    y1 = handles[1].y;
-    x2 = handles[0].x;
-    y2 = handles[0].y;
-
-    // Don't apply segment rotation to handles - they are already in the correct
-    // coordinate space relative to the segment's bounding box
-    // The gradient should look the same on all segments regardless of rotation
-  } else {
-    // Fallback to angle-based calculation when no handles are present
-    // Don't apply segment rotation - gradient should be consistent across segments
-    const baseAngle = gradient.rotation || 0;
-    const totalAngle = baseAngle - 90;
-    const rad = (totalAngle * Math.PI) / 180;
-
-    x1 = 0.5 - 0.5 * Math.cos(rad);
-    y1 = 0.5 - 0.5 * Math.sin(rad);
-    x2 = 0.5 + 0.5 * Math.cos(rad);
-    y2 = 0.5 + 0.5 * Math.sin(rad);
-  }
-
+  // Linear gradient (most common)
+  // In gradient space: (0, 0) to (1, 0) defines the gradient axis
+  // The transform matrix maps this to world space
   return (
-    <linearGradient {...commonProps} x1={x1} y1={y1} x2={x2} y2={y2}>
+    <linearGradient {...commonProps} x1={0} y1={0} x2={1} y2={0}>
       {stops}
     </linearGradient>
   );

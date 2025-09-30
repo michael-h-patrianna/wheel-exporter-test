@@ -13,9 +13,14 @@ export interface GradientStop {
   position: number; // 0-1
 }
 
+export interface GradientVector {
+  x: number; // Normalized vector relative to handleOrigin
+  y: number; // Normalized vector relative to handleOrigin
+}
+
 export interface GradientHandle {
-  x: number; // Normalized position
-  y: number; // Normalized position
+  x: number; // Normalized position (0-1)
+  y: number; // Normalized position (0-1)
 }
 
 export type GradientTransform = readonly [
@@ -27,8 +32,10 @@ export interface Gradient {
   type: 'linear' | 'radial' | 'angular' | 'diamond';
   stops: GradientStop[];
   transform: GradientTransform;
-  rotation: number; // Degrees
-  handles?: readonly GradientHandle[];
+  rotation: number; // Degrees (legacy, use handleVectors instead)
+  handleOrigin?: GradientHandle; // Defaults to { x: 0.5, y: 0.5 }
+  handleVectors?: readonly GradientVector[]; // Three vectors: p0 (origin), p1 (primary axis), p2 (secondary axis)
+  handles?: readonly GradientHandle[]; // Legacy, replaced by handleVectors
 }
 
 export interface Fill {
@@ -106,6 +113,12 @@ export interface CenterComponent {
   radius: number;
 }
 
+// Pointer component
+export interface PointerComponent {
+  bounds: ImageBounds;
+  img: string;
+}
+
 // Main wheel export format
 export interface WheelExport {
   wheelId: string;
@@ -122,6 +135,7 @@ export interface WheelExport {
   wheelTop2?: WheelOverlay;
   buttonSpin?: ButtonSpinComponent;
   center?: CenterComponent;
+  pointer?: PointerComponent;
   segments?: WheelSegmentStyles;
   exportedAt: string;
   metadata: {
@@ -152,4 +166,5 @@ export interface ExtractedAssets {
     default?: string;
     spinning?: string;
   };
+  pointerImage?: string;
 }
