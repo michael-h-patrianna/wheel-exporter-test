@@ -20,6 +20,7 @@ interface ComponentVisibility {
   wheelTop2: boolean;
   buttonSpin: boolean;
   center: boolean;
+  pointer: boolean;
   segments: boolean;
 }
 
@@ -238,11 +239,13 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
         )}
 
         {/* Layer 9: Pointer */}
-        <PointerRenderer
-          pointer={wheelData.pointer}
-          pointerImage={assets.pointerImage}
-          scale={scale}
-        />
+        {componentVisibility.pointer && (
+          <PointerRenderer
+            pointer={wheelData.pointer}
+            pointerImage={assets.pointerImage}
+            scale={scale}
+          />
+        )}
 
         {/* Layer 10: Gradient Handle Visualization (Debug) */}
         <GradientHandleRenderer

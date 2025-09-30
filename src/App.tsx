@@ -21,6 +21,7 @@ function App() {
     wheelTop2: true,
     buttonSpin: true,
     center: true,
+    pointer: true,
     segments: true,
   });
 
@@ -212,6 +213,13 @@ function App() {
                   disabled={!extractedAssets.wheelData.center}
                 >
                   Center {extractedAssets.wheelData.center ? (componentVisibility.center ? '👁' : '👁‍🗨') : '✗'}
+                </button>
+                <button
+                  className={`component-toggle ${extractedAssets.wheelData.pointer ? 'component-present' : 'component-missing'} ${!componentVisibility.pointer ? 'component-hidden' : ''}`}
+                  onClick={() => toggleComponentVisibility('pointer')}
+                  disabled={!extractedAssets.wheelData.pointer}
+                >
+                  Pointer {extractedAssets.wheelData.pointer ? (componentVisibility.pointer ? '👁' : '👁‍🗨') : '✗'}
                 </button>
               </div>
 
