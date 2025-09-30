@@ -19,8 +19,8 @@ export const PointerRenderer: React.FC<PointerRendererProps> = ({
   const { bounds } = pointer;
 
   // x and y are the CENTER of the image, not top-left
-  const scaledWidth = bounds.width * scale;
-  const scaledHeight = bounds.height * scale;
+  const scaledWidth = bounds.w * scale;
+  const scaledHeight = bounds.h * scale;
   const scaledX = bounds.x * scale;
   const scaledY = bounds.y * scale;
 

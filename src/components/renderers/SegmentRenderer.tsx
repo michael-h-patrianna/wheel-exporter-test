@@ -4,10 +4,7 @@ import {
   buildSegmentWedgePath,
   fillToSvgPaint,
   createSvgGradientDef,
-  reconstructHandles,
-  computeTemplateBounds,
-  SEGMENT_KINDS,
-  SEGMENT_PREVIEW_INNER_RADIUS_RATIO
+  SEGMENT_KINDS
 } from '../../utils/segmentUtils';
 
 interface SegmentRendererProps {
@@ -59,101 +56,42 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
   const cx = center.x * scale;
   const cy = center.y * scale;
   const outerRadius = center.radius * scale;
-  const innerRadius = outerRadius * SEGMENT_PREVIEW_INNER_RADIUS_RATIO;
 
-  // Compute canonical 4-segment template bounds (90° wedge)
-  // All gradients MUST use template bounds, not runtime segment bounds
-  const outerTemplate = computeTemplateBounds(cx, cy, outerRadius);
-  const innerTemplate = computeTemplateBounds(cx, cy, innerRadius);
-
-  // Collect all gradients for defs with proper handle reconstruction
+  // Collect all gradients for defs using rotation only
   const gradientDefs: React.ReactElement[] = [];
 
   segmentData.forEach((segment) => {
     const styles = segments[segment.kind];
     if (!styles) return;
 
-    // Calculate segment rotation for this specific segment
-    const segmentRotation = (segment.startAngle + segment.endAngle) / 2; // radians
+    // Calculate segment rotation in degrees (midpoint of segment)
+    const segmentRotationRad = (segment.startAngle + segment.endAngle) / 2;
+    const segmentRotationDeg = (segmentRotationRad * 180) / Math.PI;
 
-    // Process outer fill gradient
-    if (styles.outer?.fill?.type === 'gradient' && styles.outer.fill.gradient) {
+    // Process outer fill gradient (only linear)
+    if (styles.outer?.fill?.type === 'gradient' &&
+        styles.outer.fill.gradient &&
+        styles.outer.fill.gradient.type === 'linear') {
       const gradientId = `segment-outer-fill-${segment.index}`;
-      const handles = reconstructHandles(
-        styles.outer.fill.gradient,
-        outerTemplate.centerX,
-        outerTemplate.centerY,
-        outerTemplate.width,
-        outerTemplate.height,
-        segmentRotation
-      );
       const gradientDef = createSvgGradientDef(
         styles.outer.fill.gradient,
         gradientId,
-        handles
+        segmentRotationDeg
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
       }
     }
 
-    // Process outer stroke gradient
-    if (styles.outer?.stroke?.fill?.type === 'gradient' && styles.outer.stroke.fill.gradient) {
+    // Process outer stroke gradient (if type is gradient and linear)
+    if (styles.outer.stroke?.fill?.type === 'gradient' &&
+        styles.outer.stroke.fill.gradient &&
+        styles.outer.stroke.fill.gradient.type === 'linear') {
       const gradientId = `segment-outer-stroke-${segment.index}`;
-      const handles = reconstructHandles(
-        styles.outer.stroke.fill.gradient,
-        outerTemplate.centerX,
-        outerTemplate.centerY,
-        outerTemplate.width,
-        outerTemplate.height,
-        segmentRotation
-      );
       const gradientDef = createSvgGradientDef(
         styles.outer.stroke.fill.gradient,
         gradientId,
-        handles
-      );
-      if (gradientDef) {
-        gradientDefs.push(gradientDef);
-      }
-    }
-
-    // Process inner fill gradient (uses inner template)
-    if (styles.inner?.fill?.type === 'gradient' && styles.inner.fill.gradient) {
-      const gradientId = `segment-inner-fill-${segment.index}`;
-      const handles = reconstructHandles(
-        styles.inner.fill.gradient,
-        innerTemplate.centerX,
-        innerTemplate.centerY,
-        innerTemplate.width,
-        innerTemplate.height,
-        segmentRotation
-      );
-      const gradientDef = createSvgGradientDef(
-        styles.inner.fill.gradient,
-        gradientId,
-        handles
-      );
-      if (gradientDef) {
-        gradientDefs.push(gradientDef);
-      }
-    }
-
-    // Process inner stroke gradient (uses inner template)
-    if (styles.inner?.stroke?.fill?.type === 'gradient' && styles.inner.stroke.fill.gradient) {
-      const gradientId = `segment-inner-stroke-${segment.index}`;
-      const handles = reconstructHandles(
-        styles.inner.stroke.fill.gradient,
-        innerTemplate.centerX,
-        innerTemplate.centerY,
-        innerTemplate.width,
-        innerTemplate.height,
-        segmentRotation
-      );
-      const gradientDef = createSvgGradientDef(
-        styles.inner.stroke.fill.gradient,
-        gradientId,
-        handles
+        segmentRotationDeg
       );
       if (gradientDef) {
         gradientDefs.push(gradientDef);
@@ -209,11 +147,11 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
 
           // Get paint values for outer segment
           const outerFillPaint = fillToSvgPaint(
-            styles.outer?.fill,
+            styles.outer.fill,
             `segment-outer-fill-${segment.index}`
           );
 
-          const outerStrokePaint = styles.outer?.stroke
+          const outerStrokePaint = styles.outer.stroke
             ? fillToSvgPaint(
                 styles.outer.stroke.fill,
                 `segment-outer-stroke-${segment.index}`
@@ -223,24 +161,12 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
           return (
             <g key={`segment-${segment.index}`}>
               {/* Outer segment (wedge) */}
-              {styles.outer && (
-                <path
-                  d={outerPath}
-                  fill={outerFillPaint}
-                  stroke={outerStrokePaint}
-                  strokeWidth={styles.outer.stroke?.width ? styles.outer.stroke.width * scale : 0}
-                />
-              )}
-
-              {/* Inner segment (ring) - temporarily disabled */}
-              {/* {styles.inner && (
-                <path
-                  d={innerPath}
-                  fill={innerFillPaint}
-                  stroke={innerStrokePaint}
-                  strokeWidth={styles.inner.stroke?.width ? styles.inner.stroke.width * scale : 0}
-                />
-              )} */}
+              <path
+                d={outerPath}
+                fill={outerFillPaint}
+                stroke={outerStrokePaint}
+                strokeWidth={styles.outer.stroke?.width ? styles.outer.stroke.width * scale : 0}
+              />
             </g>
           );
         })}

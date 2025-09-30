@@ -58,8 +58,8 @@ export const ButtonSpinRenderer: React.FC<ButtonSpinRendererProps> = ({
    * Calculate scaled dimensions
    * ImageBounds use center-based positioning
    */
-  const width = bounds.width * scale;
-  const height = bounds.height * scale;
+  const width = bounds.w * scale;
+  const height = bounds.h * scale;
 
   // ============================================================================
   // CSS VARIABLES GENERATION

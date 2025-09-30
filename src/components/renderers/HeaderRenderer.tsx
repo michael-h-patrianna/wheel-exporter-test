@@ -55,8 +55,8 @@ export const HeaderRenderer: React.FC<HeaderRendererProps> = ({
    * Calculate scaled dimensions directly from bounds
    * All scaling happens here for clarity
    */
-  const width = bounds.width * scale;
-  const height = bounds.height * scale;
+  const width = bounds.w * scale;
+  const height = bounds.h * scale;
 
   // ============================================================================
   // CSS VARIABLES GENERATION

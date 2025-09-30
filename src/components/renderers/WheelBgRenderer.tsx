@@ -48,8 +48,8 @@ export const WheelBgRenderer: React.FC<WheelBgRendererProps> = ({
    * Calculate scaled dimensions
    * WheelElementBounds use center-based positioning
    */
-  const width = bounds.width * scale;
-  const height = bounds.height * scale;
+  const width = bounds.w * scale;
+  const height = bounds.h * scale;
 
   // ============================================================================
   // CSS VARIABLES GENERATION

@@ -75,9 +75,6 @@ export const GradientHandleRenderer: React.FC<GradientHandleRendererProps> = ({
     // The handles are in normalized space (0-1) relative to the segment's bounding box
     // We need to transform them to the actual segment position
 
-    // Calculate the middle angle of the segment
-    const midAngle = (startAngle + endAngle) / 2;
-
     // For a wedge segment, map the normalized coordinates
     if (type === 'outer') {
       // Transform normalized handle to segment space

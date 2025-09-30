@@ -55,8 +55,7 @@ export interface WheelSegmentVectorStyle {
 }
 
 export interface WheelSegmentTypeStyles {
-  inner?: WheelSegmentVectorStyle;
-  outer?: WheelSegmentVectorStyle;
+  outer: WheelSegmentVectorStyle; // Only outer is supported now
 }
 
 export type WheelSegmentStyles = Partial<Record<WheelSegmentKind, WheelSegmentTypeStyles>>;
@@ -65,8 +64,8 @@ export type WheelSegmentStyles = Partial<Record<WheelSegmentKind, WheelSegmentTy
 export interface ImageBounds {
   x: number;
   y: number;
-  width: number;
-  height: number;
+  w: number;
+  h: number;
   rotation?: number;
 }
 
@@ -74,8 +73,8 @@ export interface ImageBounds {
 export interface WheelElementBounds {
   x: number; // center X
   y: number; // center Y
-  width: number;
-  height: number;
+  w: number;
+  h: number;
 }
 
 // Header component
