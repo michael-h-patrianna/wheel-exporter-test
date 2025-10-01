@@ -8,11 +8,11 @@
     "exportUrl": "background.png",
     "bounds": {
       "x": 183,
-      "y": 290,
+      "y": 290.00000047683716,
       "width": 366,
       "height": 572,
       "left": 0,
-      "top": 4
+      "top": 4.000000476837158
     }
   },
   "header": {
@@ -45,45 +45,45 @@
   },
   "wheelBg": {
     "bounds": {
-      "x": 177.5,
-      "y": 312,
+      "x": 183.5,
+      "y": 317.99999237060547,
       "width": 351,
       "height": 388,
-      "left": 2,
-      "top": 118
+      "left": 8,
+      "top": 123.99999237060547
     },
     "img": "wheel_bg.png"
   },
   "wheelTop1": {
     "bounds": {
       "x": 184,
-      "y": 307.5,
+      "y": 315.36854553222656,
       "width": 306,
-      "height": 311,
+      "height": 300.7370910644531,
       "left": 31,
-      "top": 152
+      "top": 165
     },
     "img": "wheel_top_1.png"
   },
   "wheelTop2": {
     "bounds": {
       "x": 183.50006103515625,
-      "y": 306.5,
+      "y": 307.5,
       "width": 277.0001220703125,
       "height": 277,
       "left": 45,
-      "top": 168
+      "top": 169
     },
     "img": "wheel_top_2.png"
   },
   "pointer": {
     "bounds": {
       "x": 183.2553367614746,
-      "y": 177.98397064208984,
+      "y": 177.98372650146484,
       "width": 56.51067352294922,
       "height": 71.96794128417969,
       "left": 155,
-      "top": 142
+      "top": 141.999755859375
     },
     "img": "pointer.png"
   },
@@ -91,319 +91,25 @@
     "stateBounds": {
       "default": {
         "x": 183.5,
-        "y": 304.5,
-        "width": 81,
-        "height": 81,
+        "y": 306.9998779296875,
+        "width": 78,
+        "height": 78,
         "rotation": 0
       },
       "spinning": {
         "x": 183.5,
-        "y": 304.5,
-        "width": 81,
-        "height": 81,
+        "y": 306.9998779296875,
+        "width": 78,
+        "height": 78,
         "rotation": 0
       }
     },
     "defaultImg": "button_spin_default.png",
     "spinningImg": "button_spin_spinning.png"
   },
-  "button": {
-    "stateStyles": {
-      "default": {
-        "frame": {
-          "borderRadius": 50,
-          "backgroundFill": {
-            "type": "gradient",
-            "gradient": {
-              "type": "linear",
-              "rotation": 163,
-              "transform": [
-                [
-                  0.3039807081222534,
-                  0.988178551197052,
-                  -0.14016887545585632
-                ],
-                [
-                  -0.988178551197052,
-                  0.03842916339635849,
-                  0.9556601047515869
-                ]
-              ],
-              "stops": [
-                {
-                  "color": "#47fff4",
-                  "position": 0
-                },
-                {
-                  "color": "#0586ae",
-                  "position": 0.9322916865348816
-                }
-              ]
-            }
-          },
-          "isAutolayout": true,
-          "layoutMode": "HORIZONTAL",
-          "layoutSizing": {
-            "horizontal": "FIXED",
-            "vertical": "FIXED"
-          },
-          "primaryAxisAlignItems": "CENTER",
-          "counterAxisAlignItems": "CENTER",
-          "dimensions": {
-            "width": 103.19587707519531,
-            "height": 39.89502716064453
-          },
-          "padding": {
-            "vertical": 20,
-            "horizontal": 40
-          },
-          "dropShadows": [
-            {
-              "x": 0,
-              "y": 4,
-              "blur": 20,
-              "spread": 0,
-              "color": "#0586aecc"
-            },
-            {
-              "x": 0,
-              "y": -4,
-              "blur": 20,
-              "spread": 0,
-              "color": "#47fff4cc"
-            }
-          ],
-          "stroke": {
-            "width": 2,
-            "color": "#9ffff8"
-          }
-        },
-        "text": {
-          "fontSize": 16,
-          "color": "#ffffff",
-          "fontWeight": 900,
-          "textAlignHorizontal": "LEFT",
-          "textAlignVertical": "TOP",
-          "lineHeightPx": 16
-        }
-      },
-      "disabled": {
-        "frame": {
-          "borderRadius": 50,
-          "backgroundFill": {
-            "type": "gradient",
-            "gradient": {
-              "type": "linear",
-              "rotation": 163,
-              "transform": [
-                [
-                  0.3039807081222534,
-                  0.988178551197052,
-                  -0.14016887545585632
-                ],
-                [
-                  -0.988178551197052,
-                  0.03842916339635849,
-                  0.9556601047515869
-                ]
-              ],
-              "stops": [
-                {
-                  "color": "#0586ae",
-                  "position": 0
-                },
-                {
-                  "color": "#0586ae",
-                  "position": 0.9322916865348816
-                }
-              ]
-            }
-          },
-          "isAutolayout": true,
-          "layoutMode": "HORIZONTAL",
-          "layoutSizing": {
-            "horizontal": "FIXED",
-            "vertical": "FIXED"
-          },
-          "primaryAxisAlignItems": "CENTER",
-          "counterAxisAlignItems": "CENTER",
-          "dimensions": {
-            "width": 103.19587707519531,
-            "height": 39.89502716064453
-          },
-          "padding": {
-            "vertical": 20,
-            "horizontal": 40
-          },
-          "dropShadows": [],
-          "stroke": {
-            "width": 2,
-            "color": "#2badd5"
-          }
-        },
-        "text": {
-          "fontSize": 16,
-          "color": "#ffffff66",
-          "fontWeight": 900,
-          "textAlignHorizontal": "LEFT",
-          "textAlignVertical": "TOP",
-          "lineHeightPx": 16
-        }
-      },
-      "hover": {
-        "frame": {
-          "borderRadius": 50,
-          "backgroundFill": {
-            "type": "gradient",
-            "gradient": {
-              "type": "linear",
-              "rotation": 163,
-              "transform": [
-                [
-                  0.3039807081222534,
-                  0.988178551197052,
-                  -0.14016887545585632
-                ],
-                [
-                  -0.988178551197052,
-                  0.03842916339635849,
-                  0.9556601047515869
-                ]
-              ],
-              "stops": [
-                {
-                  "color": "#1ec0d0",
-                  "position": 0
-                },
-                {
-                  "color": "#0586ae",
-                  "position": 0.9322916865348816
-                }
-              ]
-            }
-          },
-          "isAutolayout": true,
-          "layoutMode": "HORIZONTAL",
-          "layoutSizing": {
-            "horizontal": "FIXED",
-            "vertical": "FIXED"
-          },
-          "primaryAxisAlignItems": "CENTER",
-          "counterAxisAlignItems": "CENTER",
-          "dimensions": {
-            "width": 103.19587707519531,
-            "height": 39.89502716064453
-          },
-          "padding": {
-            "vertical": 20,
-            "horizontal": 40
-          },
-          "dropShadows": [
-            {
-              "x": 0,
-              "y": 4,
-              "blur": 20,
-              "spread": 0,
-              "color": "#0586aecc"
-            },
-            {
-              "x": 0,
-              "y": -4,
-              "blur": 20,
-              "spread": 0,
-              "color": "#47fff4cc"
-            }
-          ],
-          "stroke": {
-            "width": 2,
-            "color": "#25ecff"
-          }
-        },
-        "text": {
-          "fontSize": 16,
-          "color": "#ffffff",
-          "fontWeight": 900,
-          "textAlignHorizontal": "LEFT",
-          "textAlignVertical": "TOP",
-          "lineHeightPx": 16
-        }
-      },
-      "active": {
-        "frame": {
-          "borderRadius": 50,
-          "backgroundFill": {
-            "type": "gradient",
-            "gradient": {
-              "type": "linear",
-              "rotation": 163,
-              "transform": [
-                [
-                  0.3039807081222534,
-                  0.988178551197052,
-                  -0.14016887545585632
-                ],
-                [
-                  -0.988178551197052,
-                  0.03842916339635849,
-                  0.9556601047515869
-                ]
-              ],
-              "stops": [
-                {
-                  "color": "#026786",
-                  "position": 0
-                },
-                {
-                  "color": "#0586ae",
-                  "position": 0.9322916865348816
-                }
-              ]
-            }
-          },
-          "isAutolayout": true,
-          "layoutMode": "HORIZONTAL",
-          "layoutSizing": {
-            "horizontal": "FIXED",
-            "vertical": "FIXED"
-          },
-          "primaryAxisAlignItems": "CENTER",
-          "counterAxisAlignItems": "CENTER",
-          "dimensions": {
-            "width": 103.19587707519531,
-            "height": 39.89502716064453
-          },
-          "padding": {
-            "vertical": 20,
-            "horizontal": 40
-          },
-          "dropShadows": [
-            {
-              "x": 0,
-              "y": 4,
-              "blur": 20,
-              "spread": 0,
-              "color": "#0586aecc"
-            }
-          ],
-          "stroke": {
-            "width": 2,
-            "color": "#1ec0d0"
-          }
-        },
-        "text": {
-          "fontSize": 16,
-          "color": "#ffffff",
-          "fontWeight": 900,
-          "textAlignHorizontal": "LEFT",
-          "textAlignVertical": "TOP",
-          "lineHeightPx": 16
-        }
-      }
-    }
-  },
   "center": {
     "x": 183.5,
-    "y": 304.5,
+    "y": 306.5,
     "radius": 137.5
   },
   "segments": {
@@ -458,7 +164,7 @@
           "type": "gradient",
           "gradient": {
             "type": "linear",
-            "rotation": 269,
+            "rotation": 270,
             "stops": [
               {
                 "color": "#ff9800",
@@ -471,30 +177,37 @@
             ],
             "transform": [
               [
-                -0.34466347098350525,
-                0.005781835410743952,
-                0.707466185092926
+                -0.37070533633232117,
+                4.3829776103955425e-17,
+                0.6853627562522888
               ],
               [
-                -0.004664529114961624,
-                -0.4634016454219818,
-                0.496012806892395
+                4.539831568614788e-17,
+                -0.4984150528907776,
+                0.4999697208404541
               ]
             ],
             "handles": [
               {
-                "x": 0.707466185092926,
-                "y": 0.496012806892395
+                "x": 0.6853627562522888,
+                "y": 0.4999697208404541
               },
               {
-                "x": 0.3628027141094208,
-                "y": 0.4913482777774334
+                "x": 0.31465741991996765,
+                "y": 0.49996972084045416
               },
               {
-                "x": 0.71324802050367,
-                "y": 0.03261116147041321
+                "x": 0.6853627562522888,
+                "y": 0.0015546679496765137
               }
             ]
+          }
+        },
+        "stroke": {
+          "width": 3,
+          "fill": {
+            "type": "solid",
+            "color": "#5f0280"
           }
         }
       },
@@ -593,10 +306,10 @@
           }
         },
         "stroke": {
-          "width": 1,
+          "width": 3,
           "fill": {
             "type": "solid",
-            "color": "#ff0000"
+            "color": "#5f0280"
           }
         }
       },
@@ -695,49 +408,10 @@
           }
         },
         "stroke": {
-          "width": 1,
+          "width": 3,
           "fill": {
-            "type": "gradient",
-            "gradient": {
-              "type": "linear",
-              "rotation": 270,
-              "stops": [
-                {
-                  "color": "#000000",
-                  "position": 0
-                },
-                {
-                  "color": "#666666",
-                  "position": 1
-                }
-              ],
-              "transform": [
-                [
-                  -1,
-                  1.2246468525851679e-16,
-                  1
-                ],
-                [
-                  -1.2246468525851679e-16,
-                  -1,
-                  1
-                ]
-              ],
-              "handles": [
-                {
-                  "x": 1,
-                  "y": 1
-                },
-                {
-                  "x": 0,
-                  "y": 0.9999999999999999
-                },
-                {
-                  "x": 1.0000000000000002,
-                  "y": 0
-                }
-              ]
-            }
+            "type": "solid",
+            "color": "#5f0280"
           }
         }
       },
@@ -834,6 +508,13 @@
               }
             ]
           }
+        },
+        "stroke": {
+          "width": 3,
+          "fill": {
+            "type": "solid",
+            "color": "#5f0280"
+          }
         }
       },
       "preview": {
@@ -841,7 +522,7 @@
       }
     }
   },
-  "exportedAt": "2025-09-29T17:18:54.652Z",
+  "exportedAt": "2025-09-30T14:15:44.980Z",
   "metadata": {
     "exportFormat": "png",
     "version": "0.0.1"
