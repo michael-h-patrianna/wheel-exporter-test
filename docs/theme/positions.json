@@ -8,11 +8,9 @@
     "exportUrl": "background.png",
     "bounds": {
       "x": 183,
-      "y": 290.00000047683716,
-      "width": 366,
-      "height": 572,
-      "left": 0,
-      "top": 4.000000476837158
+      "y": 290,
+      "w": 366,
+      "h": 572
     }
   },
   "header": {
@@ -20,23 +18,20 @@
       "active": {
         "x": 183.5,
         "y": 73.5,
-        "width": 275,
-        "height": 147,
-        "rotation": 0
+        "w": 275,
+        "h": 147
       },
       "success": {
         "x": 183.5,
         "y": 73.5,
-        "width": 275,
-        "height": 147,
-        "rotation": 0
+        "w": 275,
+        "h": 147
       },
       "fail": {
         "x": 183.5,
         "y": 73.5,
-        "width": 275,
-        "height": 147,
-        "rotation": 0
+        "w": 275,
+        "h": 147
       }
     },
     "activeImg": "header_active.png",
@@ -45,45 +40,37 @@
   },
   "wheelBg": {
     "bounds": {
-      "x": 183.5,
-      "y": 317.99999237060547,
-      "width": 351,
-      "height": 388,
-      "left": 8,
-      "top": 123.99999237060547
+      "x": 177.5,
+      "y": 312,
+      "w": 351,
+      "h": 388
     },
     "img": "wheel_bg.png"
   },
   "wheelTop1": {
     "bounds": {
       "x": 184,
-      "y": 315.36854553222656,
-      "width": 306,
-      "height": 300.7370910644531,
-      "left": 31,
-      "top": 165
+      "y": 307.5,
+      "w": 306,
+      "h": 311
     },
     "img": "wheel_top_1.png"
   },
   "wheelTop2": {
     "bounds": {
       "x": 183.50006103515625,
-      "y": 307.5,
-      "width": 277.0001220703125,
-      "height": 277,
-      "left": 45,
-      "top": 169
+      "y": 306.5,
+      "w": 277.0001220703125,
+      "h": 277
     },
     "img": "wheel_top_2.png"
   },
   "pointer": {
     "bounds": {
       "x": 183.2553367614746,
-      "y": 177.98372650146484,
-      "width": 56.51067352294922,
-      "height": 71.96794128417969,
-      "left": 155,
-      "top": 141.999755859375
+      "y": 177.98397064208984,
+      "w": 56.51067352294922,
+      "h": 71.96794128417969
     },
     "img": "pointer.png"
   },
@@ -91,124 +78,597 @@
     "stateBounds": {
       "default": {
         "x": 183.5,
-        "y": 306.9998779296875,
-        "width": 78,
-        "height": 78,
-        "rotation": 0
+        "y": 304.5,
+        "w": 81,
+        "h": 81
       },
       "spinning": {
         "x": 183.5,
-        "y": 306.9998779296875,
-        "width": 78,
-        "height": 78,
-        "rotation": 0
+        "y": 304.5,
+        "w": 81,
+        "h": 81
       }
     },
     "defaultImg": "button_spin_default.png",
     "spinningImg": "button_spin_spinning.png"
   },
-  "center": {
-    "x": 183.5,
-    "y": 306.5,
-    "radius": 137.5
-  },
-  "segments": {
-    "odd": {
-      "inner": {
-        "fill": {
+  "rewards": {
+    "backgrounds": {
+      "highlight": {
+        "borderRadius": 4.727914333343506,
+        "backgroundFill": {
+          "type": "solid",
+          "color": "#00000000"
+        },
+        "dropShadows": [],
+        "stroke": {
+          "width": 1,
+          "color": "#00000000"
+        }
+      },
+      "default": {
+        "borderRadius": 4.727914333343506,
+        "backgroundFill": {
           "type": "gradient",
           "gradient": {
             "type": "linear",
-            "rotation": 312,
+            "rotation": 90,
             "stops": [
               {
-                "color": "#d14c35",
+                "color": "#00000000",
                 "position": 0
               },
               {
-                "color": "#ff4242",
+                "color": "#00000000",
                 "position": 1
-              }
-            ],
-            "transform": [
-              [
-                -0.9659762978553772,
-                -0.7548868060112,
-                1.4412132501602173
-              ],
-              [
-                0.8632567524909973,
-                -3.2237932682037354,
-                1.689953327178955
-              ]
-            ],
-            "handles": [
-              {
-                "x": 1.4412132501602173,
-                "y": 1.689953327178955
-              },
-              {
-                "x": 0.4752369523048401,
-                "y": 2.5532100796699524
-              },
-              {
-                "x": 0.6863264441490173,
-                "y": -1.5338399410247803
               }
             ]
           }
+        },
+        "dropShadows": [],
+        "stroke": {
+          "width": 1,
+          "color": "#00000000"
+        }
+      }
+    },
+    "button": {
+      "stateStyles": {
+        "default": {
+          "frame": {
+            "borderRadius": 50,
+            "backgroundFill": {
+              "type": "gradient",
+              "gradient": {
+                "type": "linear",
+                "rotation": 163,
+                "stops": [
+                  {
+                    "color": "#47fff4",
+                    "position": 0
+                  },
+                  {
+                    "color": "#0586ae",
+                    "position": 0.9322916865348816
+                  }
+                ]
+              }
+            },
+            "isAutolayout": true,
+            "layoutMode": "HORIZONTAL",
+            "layoutSizing": {
+              "horizontal": "FIXED",
+              "vertical": "FIXED"
+            },
+            "primaryAxisAlignItems": "CENTER",
+            "counterAxisAlignItems": "CENTER",
+            "dimensions": {
+              "width": 103.19587707519531,
+              "height": 39.89502716064453
+            },
+            "padding": {
+              "vertical": 20,
+              "horizontal": 40
+            },
+            "dropShadows": [
+              {
+                "x": 0,
+                "y": 4,
+                "blur": 20,
+                "spread": 0,
+                "color": "#0586aecc"
+              },
+              {
+                "x": 0,
+                "y": -4,
+                "blur": 20,
+                "spread": 0,
+                "color": "#47fff4cc"
+              }
+            ],
+            "stroke": {
+              "width": 2,
+              "color": "#9ffff8"
+            }
+          },
+          "text": {
+            "fontSize": 16,
+            "color": "#ffffff",
+            "fontWeight": 900,
+            "textAlignHorizontal": "LEFT",
+            "textAlignVertical": "TOP",
+            "lineHeightPx": 16
+          }
+        },
+        "disabled": {
+          "frame": {
+            "borderRadius": 50,
+            "backgroundFill": {
+              "type": "gradient",
+              "gradient": {
+                "type": "linear",
+                "rotation": 163,
+                "stops": [
+                  {
+                    "color": "#0586ae",
+                    "position": 0
+                  },
+                  {
+                    "color": "#0586ae",
+                    "position": 0.9322916865348816
+                  }
+                ]
+              }
+            },
+            "isAutolayout": true,
+            "layoutMode": "HORIZONTAL",
+            "layoutSizing": {
+              "horizontal": "FIXED",
+              "vertical": "FIXED"
+            },
+            "primaryAxisAlignItems": "CENTER",
+            "counterAxisAlignItems": "CENTER",
+            "dimensions": {
+              "width": 103.19587707519531,
+              "height": 39.89502716064453
+            },
+            "padding": {
+              "vertical": 20,
+              "horizontal": 40
+            },
+            "dropShadows": [],
+            "stroke": {
+              "width": 2,
+              "color": "#2badd5"
+            }
+          },
+          "text": {
+            "fontSize": 16,
+            "color": "#ffffff66",
+            "fontWeight": 900,
+            "textAlignHorizontal": "LEFT",
+            "textAlignVertical": "TOP",
+            "lineHeightPx": 16
+          }
+        },
+        "hover": {
+          "frame": {
+            "borderRadius": 50,
+            "backgroundFill": {
+              "type": "gradient",
+              "gradient": {
+                "type": "linear",
+                "rotation": 163,
+                "stops": [
+                  {
+                    "color": "#1ec0d0",
+                    "position": 0
+                  },
+                  {
+                    "color": "#0586ae",
+                    "position": 0.9322916865348816
+                  }
+                ]
+              }
+            },
+            "isAutolayout": true,
+            "layoutMode": "HORIZONTAL",
+            "layoutSizing": {
+              "horizontal": "FIXED",
+              "vertical": "FIXED"
+            },
+            "primaryAxisAlignItems": "CENTER",
+            "counterAxisAlignItems": "CENTER",
+            "dimensions": {
+              "width": 103.19587707519531,
+              "height": 39.89502716064453
+            },
+            "padding": {
+              "vertical": 20,
+              "horizontal": 40
+            },
+            "dropShadows": [
+              {
+                "x": 0,
+                "y": 4,
+                "blur": 20,
+                "spread": 0,
+                "color": "#0586aecc"
+              },
+              {
+                "x": 0,
+                "y": -4,
+                "blur": 20,
+                "spread": 0,
+                "color": "#47fff4cc"
+              }
+            ],
+            "stroke": {
+              "width": 2,
+              "color": "#25ecff"
+            }
+          },
+          "text": {
+            "fontSize": 16,
+            "color": "#ffffff",
+            "fontWeight": 900,
+            "textAlignHorizontal": "LEFT",
+            "textAlignVertical": "TOP",
+            "lineHeightPx": 16
+          }
+        },
+        "active": {
+          "frame": {
+            "borderRadius": 50,
+            "backgroundFill": {
+              "type": "gradient",
+              "gradient": {
+                "type": "linear",
+                "rotation": 163,
+                "stops": [
+                  {
+                    "color": "#026786",
+                    "position": 0
+                  },
+                  {
+                    "color": "#0586ae",
+                    "position": 0.9322916865348816
+                  }
+                ]
+              }
+            },
+            "isAutolayout": true,
+            "layoutMode": "HORIZONTAL",
+            "layoutSizing": {
+              "horizontal": "FIXED",
+              "vertical": "FIXED"
+            },
+            "primaryAxisAlignItems": "CENTER",
+            "counterAxisAlignItems": "CENTER",
+            "dimensions": {
+              "width": 103.19587707519531,
+              "height": 39.89502716064453
+            },
+            "padding": {
+              "vertical": 20,
+              "horizontal": 40
+            },
+            "dropShadows": [
+              {
+                "x": 0,
+                "y": 4,
+                "blur": 20,
+                "spread": 0,
+                "color": "#0586aecc"
+              }
+            ],
+            "stroke": {
+              "width": 2,
+              "color": "#1ec0d0"
+            }
+          },
+          "text": {
+            "fontSize": 16,
+            "color": "#ffffff",
+            "fontWeight": 900,
+            "textAlignHorizontal": "LEFT",
+            "textAlignVertical": "TOP",
+            "lineHeightPx": 16
+          }
+        }
+      }
+    },
+    "prizes": {
+      "texts": {
+        "gcTitle": {
+          "fill": {
+            "type": "gradient",
+            "gradient": {
+              "type": "linear",
+              "rotation": 183,
+              "stops": [
+                {
+                  "color": "#ffd671",
+                  "position": 0
+                },
+                {
+                  "color": "#ff8800",
+                  "position": 1
+                }
+              ]
+            }
+          },
+          "stroke": {
+            "width": 1.0868034362792969,
+            "color": "#4e187c"
+          }
+        },
+        "gcValue": {
+          "fill": {
+            "type": "gradient",
+            "gradient": {
+              "type": "linear",
+              "rotation": 183,
+              "stops": [
+                {
+                  "color": "#ffd671",
+                  "position": 0
+                },
+                {
+                  "color": "#ff8800",
+                  "position": 1
+                }
+              ]
+            }
+          },
+          "stroke": {
+            "width": 1.0868034362792969,
+            "color": "#4e187c"
+          }
+        },
+        "scTitle": {
+          "fill": {
+            "type": "gradient",
+            "gradient": {
+              "type": "linear",
+              "rotation": 183,
+              "stops": [
+                {
+                  "color": "#c1fbd0",
+                  "position": 0
+                },
+                {
+                  "color": "#20973f",
+                  "position": 1
+                }
+              ]
+            }
+          },
+          "stroke": {
+            "width": 0.7663357257843018,
+            "color": "#4e187c"
+          }
+        },
+        "scValue": {
+          "fill": {
+            "type": "gradient",
+            "gradient": {
+              "type": "linear",
+              "rotation": 183,
+              "stops": [
+                {
+                  "color": "#c1fbd0",
+                  "position": 0
+                },
+                {
+                  "color": "#20973f",
+                  "position": 1
+                }
+              ]
+            }
+          },
+          "stroke": {
+            "width": 0.7663357257843018,
+            "color": "#4e187c"
+          }
+        },
+        "freeSpins": {
+          "fill": {
+            "type": "gradient",
+            "gradient": {
+              "type": "linear",
+              "rotation": 358,
+              "stops": [
+                {
+                  "color": "#ecc3ff",
+                  "position": 0
+                },
+                {
+                  "color": "#ffffff",
+                  "position": 0.19679436087608337
+                },
+                {
+                  "color": "#ecc3ff",
+                  "position": 0.32344192266464233
+                },
+                {
+                  "color": "#ffffff",
+                  "position": 0.4644002914428711
+                },
+                {
+                  "color": "#ecc3ff",
+                  "position": 0.6006860733032227
+                },
+                {
+                  "color": "#ffffff",
+                  "position": 0.9234717488288879
+                }
+              ]
+            }
+          }
+        },
+        "xp": {
+          "fill": {
+            "type": "gradient",
+            "gradient": {
+              "type": "linear",
+              "rotation": 183,
+              "stops": [
+                {
+                  "color": "#f98470",
+                  "position": 0
+                },
+                {
+                  "color": "#ff9782",
+                  "position": 1
+                }
+              ]
+            }
+          },
+          "stroke": {
+            "width": 1.0305893421173096,
+            "color": "#4e187c"
+          }
+        },
+        "rr": {
+          "fill": {
+            "type": "gradient",
+            "gradient": {
+              "type": "linear",
+              "rotation": 183,
+              "stops": [
+                {
+                  "color": "#b12109",
+                  "position": 0
+                },
+                {
+                  "color": "#0f2988",
+                  "position": 1
+                }
+              ]
+            }
+          },
+          "stroke": {
+            "width": 1.0305893421173096,
+            "color": "#4e187c"
+          }
+        },
+        "fail": {
+          "fill": {
+            "type": "solid",
+            "color": "#faf6f6"
+          },
+          "stroke": {
+            "width": 1.0305893421173096,
+            "color": "#4e187c"
+          }
+        },
+        "plus": {
+          "fill": {
+            "type": "gradient",
+            "gradient": {
+              "type": "linear",
+              "rotation": 183,
+              "stops": [
+                {
+                  "color": "#c1fbd0",
+                  "position": 0
+                },
+                {
+                  "color": "#d32bff",
+                  "position": 1
+                }
+              ]
+            }
+          },
+          "stroke": {
+            "width": 0.7663357257843018,
+            "color": "#4e187c"
+          }
         }
       },
+      "images": {
+        "sc": {
+          "img": "rewards_prize_sc.png"
+        },
+        "gc": {
+          "img": "rewards_prize_gc.png"
+        },
+        "purchase": {
+          "img": "rewards_prize_purchase.png"
+        }
+      }
+    }
+  },
+  "lights": {
+    "color": "#fff4b2",
+    "positions": [
+      {
+        "x": 255.90934562683105,
+        "y": 174.90934562683105
+      },
+      {
+        "x": 332.90934562683105,
+        "y": 302.90934562683105
+      },
+      {
+        "x": 311.90934562683105,
+        "y": 228.90934562683105
+      },
+      {
+        "x": 304.90934562683105,
+        "y": 389.90934562683105
+      }
+    ]
+  },
+  "center": {
+    "x": 183.5,
+    "y": 304.5,
+    "radius": 137.5
+  },
+  "lights": {
+    "color": "#88DDDD",
+    "positions": [
+      {
+        "x": 183.5,
+        "y": 304.5
+      },
+      {
+        "x": 200,
+        "y": 280
+      },
+      {
+        "x": 167,
+        "y": 280
+      }
+    ]
+  },
+  "segments": {
+    "odd": {
       "outer": {
         "fill": {
           "type": "gradient",
           "gradient": {
             "type": "linear",
-            "rotation": 270,
+            "rotation": 180,
             "stops": [
               {
-                "color": "#ff9800",
+                "color": "#ccff00",
                 "position": 0
               },
               {
-                "color": "#e604a2",
+                "color": "#ff0022",
                 "position": 1
-              }
-            ],
-            "transform": [
-              [
-                -0.37070533633232117,
-                4.3829776103955425e-17,
-                0.6853627562522888
-              ],
-              [
-                4.539831568614788e-17,
-                -0.4984150528907776,
-                0.4999697208404541
-              ]
-            ],
-            "handles": [
-              {
-                "x": 0.6853627562522888,
-                "y": 0.4999697208404541
-              },
-              {
-                "x": 0.31465741991996765,
-                "y": 0.49996972084045416
-              },
-              {
-                "x": 0.6853627562522888,
-                "y": 0.0015546679496765137
               }
             ]
           }
-        },
-        "stroke": {
-          "width": 3,
-          "fill": {
-            "type": "solid",
-            "color": "#5f0280"
-          }
+        }
+      },
+      "text": {
+        "dropShadows": [],
+        "fill": {
+          "type": "solid",
+          "color": "#ffffff"
         }
       },
       "preview": {
@@ -216,101 +676,30 @@
       }
     },
     "even": {
-      "inner": {
-        "fill": {
-          "type": "gradient",
-          "gradient": {
-            "type": "linear",
-            "rotation": 312,
-            "stops": [
-              {
-                "color": "#0073ff",
-                "position": 0
-              },
-              {
-                "color": "#143e93",
-                "position": 1
-              }
-            ],
-            "transform": [
-              [
-                -0.9659762978553772,
-                -0.7548868060112,
-                1.4412132501602173
-              ],
-              [
-                0.8632567524909973,
-                -3.2237932682037354,
-                1.689953327178955
-              ]
-            ],
-            "handles": [
-              {
-                "x": 1.4412132501602173,
-                "y": 1.689953327178955
-              },
-              {
-                "x": 0.4752369523048401,
-                "y": 2.5532100796699524
-              },
-              {
-                "x": 0.6863264441490173,
-                "y": -1.5338399410247803
-              }
-            ]
-          }
-        }
-      },
       "outer": {
         "fill": {
           "type": "gradient",
           "gradient": {
             "type": "linear",
-            "rotation": 270,
+            "rotation": 180,
             "stops": [
               {
-                "color": "#0044ff",
+                "color": "#ff0000",
                 "position": 0
               },
               {
-                "color": "#0453e6",
+                "color": "#f6ff00",
                 "position": 1
-              }
-            ],
-            "transform": [
-              [
-                -0.37070533633232117,
-                4.3829776103955425e-17,
-                0.6853627562522888
-              ],
-              [
-                4.539831568614788e-17,
-                -0.4984150528907776,
-                0.4999697208404541
-              ]
-            ],
-            "handles": [
-              {
-                "x": 0.6853627562522888,
-                "y": 0.4999697208404541
-              },
-              {
-                "x": 0.31465741991996765,
-                "y": 0.49996972084045416
-              },
-              {
-                "x": 0.6853627562522888,
-                "y": 0.0015546679496765137
               }
             ]
           }
-        },
-        "stroke": {
-          "width": 3,
-          "fill": {
-            "type": "solid",
-            "color": "#5f0280"
-          }
+        }
+      },
+      "text": {
+        "dropShadows": [],
+        "fill": {
+          "type": "solid",
+          "color": "#ffffff"
         }
       },
       "preview": {
@@ -318,101 +707,30 @@
       }
     },
     "nowin": {
-      "inner": {
-        "fill": {
-          "type": "gradient",
-          "gradient": {
-            "type": "linear",
-            "rotation": 312,
-            "stops": [
-              {
-                "color": "#adacac",
-                "position": 0
-              },
-              {
-                "color": "#ccbfbf",
-                "position": 1
-              }
-            ],
-            "transform": [
-              [
-                -0.9659762978553772,
-                -0.7548868060112,
-                1.4412132501602173
-              ],
-              [
-                0.8632567524909973,
-                -3.2237932682037354,
-                1.689953327178955
-              ]
-            ],
-            "handles": [
-              {
-                "x": 1.4412132501602173,
-                "y": 1.689953327178955
-              },
-              {
-                "x": 0.4752369523048401,
-                "y": 2.5532100796699524
-              },
-              {
-                "x": 0.6863264441490173,
-                "y": -1.5338399410247803
-              }
-            ]
-          }
-        }
-      },
       "outer": {
         "fill": {
           "type": "gradient",
           "gradient": {
             "type": "linear",
-            "rotation": 270,
+            "rotation": 180,
             "stops": [
               {
-                "color": "#f0ebe2",
+                "color": "#ff0000",
                 "position": 0
               },
               {
-                "color": "#897c85",
+                "color": "#3700ff",
                 "position": 1
-              }
-            ],
-            "transform": [
-              [
-                -0.37070533633232117,
-                4.3829776103955425e-17,
-                0.6853627562522888
-              ],
-              [
-                4.539831568614788e-17,
-                -0.4984150528907776,
-                0.4999697208404541
-              ]
-            ],
-            "handles": [
-              {
-                "x": 0.6853627562522888,
-                "y": 0.4999697208404541
-              },
-              {
-                "x": 0.31465741991996765,
-                "y": 0.49996972084045416
-              },
-              {
-                "x": 0.6853627562522888,
-                "y": 0.0015546679496765137
               }
             ]
           }
-        },
-        "stroke": {
-          "width": 3,
-          "fill": {
-            "type": "solid",
-            "color": "#5f0280"
-          }
+        }
+      },
+      "text": {
+        "dropShadows": [],
+        "fill": {
+          "type": "solid",
+          "color": "#ffffff"
         }
       },
       "preview": {
@@ -420,101 +738,30 @@
       }
     },
     "jackpot": {
-      "inner": {
-        "fill": {
-          "type": "gradient",
-          "gradient": {
-            "type": "linear",
-            "rotation": 312,
-            "stops": [
-              {
-                "color": "#ffe940",
-                "position": 0
-              },
-              {
-                "color": "#ffb813",
-                "position": 1
-              }
-            ],
-            "transform": [
-              [
-                -0.9659762978553772,
-                -0.7548868060112,
-                1.4412132501602173
-              ],
-              [
-                0.8632567524909973,
-                -3.2237932682037354,
-                1.689953327178955
-              ]
-            ],
-            "handles": [
-              {
-                "x": 1.4412132501602173,
-                "y": 1.689953327178955
-              },
-              {
-                "x": 0.4752369523048401,
-                "y": 2.5532100796699524
-              },
-              {
-                "x": 0.6863264441490173,
-                "y": -1.5338399410247803
-              }
-            ]
-          }
-        }
-      },
       "outer": {
         "fill": {
           "type": "gradient",
           "gradient": {
             "type": "linear",
-            "rotation": 270,
+            "rotation": 180,
             "stops": [
               {
-                "color": "#ffbb57",
+                "color": "#ffea00",
                 "position": 0
               },
               {
-                "color": "#ffb813",
+                "color": "#ff00d4",
                 "position": 1
-              }
-            ],
-            "transform": [
-              [
-                -0.37070533633232117,
-                4.3829776103955425e-17,
-                0.6853627562522888
-              ],
-              [
-                4.539831568614788e-17,
-                -0.4984150528907776,
-                0.4999697208404541
-              ]
-            ],
-            "handles": [
-              {
-                "x": 0.6853627562522888,
-                "y": 0.4999697208404541
-              },
-              {
-                "x": 0.31465741991996765,
-                "y": 0.49996972084045416
-              },
-              {
-                "x": 0.6853627562522888,
-                "y": 0.0015546679496765137
               }
             ]
           }
-        },
-        "stroke": {
-          "width": 3,
-          "fill": {
-            "type": "solid",
-            "color": "#5f0280"
-          }
+        }
+      },
+      "text": {
+        "dropShadows": [],
+        "fill": {
+          "type": "solid",
+          "color": "#ffffff"
         }
       },
       "preview": {
@@ -522,7 +769,7 @@
       }
     }
   },
-  "exportedAt": "2025-09-30T14:15:44.980Z",
+  "exportedAt": "2025-10-05T11:51:58.056Z",
   "metadata": {
     "exportFormat": "png",
     "version": "0.0.1"

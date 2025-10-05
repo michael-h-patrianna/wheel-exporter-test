@@ -133,6 +133,26 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     }
   }
 
+  // Extract rewards prize images (optional)
+  let rewardsPrizeImages: ExtractedAssets['rewardsPrizeImages'] | undefined;
+  if (wheelData.rewards?.prizes?.images) {
+    rewardsPrizeImages = {};
+    const prizeImages = wheelData.rewards.prizes.images;
+
+    for (const [key, imageData] of Object.entries(prizeImages)) {
+      if (imageData?.img) {
+        const file = zipContent.file(imageData.img);
+        if (file) {
+          const blob = await file.async('blob');
+          rewardsPrizeImages[key] = URL.createObjectURL(blob);
+          console.log(`Found rewards prize image: ${key} -> ${imageData.img}`);
+        } else {
+          console.warn(`Missing rewards prize image: ${key} -> ${imageData.img}`);
+        }
+      }
+    }
+  }
+
   console.log('Extraction complete:', {
     wheelData,
     headerImages,
@@ -141,7 +161,8 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     wheelTop1Image: !!wheelTop1Image,
     wheelTop2Image: !!wheelTop2Image,
     buttonSpinImages,
-    pointerImage: !!pointerImage
+    pointerImage: !!pointerImage,
+    rewardsPrizeImages
   });
 
   return {
@@ -152,6 +173,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     wheelTop1Image,
     wheelTop2Image,
     buttonSpinImages,
-    pointerImage
+    pointerImage,
+    rewardsPrizeImages
   };
 }

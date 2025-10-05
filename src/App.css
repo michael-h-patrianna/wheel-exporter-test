@@ -1,7 +1,5 @@
 .App {
-  text-align: center;
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: 100%;
   padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   min-height: 100vh;
@@ -17,6 +15,7 @@
   margin-bottom: 30px;
   box-shadow: var(--elev-2);
   border: 1px solid var(--pf-border);
+  text-align: center;
 }
 
 .App-header h1 {
@@ -38,6 +37,50 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
+}
+
+/* Layout Container */
+.layout-container {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  min-width: 0; /* Allow flex item to shrink below its content size */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  align-items: start;
+}
+
+.main-content h3 {
+  text-align: center;
+  margin: 0 0 15px 0;
+  color: var(--pf-fg-strong);
+  font-size: 1.2rem;
+}
+
+/* Responsive Layout */
+@media (max-width: 1024px) {
+  .layout-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+  }
 }
 
 /* Upload Section */
@@ -190,18 +233,72 @@
 
 /* Wheel Container */
 .wheel-container {
-  background: var(--pf-surface);
+  background: transparent;
   border-radius: 12px;
-  box-shadow: var(--elev-2);
   overflow: visible;
   position: relative;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--pf-border);
+  width: 100%;
+  max-width: 414px;
   min-height: 400px;
+  padding: 20px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-self: center;
+}
+
+.wheel-viewer {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  width: 100%;
+}
+
+/* Result Container */
+.result-container {
+  background: transparent;
+  border-radius: 12px;
+  overflow: visible;
+  position: relative;
+  width: 100%;
+  max-width: 414px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  height: fit-content;
+  justify-self: center;
+}
+
+.result-title {
+  margin: 0;
+  color: var(--pf-fg-strong);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.result-viewer {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.result-content {
+  width: 100%;
+  height: 100%;
+}
+
+.result-header {
+  flex-shrink: 0;
+}
+
+.result-highlight-box,
+.result-default-box {
+  flex-shrink: 0;
+}
+
+.result-highlight-content {
+  width: 100%;
 }
 
 /* Information Section */
@@ -329,36 +426,7 @@
   }
 }
 
-/* Desktop layout optimization */
-@media (min-width: 1200px) {
-  .App-main {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 30px;
-    align-items: start;
-  }
-
-  .wheel-container {
-    grid-column: 2;
-    grid-row: 1 / span 3;
-    min-height: 600px;
-  }
-
-  .upload-section {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .controls-section {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .info-section {
-    grid-column: 1;
-    grid-row: 3;
-  }
-}
+/* Desktop layout optimization - removed conflicting grid */
 
 /* =============================================================================
    WHEEL VIEWER COMPONENTS
@@ -368,10 +436,7 @@
   position: relative;
 }
 
-.wheel-container {
-  position: relative;
-  background: var(--pf-surface);
-}
+/* Removed duplicate .wheel-container */
 
 /* Background Component */
 .background-component {

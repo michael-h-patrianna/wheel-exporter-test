@@ -118,6 +118,106 @@ export interface PointerComponent {
   img: string;
 }
 
+// Lights component
+export interface LightsComponent {
+  color: string;
+  positions: Array<{
+    x: number;
+    y: number;
+  }>;
+}
+
+// Rewards data structures
+export interface RewardsBackgroundStyle {
+  position?: { x: number; y: number };
+  dimensions?: { width: number; height: number };
+  borderRadius: number;
+  backgroundFill: Fill;
+  padding?: { vertical: number; horizontal: number };
+  dropShadows?: Array<{
+    x: number;
+    y: number;
+    blur: number;
+    spread: number;
+    color: string;
+  }>;
+  stroke?: { width: number; color: string };
+}
+
+export interface RewardsPrizeTextStyle {
+  label: string;
+  fill: Fill;
+  stroke?: { width: number; color: string };
+  dropShadows?: Array<{
+    x: number;
+    y: number;
+    blur: number;
+    color: string;
+  }>;
+}
+
+export interface RewardsPrizeImage {
+  label: string;
+  img: string;
+}
+
+export interface RewardsButtonStyle {
+  frame: {
+    borderRadius: number;
+    backgroundFill: Fill;
+    dimensions?: { width: number; height: number };
+    padding: { vertical: number; horizontal: number };
+    dropShadows?: Array<{
+      x: number;
+      y: number;
+      blur: number;
+      spread: number;
+      color: string;
+    }>;
+    stroke?: { width: number; color: string };
+  };
+  text: {
+    fontSize: number;
+    color: string;
+    fontWeight: number;
+    lineHeightPx?: number;
+  };
+}
+
+export interface RewardsComponent {
+  backgrounds?: {
+    highlight?: RewardsBackgroundStyle;
+    default?: RewardsBackgroundStyle;
+  };
+  button?: {
+    stateStyles?: {
+      default?: RewardsButtonStyle;
+      disabled?: RewardsButtonStyle;
+      hover?: RewardsButtonStyle;
+      active?: RewardsButtonStyle;
+    };
+  };
+  prizes?: {
+    texts?: {
+      gcTitle?: RewardsPrizeTextStyle;
+      gcValue?: RewardsPrizeTextStyle;
+      scTitle?: RewardsPrizeTextStyle;
+      scValue?: RewardsPrizeTextStyle;
+      plus?: RewardsPrizeTextStyle;
+      freeSpins?: RewardsPrizeTextStyle;
+      freeSpinsValue?: RewardsPrizeTextStyle;
+      freeSpinsLabel?: RewardsPrizeTextStyle;
+      [key: string]: RewardsPrizeTextStyle | undefined;
+    };
+    images?: {
+      gc?: RewardsPrizeImage;
+      sc?: RewardsPrizeImage;
+      purchase?: RewardsPrizeImage;
+      [key: string]: RewardsPrizeImage | undefined;
+    };
+  };
+}
+
 // Main wheel export format
 export interface WheelExport {
   wheelId: string;
@@ -135,7 +235,9 @@ export interface WheelExport {
   buttonSpin?: ButtonSpinComponent;
   center?: CenterComponent;
   pointer?: PointerComponent;
+  lights?: LightsComponent;
   segments?: WheelSegmentStyles;
+  rewards?: RewardsComponent;
   exportedAt: string;
   metadata: {
     exportFormat?: string;
@@ -166,4 +268,10 @@ export interface ExtractedAssets {
     spinning?: string;
   };
   pointerImage?: string;
+  rewardsPrizeImages?: {
+    gc?: string;
+    sc?: string;
+    purchase?: string;
+    [key: string]: string | undefined;
+  };
 }

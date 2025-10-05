@@ -1,0 +1,17 @@
+{
+  "extends": ["react-app", "react-app/jest"],
+  "overrides": [
+    {
+      "files": ["**/__tests__/**/*", "**/*.test.*"],
+      "rules": {
+        "testing-library/no-container": "off",
+        "testing-library/no-node-access": "off",
+        "testing-library/no-wait-for-multiple-assertions": "off",
+        "testing-library/no-render-in-setup": "off",
+        "testing-library/prefer-presence-queries": "off",
+        "jest/no-conditional-expect": "off",
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    }
+  ]
+}

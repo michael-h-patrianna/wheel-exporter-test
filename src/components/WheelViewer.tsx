@@ -11,6 +11,7 @@ import { CenterRenderer } from './renderers/CenterRenderer';
 import { SegmentRenderer } from './renderers/SegmentRenderer';
 import { GradientHandleRenderer } from './renderers/GradientHandleRenderer';
 import { PointerRenderer } from './renderers/PointerRenderer';
+import { LightsRenderer } from './renderers/LightsRenderer';
 
 interface ComponentVisibility {
   background: boolean;
@@ -18,6 +19,7 @@ interface ComponentVisibility {
   wheelBg: boolean;
   wheelTop1: boolean;
   wheelTop2: boolean;
+  lights: boolean;
   buttonSpin: boolean;
   center: boolean;
   pointer: boolean;
@@ -153,6 +155,16 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
     setIsSpinning(false);
   }, [wheelData.wheelId]);
 
+  // Debug lights
+  useEffect(() => {
+    console.log('Lights debug:', { 
+      visibility: componentVisibility.lights, 
+      lights: wheelData.lights,
+      hasLights: !!wheelData.lights,
+      lightPositions: wheelData.lights?.positions?.length || 0
+    });
+  }, [componentVisibility.lights, wheelData.lights]);
+
   return (
     <div className="wheel-viewer">
       <div style={containerStyle} className="wheel-container">
@@ -215,6 +227,14 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
             wheelTopImage={assets.wheelTop2Image}
             scale={scale}
             layerNumber={2}
+          />
+        )}
+
+        {/* Layer 6.5: Lights */}
+        {componentVisibility.lights && (
+          <LightsRenderer
+            lights={wheelData.lights}
+            scale={scale}
           />
         )}
 
