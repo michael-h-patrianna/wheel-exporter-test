@@ -626,23 +626,6 @@
     "y": 304.5,
     "radius": 137.5
   },
-  "lights": {
-    "color": "#88DDDD",
-    "positions": [
-      {
-        "x": 183.5,
-        "y": 304.5
-      },
-      {
-        "x": 200,
-        "y": 280
-      },
-      {
-        "x": 167,
-        "y": 280
-      }
-    ]
-  },
   "segments": {
     "odd": {
       "outer": {
@@ -769,7 +752,7 @@
       }
     }
   },
-  "exportedAt": "2025-10-05T11:51:58.056Z",
+  "exportedAt": "2025-10-05T16:21:45.530Z",
   "metadata": {
     "exportFormat": "png",
     "version": "0.0.1"

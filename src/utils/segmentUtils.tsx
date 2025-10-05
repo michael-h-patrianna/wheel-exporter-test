@@ -1,11 +1,18 @@
 import React from 'react';
-import { Fill, Gradient, GradientTransform, WheelSegmentKind } from '../types';
+import { Fill, Gradient, GradientTransform, WheelSegmentKind, DropShadow } from '../types';
 
 // Constants for segment rendering
 // Segment order: jackpot, nowin, then alternating odd/even
 export const SEGMENT_KINDS: WheelSegmentKind[] = ['jackpot', 'nowin', 'odd', 'even', 'odd', 'even', 'odd', 'even'];
 const TAU = Math.PI * 2;
 export const SEGMENT_PREVIEW_INNER_RADIUS_RATIO = 0.6; // Inner radius is 60% of outer radius
+
+// Text rendering constants
+// Grid radii as factors of outer radius (0-1)
+// [0] = primary text line radius, [1] = middle (unused), [2] = secondary text line radius
+export const TEXT_GRID_RADII_FACTORS = [0.73, 0.59, 0.55] as const;
+export const MIN_TEXT_FONT_SIZE = 10;
+export const TEXT_FONT_FAMILY = '"Inter", "Helvetica Neue", Arial, sans-serif';
 
 /**
  * Convert hex color string to CSS color
@@ -285,5 +292,81 @@ export function createSvgGradientDef(
     >
       {stops}
     </linearGradient>
+  );
+}
+
+/**
+ * Create an arc path for text to follow along a segment
+ */
+export function describeArcPath(
+  cx: number,
+  cy: number,
+  radius: number,
+  startAngle: number,
+  endAngle: number
+): string {
+  const startX = cx + radius * Math.cos(startAngle);
+  const startY = cy + radius * Math.sin(startAngle);
+  const endX = cx + radius * Math.cos(endAngle);
+  const endY = cy + radius * Math.sin(endAngle);
+
+  let delta = endAngle - startAngle;
+  while (delta < 0) {
+    delta += TAU;
+  }
+  const largeArcFlag = delta > Math.PI ? 1 : 0;
+
+  return `M ${formatNumber(startX)} ${formatNumber(startY)} A ${formatNumber(radius)} ${formatNumber(radius)} 0 ${largeArcFlag} 1 ${formatNumber(endX)} ${formatNumber(endY)}`;
+}
+
+/**
+ * Calculate optimal font size for text along an arc
+ */
+export function computeArcFontSize(
+  text: string,
+  radius: number,
+  angleSpan: number
+): number {
+  if (!text || radius <= 0 || angleSpan <= 0) {
+    return MIN_TEXT_FONT_SIZE;
+  }
+
+  const arcLength = radius * angleSpan;
+  const effectiveCharacters = Math.max(text.trim().length || 1, 1.5);
+  const estimate = arcLength / (effectiveCharacters * 0.66);
+  const minSize = Math.max(MIN_TEXT_FONT_SIZE, radius * 0.1);
+  const maxSize = radius * 0.36;
+
+  return Math.max(minSize, Math.min(maxSize, estimate));
+}
+
+/**
+ * Create SVG drop shadow filter for text
+ */
+export function createDropShadowFilter(
+  filterId: string,
+  dropShadows: DropShadow[]
+): React.ReactElement {
+  if (!dropShadows || dropShadows.length === 0) {
+    return <filter id={filterId} />;
+  }
+
+  return (
+    <filter id={filterId} x="-50%" y="-50%" width="200%" height="200%">
+      {dropShadows.map((shadow, index) => (
+        <React.Fragment key={`shadow-${index}`}>
+          <feGaussianBlur in="SourceAlpha" stdDeviation={shadow.blur / 2} result={`blur-${index}`} />
+          <feOffset in={`blur-${index}`} dx={shadow.x} dy={shadow.y} result={`offset-${index}`} />
+          <feFlood floodColor={colorToCSS(shadow.color)} result={`color-${index}`} />
+          <feComposite in={`color-${index}`} in2={`offset-${index}`} operator="in" result={`shadow-${index}`} />
+        </React.Fragment>
+      ))}
+      <feMerge>
+        {dropShadows.map((_, index) => (
+          <feMergeNode key={`merge-shadow-${index}`} in={`shadow-${index}`} />
+        ))}
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
   );
 }

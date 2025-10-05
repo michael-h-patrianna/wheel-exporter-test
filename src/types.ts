@@ -44,9 +44,26 @@ export interface Fill {
   gradient?: Gradient;
 }
 
+export interface DropShadow {
+  x: number;
+  y: number;
+  blur: number;
+  spread?: number;
+  color: string; // Hex color with alpha like "#0586aecc"
+}
+
 export interface WheelSegmentStrokeStyle {
   width: number;
   fill: Fill;
+}
+
+export interface WheelSegmentTextStyle {
+  fill?: Fill;
+  stroke?: {
+    width: number;
+    color: string;
+  };
+  dropShadows?: DropShadow[];
 }
 
 export interface WheelSegmentVectorStyle {
@@ -56,6 +73,7 @@ export interface WheelSegmentVectorStyle {
 
 export interface WheelSegmentTypeStyles {
   outer: WheelSegmentVectorStyle; // Only outer is supported now
+  text?: WheelSegmentTextStyle;
 }
 
 export type WheelSegmentStyles = Partial<Record<WheelSegmentKind, WheelSegmentTypeStyles>>;

@@ -9,7 +9,6 @@ import { WheelTopRenderer } from './renderers/WheelTopRenderer';
 import { ButtonSpinRenderer } from './renderers/ButtonSpinRenderer';
 import { CenterRenderer } from './renderers/CenterRenderer';
 import { SegmentRenderer } from './renderers/SegmentRenderer';
-import { GradientHandleRenderer } from './renderers/GradientHandleRenderer';
 import { PointerRenderer } from './renderers/PointerRenderer';
 import { LightsRenderer } from './renderers/LightsRenderer';
 
@@ -49,7 +48,6 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   const [headerState, setHeaderState] = useState<HeaderState>('active');
   const [buttonSpinState, setButtonSpinState] = useState<ButtonSpinState>('default');
   const [isSpinning, setIsSpinning] = useState(false);
-  const [showGradientHandles, setShowGradientHandles] = useState(false);
   const [targetRotation, setTargetRotation] = useState(0);
   const [currentRotation, setCurrentRotation] = useState(0);
 
@@ -196,6 +194,8 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
             scale={scale}
             isSpinning={isSpinning}
             targetRotation={targetRotation}
+            rewardsPrizeImages={assets.rewardsPrizeImages}
+            purchaseImageFilename={wheelData.rewards?.prizes?.images?.purchase?.img}
           />
         )}
 
@@ -267,14 +267,6 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
           />
         )}
 
-        {/* Layer 10: Gradient Handle Visualization (Debug) */}
-        <GradientHandleRenderer
-          segments={wheelData.segments}
-          center={wheelData.center}
-          segmentCount={segmentCount}
-          scale={scale}
-          showHandles={showGradientHandles}
-        />
       </div>
 
       {/* Debug Controls */}
@@ -286,18 +278,6 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
               type="checkbox"
               checked={componentVisibility.center}
               onChange={(e) => onToggleCenter(e.target.checked)}
-            />
-            <span className="switch-slider"></span>
-          </div>
-        </label>
-
-        <label className="switch-label" style={{ marginLeft: '20px' }}>
-          <span>Show Gradient Handles</span>
-          <div className="switch">
-            <input
-              type="checkbox"
-              checked={showGradientHandles}
-              onChange={(e) => setShowGradientHandles(e.target.checked)}
             />
             <span className="switch-slider"></span>
           </div>
