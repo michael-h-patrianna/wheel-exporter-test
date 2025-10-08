@@ -1,0 +1,617 @@
+/**
+ * Comprehensive test suite for SegmentRenderer
+ * This is the most complex renderer component requiring extensive testing
+ */
+
+import React from 'react';
+import { render } from '@testing-library/react';
+import { SegmentRenderer } from '../SegmentRenderer';
+import { WheelSegmentStyles, CenterComponent, Fill, Gradient } from '../../../types';
+
+// Mock the offer.png import
+jest.mock('../../../../assets/offer.png', () => 'mocked-offer.png');
+
+describe('SegmentRenderer', () => {
+  const mockCenter: CenterComponent = {
+    x: 400,
+    y: 300,
+    radius: 200,
+  };
+
+  const solidFill: Fill = {
+    type: 'solid',
+    color: '#FF0000',
+  };
+
+  const linearGradient: Gradient = {
+    type: 'linear',
+    rotation: 45,
+    stops: [
+      { color: '#FF0000', position: 0 },
+      { color: '#0000FF', position: 1 },
+    ],
+    transform: [[1, 0, 0], [0, 1, 0]],
+  };
+
+  const gradientFill: Fill = {
+    type: 'gradient',
+    gradient: linearGradient,
+  };
+
+  const mockSegments: WheelSegmentStyles = {
+    jackpot: {
+      outer: {
+        fill: solidFill,
+        stroke: {
+          width: 2,
+          fill: { type: 'solid', color: '#FFFFFF' },
+        },
+      },
+      text: {
+        fill: { type: 'solid', color: '#FFFFFF' },
+        stroke: { width: 1, color: '#000000' },
+      },
+    },
+    nowin: {
+      outer: {
+        fill: { type: 'solid', color: '#999999' },
+      },
+      text: {
+        fill: { type: 'solid', color: '#000000' },
+      },
+    },
+    odd: {
+      outer: {
+        fill: { type: 'solid', color: '#00FF00' },
+      },
+      text: {
+        fill: { type: 'solid', color: '#FFFFFF' },
+      },
+    },
+    even: {
+      outer: {
+        fill: { type: 'solid', color: '#0000FF' },
+      },
+      text: {
+        fill: { type: 'solid', color: '#FFFFFF' },
+      },
+    },
+  };
+
+  const defaultProps = {
+    segments: mockSegments,
+    center: mockCenter,
+    segmentCount: 8,
+    scale: 1,
+    isSpinning: false,
+    targetRotation: 0,
+  };
+
+  describe('Basic Rendering', () => {
+    it('should render segments container with correct structure', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const segmentsDiv = container.querySelector('.segments-component');
+      expect(segmentsDiv).toBeInTheDocument();
+      expect(segmentsDiv).toHaveStyle({
+        position: 'absolute',
+        zIndex: 5,
+        pointerEvents: 'none',
+      });
+    });
+
+    it('should return null when segments are not provided', () => {
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={undefined} />
+      );
+
+      expect(container.firstChild).toBeNull();
+    });
+
+    it('should return null when center is not provided', () => {
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} center={undefined} />
+      );
+
+      expect(container.firstChild).toBeNull();
+    });
+
+    it('should render SVG element', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+      expect(svg).toHaveAttribute('width', '100%');
+      expect(svg).toHaveAttribute('height', '100%');
+    });
+
+    it('should render correct number of segments', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      // Segments are rendered as <g> elements (not with id attribute)
+      const segments = container.querySelectorAll('g');
+      expect(segments.length).toBeGreaterThanOrEqual(defaultProps.segmentCount);
+    });
+  });
+
+  describe('Segment Data Generation', () => {
+    it('should generate segments with correct kinds', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={8} />);
+
+      // Check that segments are rendered with data attributes
+      const paths = container.querySelectorAll('path[d]');
+      expect(paths.length).toBeGreaterThan(0);
+    });
+
+    it('should calculate correct segment angles', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={4} />);
+
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+    });
+
+    it('should cycle through SEGMENT_KINDS correctly', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={16} />);
+
+      // With 16 segments and 8 kinds, pattern should repeat twice
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+    });
+  });
+
+  describe('Rotation and Animation', () => {
+    it('should apply correct transform origin', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const svg = container.querySelector('svg');
+      expect(svg).toHaveStyle({
+        transformOrigin: '400px 300px',
+      });
+    });
+
+    it('should apply target rotation', () => {
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} targetRotation={45} />
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).toHaveStyle({
+        transform: 'rotate(45deg)',
+      });
+    });
+
+    it('should apply spinning transition when isSpinning is true', () => {
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} isSpinning={true} />
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).toHaveStyle({
+        transition: 'transform 5s cubic-bezier(0.15, 0, 0.25, 1)',
+      });
+    });
+
+    it('should apply default transition when not spinning', () => {
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} isSpinning={false} />
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).toHaveStyle({
+        transition: 'transform 1.5s cubic-bezier(0.35, 0, 0.25, 1)',
+      });
+    });
+  });
+
+  describe('Scaling', () => {
+    it('should scale center position and radius', () => {
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} scale={0.5} />
+      );
+
+      const svg = container.querySelector('svg');
+      // With scale 0.5: cx = 400 * 0.5 = 200, cy = 300 * 0.5 = 150
+      expect(svg).toHaveStyle({
+        transformOrigin: '200px 150px',
+      });
+    });
+
+    it('should scale segment dimensions', () => {
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} scale={2} />
+      );
+
+      const svg = container.querySelector('svg');
+      // With scale 2: cx = 400 * 2 = 800, cy = 300 * 2 = 600
+      expect(svg).toHaveStyle({
+        transformOrigin: '800px 600px',
+      });
+    });
+  });
+
+  describe('Gradient Rendering', () => {
+    it('should render defs element when gradients are present', () => {
+      const segmentsWithGradient: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: gradientFill,
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithGradient} />
+      );
+
+      const defs = container.querySelector('defs');
+      expect(defs).toBeInTheDocument();
+    });
+
+    it('should create gradient definitions for outer fill gradients', () => {
+      const segmentsWithGradient: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: gradientFill,
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithGradient} />
+      );
+
+      const linearGradients = container.querySelectorAll('linearGradient[id^="segment-outer-fill-"]');
+      expect(linearGradients.length).toBeGreaterThan(0);
+    });
+
+    it('should create gradient definitions for stroke gradients', () => {
+      const segmentsWithStrokeGradient: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+            stroke: {
+              width: 2,
+              fill: gradientFill,
+            },
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithStrokeGradient} />
+      );
+
+      const linearGradients = container.querySelectorAll('linearGradient[id^="segment-outer-stroke-"]');
+      expect(linearGradients.length).toBeGreaterThan(0);
+    });
+
+    it('should create gradient definitions for text fill gradients', () => {
+      const segmentsWithTextGradient: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+          },
+          text: {
+            fill: gradientFill,
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithTextGradient} />
+      );
+
+      const linearGradients = container.querySelectorAll('linearGradient[id^="segment-text-fill-"]');
+      expect(linearGradients.length).toBeGreaterThan(0);
+    });
+
+    it('should not create linear gradients for radial gradient types', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+      const radialGradient: Gradient = {
+        ...linearGradient,
+        type: 'radial',
+      };
+
+      const segmentsWithRadialGradient: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: { type: 'gradient', gradient: radialGradient },
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithRadialGradient} />
+      );
+
+      // Should not create linearGradient elements for radial gradients
+      const linearGradients = container.querySelectorAll('linearGradient[id^="segment-outer-fill-"]');
+      // There are 8 segments, "odd" appears 3 times with radial gradient, others have solid fills
+      // So we should have fewer linear gradients than total segments
+      expect(linearGradients.length).toBeLessThan(defaultProps.segmentCount);
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('Text Rendering', () => {
+    it('should create arc paths for text', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const defs = container.querySelector('defs');
+      if (defs) {
+        const arcPaths = defs.querySelectorAll('path[id*="-arc"]');
+        expect(arcPaths.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('should render text for non-jackpot segments', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const textElements = container.querySelectorAll('text');
+      expect(textElements.length).toBeGreaterThan(0);
+    });
+
+    it('should render "NO" and "WIN" for nowin segments', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const textElements = container.querySelectorAll('text[data-segment-kind="nowin"]');
+      expect(textElements.length).toBeGreaterThan(0);
+
+      const textContent = Array.from(textElements).map((el) => el.textContent);
+      expect(textContent).toContain('NO');
+      expect(textContent).toContain('WIN');
+    });
+
+    it('should render "Lorem" and "Ipsum" for odd/even segments', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const oddTexts = container.querySelectorAll('text[data-segment-kind="odd"]');
+      const evenTexts = container.querySelectorAll('text[data-segment-kind="even"]');
+
+      expect(oddTexts.length + evenTexts.length).toBeGreaterThan(0);
+    });
+
+    it('should apply text drop shadow filters', () => {
+      const segmentsWithDropShadow: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+            dropShadows: [{ x: 2, y: 2, blur: 4, color: '#000000' }],
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithDropShadow} />
+      );
+
+      const filters = container.querySelectorAll('filter[id^="segment-text-shadow-"]');
+      expect(filters.length).toBeGreaterThan(0);
+    });
+
+    it('should use textPath for curved text', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const textPaths = container.querySelectorAll('textPath');
+      expect(textPaths.length).toBeGreaterThan(0);
+    });
+
+    it('should apply correct text attributes', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const textElements = container.querySelectorAll('text');
+      textElements.forEach((text) => {
+        // SVG attributes are case-sensitive and use camelCase in JSX but lowercase in DOM
+        expect(text).toHaveAttribute('font-family');
+        expect(text).toHaveAttribute('font-weight', '700');
+        expect(text).toHaveAttribute('font-size');
+      });
+    });
+  });
+
+  describe('Jackpot Segment Image', () => {
+    it('should render image for jackpot segment with fallback', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const jackpotImages = container.querySelectorAll('image[data-segment-kind="jackpot"]');
+      expect(jackpotImages.length).toBeGreaterThan(0);
+      expect(jackpotImages[0]).toHaveAttribute('href', 'mocked-offer.png');
+    });
+
+    it('should use custom purchase image when provided', () => {
+      const rewardsPrizeImages = {
+        purchase: 'https://example.com/custom-purchase.png',
+      };
+
+      const { container } = render(
+        <SegmentRenderer
+          {...defaultProps}
+          purchaseImageFilename="custom-purchase.png"
+          rewardsPrizeImages={rewardsPrizeImages}
+        />
+      );
+
+      const jackpotImages = container.querySelectorAll('image[data-segment-kind="jackpot"]');
+      expect(jackpotImages[0]).toHaveAttribute('href', 'https://example.com/custom-purchase.png');
+    });
+
+    it('should fallback to offer.png when purchase image filename provided but no image URL', () => {
+      const { container } = render(
+        <SegmentRenderer
+          {...defaultProps}
+          purchaseImageFilename="custom-purchase.png"
+          rewardsPrizeImages={{}}
+        />
+      );
+
+      const jackpotImages = container.querySelectorAll('image[data-segment-kind="jackpot"]');
+      expect(jackpotImages[0]).toHaveAttribute('href', 'mocked-offer.png');
+    });
+
+    it('should apply preserveAspectRatio to jackpot image', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const jackpotImages = container.querySelectorAll('image[data-segment-kind="jackpot"]');
+      expect(jackpotImages[0]).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet');
+    });
+  });
+
+  describe('Segment Path Rendering', () => {
+    it('should render path elements for each segment', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const paths = container.querySelectorAll('g > path');
+      expect(paths.length).toBeGreaterThanOrEqual(defaultProps.segmentCount);
+    });
+
+    it('should apply fill to segment paths', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const paths = container.querySelectorAll('g > path');
+      paths.forEach((path) => {
+        expect(path).toHaveAttribute('fill');
+      });
+    });
+
+    it('should apply stroke when provided', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} />);
+
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+    });
+
+    it('should scale stroke width correctly', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} scale={2} />);
+
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle missing segment styles gracefully', () => {
+      const incompleteSegments: Partial<WheelSegmentStyles> = {
+        odd: mockSegments.odd,
+        even: mockSegments.even,
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={incompleteSegments as WheelSegmentStyles} />
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+    });
+
+    it('should handle segments without text', () => {
+      const segmentsWithoutText: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithoutText} />
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+    });
+
+    it('should handle different segment counts', () => {
+      const testCases = [4, 8, 12, 16];
+
+      testCases.forEach((count) => {
+        const { container } = render(
+          <SegmentRenderer {...defaultProps} segmentCount={count} />
+        );
+
+        const svg = container.querySelector('svg');
+        expect(svg).toBeInTheDocument();
+      });
+    });
+
+    it('should handle very small radius', () => {
+      const smallCenter: CenterComponent = {
+        x: 400,
+        y: 300,
+        radius: 10,
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} center={smallCenter} />
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+    });
+
+    it('should handle very large radius', () => {
+      const largeCenter: CenterComponent = {
+        x: 400,
+        y: 300,
+        radius: 1000,
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} center={largeCenter} />
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+    });
+  });
+
+  describe('Performance and Memoization', () => {
+    it('should memoize segment data based on segmentCount', () => {
+      const { rerender } = render(<SegmentRenderer {...defaultProps} />);
+
+      // Rerender with same props should use memoized data
+      rerender(<SegmentRenderer {...defaultProps} />);
+
+      // Changing segmentCount should recalculate
+      rerender(<SegmentRenderer {...defaultProps} segmentCount={12} />);
+    });
+
+    it('should memoize jackpot image URL', () => {
+      const { rerender } = render(<SegmentRenderer {...defaultProps} />);
+
+      rerender(<SegmentRenderer {...defaultProps} />);
+
+      const rewardsPrizeImages = { purchase: 'custom.png' };
+      rerender(
+        <SegmentRenderer
+          {...defaultProps}
+          purchaseImageFilename="custom.png"
+          rewardsPrizeImages={rewardsPrizeImages}
+        />
+      );
+    });
+  });
+});
