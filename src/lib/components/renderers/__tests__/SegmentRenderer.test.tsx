@@ -614,4 +614,197 @@ describe('SegmentRenderer', () => {
       );
     });
   });
+
+  describe('Text Stroke Gradient Support', () => {
+    it('should render text with gradient stroke', () => {
+      const segmentsWithGradientStroke: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+            stroke: {
+              width: 4,
+              fill: {
+                type: 'gradient',
+                gradient: {
+                  type: 'linear',
+                  rotation: 90,
+                  stops: [
+                    { color: '#3a125d', position: 0 },
+                    { color: '#7a26c3', position: 1 },
+                  ],
+                  transform: [[1, 0, 0], [0, 1, 0]],
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithGradientStroke} />
+      );
+
+      const defs = container.querySelector('defs');
+      expect(defs).toBeInTheDocument();
+
+      // Check for text stroke gradient definition
+      const strokeGradients = defs?.querySelectorAll('linearGradient[id*="segment-text-stroke-"]');
+      expect(strokeGradients && strokeGradients.length).toBeGreaterThan(0);
+    });
+
+    it('should render text with solid color stroke', () => {
+      const segmentsWithSolidStroke: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+            stroke: {
+              width: 2,
+              fill: {
+                type: 'solid',
+                color: '#000000',
+              },
+            },
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithSolidStroke} />
+      );
+
+      const textElements = container.querySelectorAll('text[data-segment-kind="odd"]');
+      expect(textElements.length).toBeGreaterThan(0);
+
+      // Text should have stroke attribute with solid color
+      textElements.forEach((text) => {
+        expect(text).toHaveAttribute('stroke');
+      });
+    });
+
+    it('should support legacy string color format for backward compatibility', () => {
+      const segmentsWithLegacyStroke: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+            stroke: {
+              width: 2,
+              color: '#FF0000', // Legacy format
+            },
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithLegacyStroke} />
+      );
+
+      const textElements = container.querySelectorAll('text[data-segment-kind="odd"]');
+      expect(textElements.length).toBeGreaterThan(0);
+
+      // Text should render with the legacy color
+      textElements.forEach((text) => {
+        expect(text).toHaveAttribute('stroke', '#FF0000');
+      });
+    });
+
+    it('should prioritize fill over color when both are present', () => {
+      const segmentsWithBothFormats: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+            stroke: {
+              width: 2,
+              color: '#FF0000', // Legacy format
+              fill: { type: 'solid', color: '#0000FF' }, // New format should take priority
+            },
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithBothFormats} />
+      );
+
+      const textElements = container.querySelectorAll('text[data-segment-kind="odd"]');
+      expect(textElements.length).toBeGreaterThan(0);
+
+      // Text should use the new fill format (blue), not the legacy color (red)
+      textElements.forEach((text) => {
+        expect(text).toHaveAttribute('stroke', '#0000FF');
+      });
+    });
+
+    it('should render text without stroke when stroke is undefined', () => {
+      const segmentsWithoutStroke: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+            // No stroke defined
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithoutStroke} />
+      );
+
+      const textElements = container.querySelectorAll('text[data-segment-kind="odd"]');
+      expect(textElements.length).toBeGreaterThan(0);
+
+      // Text should have stroke="none"
+      textElements.forEach((text) => {
+        expect(text).toHaveAttribute('stroke', 'none');
+      });
+    });
+
+    it('should apply stroke width correctly with gradient stroke', () => {
+      const segmentsWithThickStroke: WheelSegmentStyles = {
+        ...mockSegments,
+        odd: {
+          outer: {
+            fill: solidFill,
+          },
+          text: {
+            fill: { type: 'solid', color: '#FFFFFF' },
+            stroke: {
+              width: 8,
+              fill: gradientFill,
+            },
+          },
+        },
+      };
+
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} segments={segmentsWithThickStroke} />
+      );
+
+      const textElements = container.querySelectorAll('text[data-segment-kind="odd"]');
+      expect(textElements.length).toBeGreaterThan(0);
+
+      // Text should have stroke-width attribute
+      textElements.forEach((text) => {
+        expect(text).toHaveAttribute('stroke-width', '8');
+      });
+    });
+  });
 });

@@ -98,12 +98,15 @@
         "borderRadius": 4.727914333343506,
         "backgroundFill": {
           "type": "solid",
-          "color": "#00000000"
+          "color": "#4e187c"
         },
         "dropShadows": [],
         "stroke": {
           "width": 1,
-          "color": "#00000000"
+          "fill": {
+            "type": "solid",
+            "color": "#000000"
+          }
         }
       },
       "default": {
@@ -115,20 +118,31 @@
             "rotation": 90,
             "stops": [
               {
-                "color": "#00000000",
+                "color": "#3a125d",
                 "position": 0
               },
               {
-                "color": "#00000000",
+                "color": "#7a26c3",
                 "position": 1
               }
             ]
           }
         },
-        "dropShadows": [],
+        "dropShadows": [
+          {
+            "x": 20,
+            "y": 20,
+            "blur": 20,
+            "spread": 0,
+            "color": "#ef121282"
+          }
+        ],
         "stroke": {
-          "width": 1,
-          "color": "#00000000"
+          "width": 4,
+          "fill": {
+            "type": "solid",
+            "color": "#000000"
+          }
         }
       }
     },
@@ -800,7 +814,7 @@
       }
     }
   },
-  "exportedAt": "2025-10-08T17:08:10.557Z",
+  "exportedAt": "2025-10-08T20:45:22.598Z",
   "metadata": {
     "exportFormat": "png",
     "version": "0.0.1"

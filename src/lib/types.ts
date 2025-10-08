@@ -244,10 +244,30 @@ export interface WheelSegmentStrokeStyle {
  *
  * @example
  * ```tsx
+ * // With stroke gradient
  * const textStyle: WheelSegmentTextStyle = {
  *   fill: { type: 'solid', color: '#FFFFFF' },
- *   stroke: { width: 1, color: '#000000' },
+ *   stroke: {
+ *     width: 4,
+ *     fill: {
+ *       type: 'gradient',
+ *       gradient: {
+ *         type: 'linear',
+ *         rotation: 90,
+ *         stops: [
+ *           { color: '#3a125d', position: 0 },
+ *           { color: '#7a26c3', position: 1 }
+ *         ]
+ *       }
+ *     }
+ *   },
  *   dropShadows: [{ x: 2, y: 2, blur: 4, color: '#00000080' }]
+ * };
+ *
+ * // Backward compatible with color string
+ * const legacyTextStyle: WheelSegmentTextStyle = {
+ *   fill: { type: 'solid', color: '#FFFFFF' },
+ *   stroke: { width: 1, color: '#000000' }
  * };
  * ```
  */
@@ -258,8 +278,10 @@ export interface WheelSegmentTextStyle {
   stroke?: {
     /** Stroke width in pixels */
     width: number;
-    /** Stroke color */
-    color: string;
+    /** Stroke color (legacy: string) or fill (solid/gradient) */
+    color?: string;
+    /** Stroke fill (solid or gradient) - preferred over color */
+    fill?: Fill;
   };
   /** Array of drop shadow effects for text */
   dropShadows?: DropShadow[];

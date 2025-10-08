@@ -140,6 +140,21 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
       }
     }
 
+    // Process text stroke gradient (only linear)
+    if (styles.text?.stroke?.fill?.type === 'gradient' &&
+        styles.text.stroke.fill.gradient &&
+        styles.text.stroke.fill.gradient.type === 'linear') {
+      const gradientId = `segment-text-stroke-${segment.index}`;
+      const gradientDef = createSvgGradientDef(
+        styles.text.stroke.fill.gradient,
+        gradientId,
+        segmentRotationDeg
+      );
+      if (gradientDef) {
+        gradientDefs.push(gradientDef);
+      }
+    }
+
     // Process text drop shadow filter
     if (styles.text?.dropShadows && styles.text.dropShadows.length > 0) {
       const filterId = `segment-text-shadow-${segment.index}`;
@@ -307,8 +322,20 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
                   `segment-text-fill-${segment.index}`
                 );
 
-                // Get text stroke
-                const textStroke = styles.text?.stroke?.color || 'none';
+                // Get text stroke - support both new fill structure and legacy color string
+                let textStroke = 'none';
+                if (styles.text?.stroke) {
+                  if (styles.text.stroke.fill) {
+                    // Use new fill structure (solid or gradient)
+                    textStroke = fillToSvgPaint(
+                      styles.text.stroke.fill,
+                      `segment-text-stroke-${segment.index}`
+                    );
+                  } else if (styles.text.stroke.color) {
+                    // Fallback to legacy color string
+                    textStroke = styles.text.stroke.color;
+                  }
+                }
                 const textStrokeWidth = styles.text?.stroke?.width || 0;
 
                 // Get text filter

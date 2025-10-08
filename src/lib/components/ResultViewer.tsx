@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { ExtractedAssets, Fill, RewardsPrizeTextStyle, RewardsBackgroundStyle, RewardsButtonStyle } from '../types';
 
 /**
@@ -7,6 +7,12 @@ import { ExtractedAssets, Fill, RewardsPrizeTextStyle, RewardsBackgroundStyle, R
  * ⚠️ IMPORTANT: If backgrounds don't show, check positions.json backgrounds.highlight and
  * backgrounds.default for transparent colors (#00000000). The Figma plugin may export
  * transparent backgrounds by default. Set proper colors/gradients in Figma before exporting.
+ *
+ * ✅ BACKGROUND STYLING: This component fully supports:
+ * - Solid color fills and linear gradients
+ * - Border radius and strokes (borders)
+ * - Drop shadows (box-shadow for backgrounds, applied with scaling)
+ * - Automatic selection of highlight vs default backgrounds based on row type
  *
  * ===================================================================================
  * POSITIONS.JSON → VISUAL STYLE MAPPING DOCUMENTATION
@@ -344,11 +350,18 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
       style.border = `${Math.round(bgStyle.stroke.width * scale)}px solid ${bgStyle.stroke.color}`;
     }
 
-    // NOTE: Box shadows removed for React Native cross-platform compatibility
-    // Box shadows are not supported in React Native (per CLAUDE.md CIB-001.5)
-    // If shadows are needed, they must be implemented using platform-specific abstractions:
-    // - Android: elevation property
-    // - iOS: shadowColor, shadowOffset, shadowOpacity, shadowRadius properties
+    // Handle drop shadows (scaled)
+    if (bgStyle.dropShadows && bgStyle.dropShadows.length > 0) {
+      style.boxShadow = bgStyle.dropShadows
+        .map((shadow) => {
+          const x = Math.round(shadow.x * scale);
+          const y = Math.round(shadow.y * scale);
+          const blur = Math.round(shadow.blur * scale);
+          const spread = Math.round(shadow.spread * scale);
+          return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
+        })
+        .join(', ');
+    }
 
     return style;
   }, [scale, buildGradient]);
@@ -387,11 +400,18 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
       containerStyle.border = `${Math.round(btnStyle.frame.stroke.width * scale)}px solid ${btnStyle.frame.stroke.color}`;
     }
 
-    // NOTE: Box shadows removed for React Native cross-platform compatibility
-    // Box shadows are not supported in React Native (per CLAUDE.md CIB-001.5)
-    // If shadows are needed, they must be implemented using platform-specific abstractions:
-    // - Android: elevation property
-    // - iOS: shadowColor, shadowOffset, shadowOpacity, shadowRadius properties
+    // Handle drop shadows (scaled)
+    if (btnStyle.frame.dropShadows && btnStyle.frame.dropShadows.length > 0) {
+      containerStyle.boxShadow = btnStyle.frame.dropShadows
+        .map((shadow) => {
+          const x = Math.round(shadow.x * scale);
+          const y = Math.round(shadow.y * scale);
+          const blur = Math.round(shadow.blur * scale);
+          const spread = Math.round(shadow.spread * scale);
+          return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
+        })
+        .join(', ');
+    }
 
     const textStyle: React.CSSProperties = {
       fontSize: `${Math.round(btnStyle.text.fontSize * scale)}px`,
