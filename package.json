@@ -22,7 +22,7 @@
   "scripts": {
     "start": "react-scripts start",
     "prebuild": "bash scripts/tools/copy-theme.sh",
-    "build": "react-scripts build",
+    "build": "NODE_OPTIONS='--no-deprecation' react-scripts build",
     "test": "npm run validate:test && react-scripts test --watchAll=false --coverage",
     "test:watch": "react-scripts test",
     "test:coverage": "react-scripts test --watchAll=false --coverage --coverageReporters=text-lcov --coverageReporters=text",

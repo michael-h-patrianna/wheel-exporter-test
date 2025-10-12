@@ -44,15 +44,21 @@
   display: flex;
   gap: 30px;
   align-items: flex-start;
+  margin-top: 20px;
 }
 
-/* Sidebar */
+/* Legacy sidebar - kept for compatibility */
 .sidebar {
   width: 320px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+/* Update layout container to work with new sidebar */
+.layout-container > .sidebar {
+  display: none; /* Hide legacy sidebar by default */
 }
 
 /* Main Content Area */
@@ -655,4 +661,306 @@
 
 .switch input:focus + .switch-slider {
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+}
+
+/* =============================================================================
+   APP BAR (MOBILE HEADER)
+   ============================================================================= */
+
+.app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--pf-surface);
+  padding: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--pf-border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.app-bar__hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--pf-border);
+  color: var(--pf-fg);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.app-bar__hamburger:hover {
+  background: color-mix(in srgb, var(--pf-border) 20%, var(--pf-surface));
+  border-color: var(--pf-fg);
+}
+
+.app-bar__hamburger:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+}
+
+.app-bar__title {
+  margin-left: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--pf-fg-strong);
+  flex: 1;
+}
+
+.app-bar__github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--pf-border);
+  margin-right: 8px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.app-bar__github-link:hover {
+  background: color-mix(in srgb, var(--pf-border) 20%, var(--pf-surface));
+  border-color: var(--pf-fg);
+}
+
+.app-bar__github-link:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+}
+
+.app-bar__github-icon {
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) invert(1);
+  transition: filter 0.2s ease;
+}
+
+.app-bar__github-link:hover .app-bar__github-icon {
+  filter: brightness(0) invert(1) drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+}
+
+/* Always show app bar, just hide hamburger on desktop */
+@media (min-width: 1220px) {
+  .app-bar__hamburger {
+    display: none;
+  }
+}
+
+/* =============================================================================
+   SIDEBAR
+   ============================================================================= */
+
+.app-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 70px; /* Below app bar */
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--pf-surface);
+  box-shadow: var(--elev-1);
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+  border: 1px solid var(--pf-border);
+}
+
+/* Hide desktop sidebar below 1220px */
+@media (max-width: 1219px) {
+  .app-sidebar.desktop-sidebar {
+    display: none;
+  }
+}
+
+/* =============================================================================
+   DRAWER
+   ============================================================================= */
+
+.app-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+}
+
+.app-drawer.is-open {
+  display: block;
+}
+
+.app-drawer__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.app-drawer.is-open .app-drawer__overlay {
+  opacity: 1;
+  margin-left: min(86vw, 340px);
+}
+
+.app-drawer__panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: min(86vw, 340px);
+  max-width: 100%;
+  transform: translateX(-100%);
+  transition: transform 200ms ease;
+  overflow-y: auto;
+  background: var(--pf-bg);
+  padding: 0;
+}
+
+.app-drawer.is-open .app-drawer__panel {
+  transform: translateX(0);
+}
+
+.app-drawer__panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px;
+  position: sticky;
+  top: 0;
+  background: var(--pf-bg);
+  z-index: 10;
+  border-bottom: 1px solid var(--pf-border);
+}
+
+.app-drawer__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--pf-border);
+  color: var(--pf-fg);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.app-drawer__close:hover {
+  background: color-mix(in srgb, var(--pf-border) 20%, var(--pf-surface));
+  border-color: var(--pf-fg);
+}
+
+.app-drawer__close:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+}
+
+/* On larger viewports, match drawer width to the desktop sidebar column */
+@media (min-width: 769px) {
+  .app-drawer__panel {
+    width: 320px;
+  }
+  .app-drawer.is-open .app-drawer__overlay {
+    margin-left: 320px;
+  }
+}
+
+/* Inside the drawer, make the Sidebar behave like a full-height panel */
+.app-drawer__panel .app-sidebar {
+  position: static;
+  top: auto;
+  max-height: none;
+  margin: 8px;
+}
+
+/* =============================================================================
+   CUSTOM SCROLLBAR STYLING
+   ============================================================================= */
+
+/* Scrollbar for sidebar */
+.app-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.app-sidebar::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--pf-border) 10%, var(--pf-surface));
+  border-radius: 4px;
+}
+
+.app-sidebar::-webkit-scrollbar-thumb {
+  background: var(--pf-border);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.app-sidebar::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--pf-border) 80%, var(--pf-fg-strong));
+}
+
+/* Firefox scrollbar */
+.app-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--pf-border) color-mix(in srgb, var(--pf-border) 10%, var(--pf-surface));
+}
+
+/* =============================================================================
+   CUSTOM SELECT STYLING
+   ============================================================================= */
+
+.control-group select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--pf-border);
+  background: color-mix(in srgb, var(--pf-border) 10%, var(--pf-surface));
+  color: var(--pf-fg-strong);
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 32px;
+}
+
+.control-group select:hover {
+  border-color: color-mix(in srgb, var(--pf-border) 80%, var(--pf-fg-strong));
+  background: color-mix(in srgb, var(--pf-border) 15%, var(--pf-surface));
+}
+
+.control-group select:focus {
+  outline: none;
+  border-color: var(--pf-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--pf-accent) 20%, transparent);
+}
+
+.control-group select option {
+  background: var(--pf-surface);
+  color: var(--pf-fg-strong);
+  padding: 8px;
+}
+
+/* Style for small description text under selects */
+.control-group small {
+  display: block;
+  margin-top: 6px;
+  color: var(--pf-muted);
+  font-size: 0.85rem;
+  line-height: 1.4;
 }

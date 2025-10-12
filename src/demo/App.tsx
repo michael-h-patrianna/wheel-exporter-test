@@ -3,12 +3,14 @@ import './App.css';
 import { WheelViewer } from '../lib/components/WheelViewer';
 import { ResultViewer, ExtractedAssets, ErrorBoundary } from '../lib';
 import { loadWheelFromZip, WheelLoadError } from '../lib/services/wheelLoader';
-import { PrizeTable } from '../lib/components/prize/PrizeTable';
 import { createDefaultPrizeProvider, type PrizeProviderResult } from '../lib/services/prizeProvider';
-import { SEGMENT_LAYOUTS, type SegmentLayoutType } from '../lib/types/segmentLayoutTypes';
-import { getAllAnimations, type LightAnimationType } from '../lib/components/renderers/lights/lightAnimations';
+import { type SegmentLayoutType } from '../lib/types/segmentLayoutTypes';
+import { type LightAnimationType } from '../lib/components/renderers/lights/lightAnimations';
+import { AppBar } from './components/AppBar';
+import { Sidebar } from './components/Sidebar';
 
 function App() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [extractedAssets, setExtractedAssets] = useState<ExtractedAssets | null>(null);
   const [wheelWidth, setWheelWidth] = useState(800);
   const [wheelHeight, setWheelHeight] = useState(600);
@@ -140,226 +142,58 @@ function App() {
     }
   };
 
+  // Close drawer on ESC
+  useEffect(() => {
+    if (!isDrawerOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsDrawerOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isDrawerOpen]);
+
+  // Prevent background scroll when drawer is open
+  useEffect(() => {
+    if (isDrawerOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [isDrawerOpen]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Wheel Demo</h1>
-        <p>Upload a ZIP file exported from the Figma Wheel Plugin</p>
-      </header>
+      {/* App Bar (Mobile Header) */}
+      <AppBar
+        onMenuClick={() => setIsDrawerOpen(true)}
+        title="Wheel Demo"
+        githubUrl="https://github.com/michael-h-patrianna/wheel-exporter-test"
+      />
 
       <main className="App-main">
         <div className="layout-container">
-          {/* Left Sidebar */}
-          <div className="sidebar">
-            {/* File Upload */}
-            <div className="upload-section">
-              <label className="file-input-label">
-                <input
-                  type="file"
-                  accept=".zip"
-                  onChange={handleFileUpload}
-                  className="file-input-hidden"
-                  disabled={isLoading}
-                />
-                <span className="file-input-button">
-                  {isLoading ? 'Loading...' : 'Choose ZIP File'}
-                </span>
-              </label>
-              {isLoading && <div className="loading-message">Loading wheel theme...</div>}
-              {error && <div className="error-message">{error}</div>}
-            </div>
-
-            {extractedAssets && (
-              <>
-                {/* Prize Table */}
-                {prizeSession && (
-                  <PrizeTable
-                    prizes={prizeSession.prizes}
-                    winningIndex={prizeSession.winningIndex}
-                    showWinner={true}
-                    onNewPrizes={handleNewPrizes}
-                  />
-                )}
-
-                {/* Controls */}
-                <div className="controls-section">
-                  <h3>Wheel Settings</h3>
-                  <div className="control-group">
-                    <label>
-                      Wheel Width: {wheelWidth}px
-                      <input
-                        type="range"
-                        min="200"
-                        max="414"
-                        value={wheelWidth}
-                        onChange={(e) => setWheelWidth(Number(e.target.value))}
-                      />
-                    </label>
-                  </div>
-                  <div className="control-group">
-                    <label>
-                      Wheel Height: {wheelHeight}px
-                      <input
-                        type="range"
-                        min="200"
-                        max="720"
-                        value={wheelHeight}
-                        onChange={(e) => setWheelHeight(Number(e.target.value))}
-                      />
-                    </label>
-                  </div>
-                  <div className="control-group">
-                    <label>
-                      Segment Layout Style:
-                      <select
-                        value={layoutType}
-                        onChange={(e) => setLayoutType(e.target.value as SegmentLayoutType)}
-                        style={{
-                          width: '100%',
-                          padding: '8px',
-                          marginTop: '4px',
-                          borderRadius: '4px',
-                          border: '1px solid #ccc'
-                        }}
-                      >
-                        {SEGMENT_LAYOUTS.map(layout => (
-                          <option key={layout.id} value={layout.id}>
-                            {layout.name}
-                          </option>
-                        ))}
-                      </select>
-                      <small style={{ display: 'block', marginTop: '4px', color: '#666' }}>
-                        {SEGMENT_LAYOUTS.find(l => l.id === layoutType)?.description}
-                      </small>
-                    </label>
-                  </div>
-                  <div className="control-group">
-                    <label>
-                      Light Animation:
-                      <select
-                        value={lightAnimationType}
-                        onChange={(e) => setLightAnimationType(e.target.value as LightAnimationType)}
-                        style={{
-                          width: '100%',
-                          padding: '8px',
-                          marginTop: '4px',
-                          borderRadius: '4px',
-                          border: '1px solid #ccc'
-                        }}
-                      >
-                        {getAllAnimations().map(animation => (
-                          <option key={animation.id} value={animation.id}>
-                            {animation.title}
-                          </option>
-                        ))}
-                      </select>
-                      <small style={{ display: 'block', marginTop: '4px', color: '#666' }}>
-                        {getAllAnimations().find(a => a.id === lightAnimationType)?.description}
-                      </small>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Information panel */}
-                <div className="info-section">
-                  <h3>Wheel Information</h3>
-                  <div className="info-grid">
-                    <div className="info-item">
-                      <strong>ID:</strong> {extractedAssets.wheelData.wheelId}
-                    </div>
-                    <div className="info-item">
-                      <strong>Frame Size:</strong> {extractedAssets.wheelData.frameSize.width} × {extractedAssets.wheelData.frameSize.height}
-                    </div>
-                    <div className="info-item">
-                      <strong>Version:</strong> {extractedAssets.wheelData.metadata.version}
-                    </div>
-                  </div>
-
-                  <h4>Components Included:</h4>
-                  <div className="components-list">
-                    <button
-                      className={`component-toggle ${extractedAssets.backgroundImage ? 'component-present' : 'component-missing'} ${!componentVisibility.background ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('background')}
-                      disabled={!extractedAssets.backgroundImage}
-                    >
-                      Background {extractedAssets.backgroundImage ? (componentVisibility.background ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                    <button
-                      className={`component-toggle ${extractedAssets.wheelData.header ? 'component-present' : 'component-missing'} ${!componentVisibility.header ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('header')}
-                      disabled={!extractedAssets.wheelData.header}
-                    >
-                      Header {extractedAssets.wheelData.header ? (componentVisibility.header ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                    <button
-                      className={`component-toggle ${extractedAssets.wheelData.wheelBg ? 'component-present' : 'component-missing'} ${!componentVisibility.wheelBg ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('wheelBg')}
-                      disabled={!extractedAssets.wheelData.wheelBg}
-                    >
-                      Wheel Bg {extractedAssets.wheelData.wheelBg ? (componentVisibility.wheelBg ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                    <button
-                      className={`component-toggle ${extractedAssets.wheelData.segments ? 'component-present' : 'component-missing'} ${!componentVisibility.segments ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('segments')}
-                      disabled={!extractedAssets.wheelData.segments}
-                    >
-                      Segments {extractedAssets.wheelData.segments ? (componentVisibility.segments ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                    <button
-                      className={`component-toggle ${extractedAssets.wheelData.wheelTop1 ? 'component-present' : 'component-missing'} ${!componentVisibility.wheelTop1 ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('wheelTop1')}
-                      disabled={!extractedAssets.wheelData.wheelTop1}
-                    >
-                      Wheel Top 1 {extractedAssets.wheelData.wheelTop1 ? (componentVisibility.wheelTop1 ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                    <button
-                      className={`component-toggle ${extractedAssets.wheelData.wheelTop2 ? 'component-present' : 'component-missing'} ${!componentVisibility.wheelTop2 ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('wheelTop2')}
-                      disabled={!extractedAssets.wheelData.wheelTop2}
-                    >
-                      Wheel Top 2 {extractedAssets.wheelData.wheelTop2 ? (componentVisibility.wheelTop2 ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                    <button
-                      className={`component-toggle ${extractedAssets.wheelData.lights ? 'component-present' : 'component-missing'} ${!componentVisibility.lights ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('lights')}
-                      disabled={!extractedAssets.wheelData.lights}
-                    >
-                      Lights {extractedAssets.wheelData.lights ? (componentVisibility.lights ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                    <button
-                      className={`component-toggle ${extractedAssets.wheelData.buttonSpin ? 'component-present' : 'component-missing'} ${!componentVisibility.buttonSpin ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('buttonSpin')}
-                      disabled={!extractedAssets.wheelData.buttonSpin}
-                    >
-                      Button Spin {extractedAssets.wheelData.buttonSpin ? (componentVisibility.buttonSpin ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                    <button
-                      className={`component-toggle ${extractedAssets.wheelData.center ? 'component-present' : 'component-missing'} ${!componentVisibility.center ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('center')}
-                      disabled={!extractedAssets.wheelData.center}
-                    >
-                      Center {extractedAssets.wheelData.center ? (componentVisibility.center ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                    <button
-                      className={`component-toggle ${extractedAssets.wheelData.pointer ? 'component-present' : 'component-missing'} ${!componentVisibility.pointer ? 'component-hidden' : ''}`}
-                      onClick={() => toggleComponentVisibility('pointer')}
-                      disabled={!extractedAssets.wheelData.pointer}
-                    >
-                      Pointer {extractedAssets.wheelData.pointer ? (componentVisibility.pointer ? '👁' : '👁‍🗨') : '✗'}
-                    </button>
-                  </div>
-
-                  <p className="interaction-help">
-                    <strong>Interaction Guide:</strong><br />
-                    • Click header to cycle: active → success → fail<br />
-                    • Click spin button to simulate wheel spinning<br />
-                    • Toggle "Show Center" to show/hide center overlay<br />
-                    • Adjust wheel dimensions using the sliders above
-                  </p>
-                </div>
-              </>
-            )}
-          </div>
+          {/* Desktop Sidebar */}
+          <Sidebar
+            extractedAssets={extractedAssets}
+            prizeSession={prizeSession}
+            isLoading={isLoading}
+            error={error}
+            wheelWidth={wheelWidth}
+            wheelHeight={wheelHeight}
+            layoutType={layoutType}
+            lightAnimationType={lightAnimationType}
+            componentVisibility={componentVisibility}
+            onFileUpload={handleFileUpload}
+            onNewPrizes={handleNewPrizes}
+            onWheelWidthChange={setWheelWidth}
+            onWheelHeightChange={setWheelHeight}
+            onLayoutTypeChange={setLayoutType}
+            onLightAnimationTypeChange={setLightAnimationType}
+            onToggleComponentVisibility={toggleComponentVisibility}
+            className="desktop-sidebar"
+          />
 
           {/* Main Content Area */}
           <div className="main-content">
@@ -400,6 +234,62 @@ function App() {
           </div>
         </div>
       </main>
+
+      {/* Drawer for mobile sidebar */}
+      <div
+        id="app-sidebar-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden={!isDrawerOpen}
+        hidden={!isDrawerOpen}
+        className={`app-drawer ${isDrawerOpen ? 'is-open' : ''}`}
+      >
+        <div className="app-drawer__overlay" onClick={() => setIsDrawerOpen(false)} />
+        <div className="app-drawer__panel">
+          <div className="app-drawer__panel-header">
+            <button
+              type="button"
+              className="app-drawer__close"
+              aria-label="Close menu"
+              onClick={() => setIsDrawerOpen(false)}
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <Sidebar
+            extractedAssets={extractedAssets}
+            prizeSession={prizeSession}
+            isLoading={isLoading}
+            error={error}
+            wheelWidth={wheelWidth}
+            wheelHeight={wheelHeight}
+            layoutType={layoutType}
+            lightAnimationType={lightAnimationType}
+            componentVisibility={componentVisibility}
+            onFileUpload={handleFileUpload}
+            onNewPrizes={handleNewPrizes}
+            onWheelWidthChange={setWheelWidth}
+            onWheelHeightChange={setWheelHeight}
+            onLayoutTypeChange={setLayoutType}
+            onLightAnimationTypeChange={setLightAnimationType}
+            onToggleComponentVisibility={toggleComponentVisibility}
+            className="drawer-sidebar"
+          />
+        </div>
+      </div>
     </div>
   );
 }
