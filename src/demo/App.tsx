@@ -6,6 +6,7 @@ import { loadWheelFromZip, WheelLoadError } from '../lib/services/wheelLoader';
 import { PrizeTable } from '../lib/components/prize/PrizeTable';
 import { createDefaultPrizeProvider, type PrizeProviderResult } from '../lib/services/prizeProvider';
 import { SEGMENT_LAYOUTS, type SegmentLayoutType } from '../lib/types/segmentLayoutTypes';
+import { getAllAnimations, type LightAnimationType } from '../lib/components/renderers/lights/lightAnimations';
 
 function App() {
   const [extractedAssets, setExtractedAssets] = useState<ExtractedAssets | null>(null);
@@ -17,6 +18,7 @@ function App() {
   const [prizeRefreshTrigger, setPrizeRefreshTrigger] = useState(0);
   const wheelResetRef = useRef<(() => void) | null>(null);
   const [layoutType, setLayoutType] = useState<SegmentLayoutType>('original');
+  const [lightAnimationType, setLightAnimationType] = useState<LightAnimationType>('none');
 
   // Component visibility state
   const [componentVisibility, setComponentVisibility] = useState({
@@ -231,6 +233,31 @@ function App() {
                       </small>
                     </label>
                   </div>
+                  <div className="control-group">
+                    <label>
+                      Light Animation:
+                      <select
+                        value={lightAnimationType}
+                        onChange={(e) => setLightAnimationType(e.target.value as LightAnimationType)}
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          marginTop: '4px',
+                          borderRadius: '4px',
+                          border: '1px solid #ccc'
+                        }}
+                      >
+                        {getAllAnimations().map(animation => (
+                          <option key={animation.id} value={animation.id}>
+                            {animation.title}
+                          </option>
+                        ))}
+                      </select>
+                      <small style={{ display: 'block', marginTop: '4px', color: '#666' }}>
+                        {getAllAnimations().find(a => a.id === lightAnimationType)?.description}
+                      </small>
+                    </label>
+                  </div>
                 </div>
 
                 {/* Information panel */}
@@ -352,6 +379,7 @@ function App() {
                       prizeSession={prizeSession}
                       onResetReady={(resetFn) => { wheelResetRef.current = resetFn; }}
                       layoutType={layoutType}
+                      lightAnimationType={lightAnimationType}
                     />
                   </div>
 

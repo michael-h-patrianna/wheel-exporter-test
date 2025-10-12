@@ -1,0 +1,142 @@
+/**
+ * Accelerating Spin Animation
+ * Duration: 5s
+ * Pattern: Accelerates then settles on winner (wheel of fortune style)
+ * Cross-platform compatible - uses box-shadow instead of radial gradients
+ */
+
+.light-bulb__glow-outer--accelerating-spin {
+  animation: spin-accelerate-glow 5s ease-in-out infinite;
+  animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
+}
+
+.light-bulb__bulb--accelerating-spin {
+  animation: spin-accelerate-bulb 5s ease-in-out infinite;
+  animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
+}
+
+/* Primary animation: Accelerating spin like wheel of fortune */
+/* Phase 1 (0-25%): Sequential chase */
+/* Phase 2 (25-50%): All bulbs light up (blur effect) */
+/* Phase 3 (50-80%): Back to sequential */
+/* Phase 4 (80-100%): Settle on first bulb */
+@keyframes spin-accelerate-bulb {
+  /* Phase 1: Sequential chase - ON for 8% */
+  0%, 92% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+  1% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 8px var(--bulb-on-glow80), 0 0 12px var(--bulb-on-glow60);
+  }
+  4% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 8px var(--bulb-on-glow80), 0 0 12px var(--bulb-on-glow60);
+  }
+  6% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 4px var(--bulb-on-glow50);
+  }
+  8% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+
+  /* Phase 2: All bulbs ON (blur effect) */
+  30%, 45% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 18px var(--bulb-on-glow80);
+  }
+
+  /* Phase 3: Back to sequential chase */
+  55% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 8px var(--bulb-on-glow80), 0 0 12px var(--bulb-on-glow60);
+  }
+  57% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 4px var(--bulb-on-glow50);
+  }
+  59% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+
+  100% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+}
+
+/* Winner spotlight for first bulb */
+.light-bulb__wrapper--accelerating-spin:first-child .light-bulb__bulb--accelerating-spin {
+  animation: spin-accelerate-bulb-winner 5s ease-in-out infinite;
+}
+
+@keyframes spin-accelerate-bulb-winner {
+  0%, 79% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+  80% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 25px var(--bulb-on-glow80);
+  }
+  100% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 25px var(--bulb-on-glow80);
+  }
+}
+
+@keyframes spin-accelerate-glow {
+  /* Phase 1: Sequential */
+  0%, 92% {
+    opacity: 0;
+  }
+  1% {
+    opacity: 0.8;
+  }
+  4% {
+    opacity: 0.8;
+  }
+  6% {
+    opacity: 0.4;
+  }
+  8% {
+    opacity: 0;
+  }
+
+  /* Phase 2: All ON */
+  30%, 45% {
+    opacity: 1;
+  }
+
+  /* Phase 3: Back to sequential */
+  55% {
+    opacity: 0.8;
+  }
+  57% {
+    opacity: 0.4;
+  }
+  59%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Winner glow */
+.light-bulb__wrapper--accelerating-spin:first-child .light-bulb__glow-outer--accelerating-spin {
+  animation: spin-accelerate-glow-winner 5s ease-in-out infinite;
+}
+
+@keyframes spin-accelerate-glow-winner {
+  0%, 79% {
+    opacity: 0;
+  }
+  80% {
+    opacity: 1;
+  }
+  86%, 100% {
+    opacity: 0.95;
+  }
+}

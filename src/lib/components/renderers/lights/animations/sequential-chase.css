@@ -1,0 +1,115 @@
+/**
+ * Sequential Chase Animation
+ * Duration: 1.6s
+ * Pattern: Single bulb chases around
+ * Cross-platform compatible - uses box-shadow instead of radial gradients
+ */
+
+/* Glow layer - uses solid color background with blur via box-shadow */
+.light-bulb__glow-outer--sequential-chase {
+  animation: chase-glow 1.6s ease-in-out infinite;
+  animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
+}
+
+.light-bulb__bulb--sequential-chase {
+  animation: chase-bulb 1.6s ease-in-out infinite;
+  animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
+}
+
+/* Primary animation: Sequential chasing light */
+@keyframes chase-bulb {
+  0%, 85% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+  1% {
+    background-color: color-mix(in srgb, var(--bulb-off) 90%, var(--bulb-on) 10%);
+    box-shadow: 0 0 2px var(--bulb-off-glow35);
+  }
+  2% {
+    background-color: var(--bulb-off-tint30);
+    box-shadow: 0 0 3px color-mix(in srgb, var(--bulb-off) 40%, transparent);
+  }
+  3% {
+    background-color: var(--bulb-blend40);
+    box-shadow: 0 0 5px var(--bulb-on-glow50), 0 0 8px var(--bulb-on-glow35);
+  }
+  4% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 7px var(--bulb-on-glow70), 0 0 11px var(--bulb-on-glow50);
+  }
+  5% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 15px var(--bulb-on-glow70);
+  }
+  10% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 15px var(--bulb-on-glow70);
+  }
+  11% {
+    background-color: color-mix(in srgb, var(--bulb-on) 95%, var(--bulb-off) 5%);
+    box-shadow: 0 0 8px var(--bulb-on-glow80), 0 0 13px var(--bulb-on-glow60);
+  }
+  12% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--bulb-on) 65%, transparent), 0 0 10px var(--bulb-on-glow45);
+  }
+  13% {
+    background-color: var(--bulb-blend40);
+    box-shadow: 0 0 4px var(--bulb-on-glow50);
+  }
+  14% {
+    background-color: var(--bulb-off-tint30);
+    box-shadow: 0 0 3px color-mix(in srgb, var(--bulb-off) 40%, transparent);
+  }
+  15% {
+    background-color: color-mix(in srgb, var(--bulb-off) 90%, var(--bulb-on) 10%);
+    box-shadow: 0 0 2px var(--bulb-off-glow35);
+  }
+  16%, 100% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+}
+
+@keyframes chase-glow {
+  0%, 85% {
+    opacity: 0;
+  }
+  1% {
+    opacity: 0.1;
+  }
+  2% {
+    opacity: 0.25;
+  }
+  3% {
+    opacity: 0.45;
+  }
+  4% {
+    opacity: 0.7;
+  }
+  5% {
+    opacity: 0.9;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  11% {
+    opacity: 0.75;
+  }
+  12% {
+    opacity: 0.6;
+  }
+  13% {
+    opacity: 0.4;
+  }
+  14% {
+    opacity: 0.2;
+  }
+  15% {
+    opacity: 0.08;
+  }
+  16%, 100% {
+    opacity: 0;
+  }
+}

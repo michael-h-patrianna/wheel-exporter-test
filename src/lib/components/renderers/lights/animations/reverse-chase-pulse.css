@@ -1,0 +1,159 @@
+/**
+ * Reverse Chase Pulse Animation
+ * Duration: 7s
+ * Pattern: Counter-clockwise then clockwise with pulses
+ * Cross-platform compatible - uses box-shadow instead of radial gradients
+ */
+
+.light-bulb__glow-outer--reverse-chase-pulse {
+  animation: reverse-chase-glow 7s ease-in-out infinite;
+  animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
+}
+
+.light-bulb__bulb--reverse-chase-pulse {
+  animation: reverse-chase-bulb 7s ease-in-out infinite;
+  animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
+}
+
+/* Winner spotlight for first bulb */
+.light-bulb__wrapper--reverse-chase-pulse:first-child .light-bulb__bulb--reverse-chase-pulse {
+  animation: reverse-chase-bulb-winner 7s ease-in-out infinite;
+}
+
+.light-bulb__wrapper--reverse-chase-pulse:first-child .light-bulb__glow-outer--reverse-chase-pulse {
+  animation: reverse-chase-glow-winner 7s ease-in-out infinite;
+}
+
+/* Reverse chase pattern: Counter-clockwise → clockwise → pulse → winner */
+/* Phase 1 (0-35%): Counter-clockwise chase (3 complete rounds) */
+/* Phase 2 (35-65%): Clockwise chase faster (2 complete rounds) */
+/* Phase 3 (65-85%): All bulbs pulse together (thinking pattern) */
+/* Phase 4 (85-100%): Settle on winner */
+@keyframes reverse-chase-bulb {
+  /* Phase 1: Counter-clockwise - each bulb ON for 10% of phase 1 */
+  0%, 94% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+
+  /* ON period during counter-clockwise phase */
+  2%, 6% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 9px color-mix(in srgb, var(--bulb-on) 85%, transparent), 0 0 14px color-mix(in srgb, var(--bulb-on) 65%, transparent);
+  }
+  8% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--bulb-on) 55%, transparent);
+  }
+
+  /* Phase 2: Clockwise chase - faster, at 40-65% timeline */
+  42%, 46% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 9px color-mix(in srgb, var(--bulb-on) 85%, transparent), 0 0 14px color-mix(in srgb, var(--bulb-on) 65%, transparent);
+  }
+  47% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--bulb-on) 55%, transparent);
+  }
+
+  /* Phase 3: Synchronized pulse - all bulbs together */
+  68%, 70% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 16px var(--bulb-on-glow70);
+  }
+  71% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+
+  75%, 77% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 16px var(--bulb-on-glow70);
+  }
+  78% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+
+  82%, 84% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 16px var(--bulb-on-glow70);
+  }
+
+  100% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+}
+
+@keyframes reverse-chase-glow {
+  /* Phase 1: Counter-clockwise */
+  0%, 94% {
+    opacity: 0;
+  }
+  2%, 6% {
+    opacity: 0.85;
+  }
+  8% {
+    opacity: 0.4;
+  }
+
+  /* Phase 2: Clockwise */
+  42%, 46% {
+    opacity: 0.85;
+  }
+  47% {
+    opacity: 0.4;
+  }
+
+  /* Phase 3: Synchronized pulse */
+  68%, 70% {
+    opacity: 0.9;
+  }
+  71% {
+    opacity: 0;
+  }
+
+  75%, 77% {
+    opacity: 0.9;
+  }
+  78% {
+    opacity: 0;
+  }
+
+  82%, 84% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Winner celebration */
+@keyframes reverse-chase-bulb-winner {
+  0%, 86% {
+    background-color: var(--bulb-off);
+    box-shadow: 0 0 2px var(--bulb-off-glow30);
+  }
+  87% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 30px color-mix(in srgb, var(--bulb-on) 95%, transparent);
+  }
+  100% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 30px color-mix(in srgb, var(--bulb-on) 95%, transparent);
+  }
+}
+
+@keyframes reverse-chase-glow-winner {
+  0%, 86% {
+    opacity: 0;
+  }
+  87% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}

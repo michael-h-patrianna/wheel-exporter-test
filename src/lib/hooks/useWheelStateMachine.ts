@@ -12,7 +12,7 @@ export type WheelState = 'IDLE' | 'SPINNING' | 'COMPLETE';
 export type WheelEvent =
   | { type: 'START_SPIN'; targetSegment: number; finalRotation: number }
   | { type: 'SPIN_COMPLETE' }
-  | { type: 'RESET' };
+  | { type: 'RESET'; initialRotation?: number };
 
 /**
  * State machine data
@@ -38,6 +38,33 @@ const ROTATION_CONFIG = {
   MIN_FULL_SPINS: 4, // 4-5 full rotations for excitement
   MAX_FULL_SPINS: 5,
 } as const;
+
+/**
+ * Calculate initial rotation to position a segment at 12 o'clock
+ * Used to position the jackpot segment at the top when the wheel loads
+ *
+ * @param jackpotSegmentIndex - Index of the jackpot segment to position at 12 o'clock
+ * @param segmentCount - Total number of segments
+ * @returns Initial rotation in degrees
+ */
+function calculateInitialRotation(
+  jackpotSegmentIndex: number,
+  segmentCount: number
+): number {
+  // Calculate angle for each segment
+  const segmentAngle = 360 / segmentCount;
+
+  // Calculate where the jackpot segment's center naturally sits (before rotation)
+  // Segments start at -90° (12 o'clock), so segment N center is at:
+  const segmentOriginalAngle = jackpotSegmentIndex * segmentAngle + segmentAngle / 2 - 90;
+
+  // To position this segment at -90° (pointer position), we need to rotate by:
+  // pointerAngle (-90°) - segmentOriginalAngle
+  const pointerAngle = -90;
+  const initialRotation = ((pointerAngle - segmentOriginalAngle + 360) % 360);
+
+  return initialRotation;
+}
 
 /**
  * Calculate rotation needed to land winning segment at 12 o'clock position
@@ -120,11 +147,12 @@ function wheelStateMachineReducer(
       }
       // Allow reset from IDLE state (idempotent operation)
       if (event.type === 'RESET') {
+        const resetRotation = event.initialRotation ?? 0;
         logger.debug('Wheel state: IDLE -> IDLE (reset called)', logContext);
         return {
           state: 'IDLE',
-          rotation: 0,
-          targetRotation: 0,
+          rotation: resetRotation,
+          targetRotation: resetRotation,
           targetSegment: null,
         };
       }
@@ -144,11 +172,12 @@ function wheelStateMachineReducer(
       }
       // Allow reset from SPINNING state (e.g., when generating new prize table)
       if (event.type === 'RESET') {
+        const resetRotation = event.initialRotation ?? 0;
         logger.info('Wheel state: SPINNING -> IDLE (forced reset)', logContext);
         return {
           state: 'IDLE',
-          rotation: 0,
-          targetRotation: 0,
+          rotation: resetRotation,
+          targetRotation: resetRotation,
           targetSegment: null,
         };
       }
@@ -156,11 +185,12 @@ function wheelStateMachineReducer(
 
     case 'COMPLETE':
       if (event.type === 'RESET') {
+        const resetRotation = event.initialRotation ?? 0;
         logger.info('Wheel state: COMPLETE -> IDLE', logContext);
         return {
           state: 'IDLE',
-          rotation: 0,
-          targetRotation: 0,
+          rotation: resetRotation,
+          targetRotation: resetRotation,
           targetSegment: null,
         };
       }
@@ -196,6 +226,7 @@ interface UseWheelStateMachineConfig {
   segmentCount: number;
   onSpinComplete?: (segment: number) => void;
   winningSegmentIndex?: number | null; // Pre-determined winning segment from prize session
+  jackpotSegmentIndex?: number | null; // Index of jackpot segment to position at 12 o'clock initially
 }
 
 /**
@@ -227,13 +258,28 @@ interface UseWheelStateMachineReturn {
 export function useWheelStateMachine(
   config: UseWheelStateMachineConfig
 ): UseWheelStateMachineReturn {
-  const { segmentCount, onSpinComplete, winningSegmentIndex } = config;
+  const { segmentCount, onSpinComplete, winningSegmentIndex, jackpotSegmentIndex } = config;
+
+  // Calculate initial rotation to position jackpot at 12 o'clock
+  const initialRotation = jackpotSegmentIndex != null
+    ? calculateInitialRotation(jackpotSegmentIndex, segmentCount)
+    : 0;
+
+  // Store initial rotation in a ref so it doesn't change during re-renders
+  const initialRotationRef = useRef(initialRotation);
+
+  // Update initial rotation ref when jackpot segment changes
+  useEffect(() => {
+    initialRotationRef.current = jackpotSegmentIndex != null
+      ? calculateInitialRotation(jackpotSegmentIndex, segmentCount)
+      : 0;
+  }, [jackpotSegmentIndex, segmentCount]);
 
   // Initialize state
   const [machineState, dispatch] = useReducer(wheelStateMachineReducer, {
     state: 'IDLE',
-    rotation: 0,
-    targetRotation: 0,
+    rotation: initialRotation,
+    targetRotation: initialRotation,
     targetSegment: null,
   });
 
@@ -299,11 +345,11 @@ export function useWheelStateMachine(
   }, [machineState.state, machineState.rotation, segmentCount, onSpinComplete, winningSegmentIndex]);
 
   /**
-   * Reset to IDLE state
+   * Reset to IDLE state with initial rotation (jackpot at 12 o'clock)
    */
   const reset = useCallback(() => {
     cleanupTimeouts();
-    dispatch({ type: 'RESET' });
+    dispatch({ type: 'RESET', initialRotation: initialRotationRef.current });
   }, [cleanupTimeouts]);
 
   /**

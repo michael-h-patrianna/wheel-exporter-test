@@ -3,6 +3,7 @@ import { WheelExport, ExtractedAssets, HeaderState, ButtonSpinState } from '../t
 import { useWheelStateMachine } from '../hooks/useWheelStateMachine';
 import type { PrizeProviderResult } from '../services/prizeProvider';
 import type { SegmentLayoutType } from '../types/segmentLayoutTypes';
+import { mapPrizesToSegments } from '../utils/prizeSegmentMapper';
 
 // Import all renderer components
 import { BackgroundRenderer } from './renderers/BackgroundRenderer';
@@ -13,7 +14,8 @@ import { ButtonSpinRenderer } from './renderers/ButtonSpinRenderer';
 import { CenterRenderer } from './renderers/CenterRenderer';
 import { SegmentRenderer } from './renderers/SegmentRenderer';
 import { PointerRenderer } from './renderers/PointerRenderer';
-import { LightsRenderer } from './renderers/LightsRenderer';
+import { AnimatedLightsRenderer } from './renderers/lights/AnimatedLightsRenderer';
+import type { LightAnimationType } from './renderers/lights/lightAnimations';
 
 interface ComponentVisibility {
   background: boolean;
@@ -39,6 +41,7 @@ interface WheelViewerProps {
   prizeSession?: PrizeProviderResult | null;
   onResetReady?: (resetFn: () => void) => void;
   layoutType?: SegmentLayoutType;
+  lightAnimationType?: LightAnimationType;
 }
 
 export const WheelViewer: React.FC<WheelViewerProps> = ({
@@ -52,15 +55,28 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   prizeSession,
   onResetReady,
   layoutType = 'original',
+  lightAnimationType = 'none',
 }) => {
   // Component state management
   const [headerState, setHeaderState] = useState<HeaderState>('active');
   const [buttonSpinState, setButtonSpinState] = useState<ButtonSpinState>('default');
 
+  // Calculate jackpot segment index (segment with 'jackpot' kind)
+  const jackpotSegmentIndex = useMemo(() => {
+    if (!prizeSession?.prizes) return null;
+
+    // Map prizes to segments to determine which has the 'jackpot' kind
+    const prizeSegments = mapPrizesToSegments(prizeSession.prizes);
+    const jackpotSegment = prizeSegments.find(seg => seg.kind === 'jackpot');
+
+    return jackpotSegment?.index ?? null;
+  }, [prizeSession?.prizes]);
+
   // Wheel spin state machine with winning segment from prize session
   const wheelStateMachine = useWheelStateMachine({
     segmentCount,
     winningSegmentIndex: prizeSession?.winningIndex,
+    jackpotSegmentIndex,
     onSpinComplete: useCallback(() => {
       setButtonSpinState('default');
     }, []),
@@ -120,6 +136,26 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
     return buttonSpinState === 'default'
       ? assets.buttonSpinImages.default
       : assets.buttonSpinImages.spinning;
+  };
+
+  // Get light animation based on wheel state
+  const getLightAnimation = (): LightAnimationType => {
+    // If manual override is provided, use it
+    if (lightAnimationType && lightAnimationType !== 'none') {
+      return lightAnimationType;
+    }
+
+    // Otherwise, map wheel state to animation
+    switch (wheelStateMachine.state) {
+      case 'IDLE':
+        return 'alternating-carnival';
+      case 'SPINNING':
+        return 'sequential-chase';
+      case 'COMPLETE':
+        return 'accelerating-spin';
+      default:
+        return 'alternating-carnival';
+    }
   };
 
   // Expose reset function to parent
@@ -220,14 +256,6 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
           />
         )}
 
-        {/* Layer 6.5: Lights */}
-        {componentVisibility.lights && (
-          <LightsRenderer
-            lights={wheelData.lights}
-            scale={scale}
-          />
-        )}
-
         {/* Layer 7: Spin Button */}
         {componentVisibility.buttonSpin && wheelData.buttonSpin && (
           <ButtonSpinRenderer
@@ -240,7 +268,16 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
           />
         )}
 
-        {/* Layer 8: Center Circle */}
+        {/* Layer 8: Lights (above wheelTop2, below pointer) */}
+        {componentVisibility.lights && (
+          <AnimatedLightsRenderer
+            lights={wheelData.lights}
+            scale={scale}
+            animationType={getLightAnimation()}
+          />
+        )}
+
+        {/* Layer 9: Center Circle */}
         {componentVisibility.center && (
           <CenterRenderer
             center={wheelData.center}
@@ -248,7 +285,7 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
           />
         )}
 
-        {/* Layer 9: Pointer */}
+        {/* Layer 10: Pointer (top layer) */}
         {componentVisibility.pointer && (
           <PointerRenderer
             pointer={wheelData.pointer}

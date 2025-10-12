@@ -1,0 +1,197 @@
+/**
+ * Alternating Carnival Animation
+ * Duration: 1.2s
+ * Pattern: Even/odd bulbs alternate
+ * Cross-platform compatible - uses box-shadow instead of radial gradients
+ */
+
+/* GPU acceleration and performance */
+.light-bulb__wrapper--alternating-carnival {
+  will-change: transform;
+}
+
+.light-bulb__bulb--alternating-carnival {
+  will-change: transform, background-color, box-shadow;
+}
+
+.light-bulb__glow-outer--alternating-carnival,
+.light-bulb__glow-inner--alternating-carnival,
+.light-bulb__filament--alternating-carnival {
+  will-change: opacity;
+}
+
+/* Animations for even bulbs */
+.light-bulb__wrapper--even.light-bulb__wrapper--alternating-carnival {
+  animation: carnival-wrapper-even 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.light-bulb__wrapper--even .light-bulb__bulb--alternating-carnival {
+  animation: carnival-bulb-even 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.light-bulb__wrapper--even .light-bulb__filament--alternating-carnival {
+  animation: carnival-filament-even 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.light-bulb__wrapper--even .light-bulb__glow-outer--alternating-carnival {
+  animation: carnival-glow-outer-even 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.light-bulb__wrapper--even .light-bulb__glow-inner--alternating-carnival {
+  animation: carnival-glow-inner-even 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+/* Animations for odd bulbs */
+.light-bulb__wrapper--odd.light-bulb__wrapper--alternating-carnival {
+  animation: carnival-wrapper-odd 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.light-bulb__wrapper--odd .light-bulb__bulb--alternating-carnival {
+  animation: carnival-bulb-odd 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.light-bulb__wrapper--odd .light-bulb__filament--alternating-carnival {
+  animation: carnival-filament-odd 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.light-bulb__wrapper--odd .light-bulb__glow-outer--alternating-carnival {
+  animation: carnival-glow-outer-odd 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.light-bulb__wrapper--odd .light-bulb__glow-inner--alternating-carnival {
+  animation: carnival-glow-inner-odd 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+/* Keyframes for even bulbs - smooth transitions with blend states */
+@keyframes carnival-bulb-even {
+  0%, 42% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 4px var(--bulb-on-glow70), 0 0 6px var(--bulb-on-glow50);
+    transform: translate(-50%, -50%) scale(1) rotate(1.5deg);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+  43% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 2px var(--bulb-on-glow50);
+    transform: translate(-50%, -50%) scale(1) rotate(0.75deg);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+  44%, 92% {
+    background-color: var(--bulb-off);
+    box-shadow: none;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  93% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 2px var(--bulb-on-glow50);
+    transform: translate(-50%, -50%) scale(1) rotate(0.75deg);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+  94%, 100% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 4px var(--bulb-on-glow70), 0 0 6px var(--bulb-on-glow50);
+    transform: translate(-50%, -50%) scale(1) rotate(1.5deg);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+@keyframes carnival-wrapper-even {
+  0%, 100% {
+    z-index: 1;
+  }
+}
+
+/* Filament animation for even - smooth fade transitions */
+@keyframes carnival-filament-even {
+  0%, 42% { opacity: 0.85; }
+  43% { opacity: 0.4; }
+  44%, 92% { opacity: 0; }
+  93% { opacity: 0.4; }
+  94%, 100% { opacity: 0.85; }
+}
+
+/* Outer glow for even - smooth fade transitions */
+@keyframes carnival-glow-outer-even {
+  0%, 42% { opacity: 0.65; }
+  43% { opacity: 0.3; }
+  44%, 92% { opacity: 0; }
+  93% { opacity: 0.3; }
+  94%, 100% { opacity: 0.65; }
+}
+
+/* Inner glow for even - smooth fade transitions */
+@keyframes carnival-glow-inner-even {
+  0%, 42% { opacity: 0.8; }
+  43% { opacity: 0.4; }
+  44%, 92% { opacity: 0; }
+  93% { opacity: 0.4; }
+  94%, 100% { opacity: 0.8; }
+}
+
+/* Keyframes for odd bulbs - smooth transitions with blend states */
+@keyframes carnival-bulb-odd {
+  0%, 42% {
+    background-color: var(--bulb-off);
+    box-shadow: none;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  43% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 2px var(--bulb-on-glow50);
+    transform: translate(-50%, -50%) scale(1) rotate(0.75deg);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+  44%, 92% {
+    background-color: var(--bulb-on);
+    box-shadow: 0 0 4px var(--bulb-on-glow70), 0 0 6px var(--bulb-on-glow50);
+    transform: translate(-50%, -50%) scale(1) rotate(1.5deg);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+  93% {
+    background-color: var(--bulb-blend70);
+    box-shadow: 0 0 2px var(--bulb-on-glow50);
+    transform: translate(-50%, -50%) scale(1) rotate(0.75deg);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+  94%, 100% {
+    background-color: var(--bulb-off);
+    box-shadow: none;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+@keyframes carnival-wrapper-odd {
+  0%, 100% {
+    z-index: 1;
+  }
+}
+
+/* Filament animation for odd - smooth fade transitions */
+@keyframes carnival-filament-odd {
+  0%, 42% { opacity: 0; }
+  43% { opacity: 0.4; }
+  44%, 92% { opacity: 0.85; }
+  93% { opacity: 0.4; }
+  94%, 100% { opacity: 0; }
+}
+
+/* Outer glow for odd - smooth fade transitions */
+@keyframes carnival-glow-outer-odd {
+  0%, 42% { opacity: 0; }
+  43% { opacity: 0.3; }
+  44%, 92% { opacity: 0.65; }
+  93% { opacity: 0.3; }
+  94%, 100% { opacity: 0; }
+}
+
+/* Inner glow for odd - smooth fade transitions */
+@keyframes carnival-glow-inner-odd {
+  0%, 42% { opacity: 0; }
+  43% { opacity: 0.4; }
+  44%, 92% { opacity: 0.8; }
+  93% { opacity: 0.4; }
+  94%, 100% { opacity: 0; }
+}

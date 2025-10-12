@@ -140,10 +140,11 @@ App (Demo)
     │   └── OriginalLayout      (Layout strategy for segments)
     ├── HeaderRenderer          (Layer 4: Header with state images)
     ├── WheelTopRenderer x2     (Layers 5-6: Top overlays)
-    ├── LightsRenderer          (Layer 6.5: Decorative lights)
     ├── ButtonSpinRenderer      (Layer 7: Spin button)
-    ├── CenterRenderer          (Layer 8: Center debug circle)
-    └── PointerRenderer         (Layer 9: Winning indicator)
+    ├── AnimatedLightsRenderer  (Layer 8: Animated decorative lights)
+    │   └── LightBulb[]         (Individual light bulbs with animations)
+    ├── CenterRenderer          (Layer 9: Center debug circle)
+    └── PointerRenderer         (Layer 10: Winning indicator - top layer)
 
 ResultViewer
 ├── HeaderRenderer (success state)
@@ -486,6 +487,422 @@ Scaled properties:
 - Stroke widths
 - Shadow offsets/blur/spread
 - Font sizes
+
+---
+
+## Light Animation System
+
+### Overview
+
+The wheel includes a sophisticated **decorative light bulb animation system** that provides visual feedback based on the wheel's state. The system supports 8 distinct animation patterns and automatically switches animations based on the wheel state machine.
+
+**Components**:
+- `AnimatedLightsRenderer`: Container that manages light positioning and timing
+- `LightBulb`: Individual light bulb with glow effects and animations
+
+**Files**:
+- `src/lib/components/renderers/lights/AnimatedLightsRenderer.tsx`
+- `src/lib/components/renderers/lights/LightBulb.tsx`
+- `src/lib/components/renderers/lights/LightBulb.css`
+- `src/lib/components/renderers/lights/animations/*.css` (8 animation files)
+
+### Architecture
+
+#### Layer Positioning
+
+Lights render at **Layer 8** (z-index: 17):
+- Above wheelTop2 (z-index: 16), wheelTop1 (z-index: 15), buttonSpin, and segments
+- Below pointer (z-index: 20) and center (z-index: 100)
+- This ensures lights are visible on top of the wheel decorations but don't obscure the winning indicator
+
+#### Component Structure
+
+```
+AnimatedLightsRenderer (Container)
+├── Calculates bulb positions from wheel data
+├── Reorders positions so 12 o'clock is first
+├── Computes animation timing (delay per bulb)
+├── Maps wheel state to animation type
+└── Renders LightBulb[] (one per position)
+    └── LightBulb (Individual bulb)
+        ├── Wrapper div (position, classes)
+        ├── Bulb element (8px circle, colored)
+        ├── Inner glow (10px, medium intensity)
+        └── Outer glow (12px, diffused)
+```
+
+#### Position Reordering
+
+Lights are reordered so the **topmost bulb (minimum y coordinate)** becomes first in the array. This ensures animations start at the **12 o'clock position** instead of wherever the first bulb happens to be in the data.
+
+```typescript
+// Find bulb with minimum y (topmost)
+let topIndex = 0;
+let minY = positions[0].y;
+for (let i = 1; i < positions.length; i++) {
+  if (positions[i].y < minY) {
+    minY = positions[i].y;
+    topIndex = i;
+  }
+}
+
+// Reorder: [top, top+1, ..., end, 0, ..., top-1]
+const reordered = [
+  ...positions.slice(topIndex),
+  ...positions.slice(0, topIndex)
+];
+```
+
+**Location**: `src/lib/components/renderers/lights/AnimatedLightsRenderer.tsx:77`
+
+### Animation Patterns
+
+The system supports **8 distinct animation patterns**, each with unique timing and visual characteristics:
+
+#### 1. **Alternating Carnival** (Default/IDLE state)
+- **Duration**: 1.2s
+- **Pattern**: Even/odd bulbs alternate in a classic carnival marquee style
+- **Timing**: Synchronized (no stagger)
+- **Use Case**: Wheel at rest, attracting attention
+
+#### 2. **Sequential Chase** (SPINNING state)
+- **Duration**: 1.6s
+- **Pattern**: Lights chase around the wheel one by one
+- **Timing**: Synchronized (no stagger)
+- **Use Case**: Wheel spinning, creating sense of motion
+
+#### 3. **Accelerating Spin** (COMPLETE state)
+- **Duration**: 5.0s
+- **Pattern**: Lights chase with increasing speed
+- **Timing**: 0.08 stagger multiplier
+- **Special**: Winner bulb (first in array) gets extra flash effect
+- **Use Case**: Wheel stopped, celebrating the win
+
+#### 4. **Reverse Chase Pulse**
+- **Duration**: 7.0s
+- **Pattern**: Chase animation running in reverse direction
+- **Timing**: 0.12 stagger multiplier
+- **Visual**: Smooth pulse with longer fade
+
+#### 5. **Random Sparkle**
+- **Duration**: 4.0s
+- **Pattern**: Bulbs light up in semi-random sequence
+- **Timing**: 0.37 stagger multiplier (creates pseudo-random effect)
+- **Visual**: Quick sparkles with varied intensity
+
+#### 6. **Carnival Waltz**
+- **Duration**: 4.8s
+- **Pattern**: Groups of 3 in waltz rhythm (ONE-two-three)
+- **Timing**: Delay per group (4.8s / numGroups)
+- **Special**: Beat-based intensity (strong, weak, weak)
+- **Delay Offsets**: Beat 1 (0ms), Beat 2 (+150ms), Beat 3 (+300ms)
+
+#### 7. **Comet Trail**
+- **Duration**: 3.0s
+- **Pattern**: Bright head with long trailing fadeout
+- **Timing**: Synchronized (no stagger)
+- **Visual**: Quick flash (1%) followed by gradual 30% fadeout
+
+#### 8. **Dual Convergence**
+- **Duration**: 4.0s
+- **Pattern**: Two lights from opposite sides collide at center
+- **Timing**: Delay per half (4.0s / halfBulbs)
+- **Special**: Collision flash at meeting point (white burst)
+- **Groups**: First half vs second half
+
+### State-Based Animation Mapping
+
+Animations automatically switch based on the **wheel state machine**:
+
+```typescript
+const getLightAnimation = (): LightAnimationType => {
+  // Manual override takes precedence
+  if (lightAnimationType && lightAnimationType !== 'none') {
+    return lightAnimationType;
+  }
+
+  // Map wheel state to animation
+  switch (wheelStateMachine.state) {
+    case 'IDLE':      return 'alternating-carnival';  // At rest
+    case 'SPINNING':  return 'sequential-chase';      // Spinning
+    case 'COMPLETE':  return 'accelerating-spin';     // Winner displayed
+    default:          return 'alternating-carnival';
+  }
+};
+```
+
+**States**:
+- **IDLE**: Wheel loaded or reset → **Alternating Carnival** (attracts attention)
+- **SPINNING**: Wheel spinning → **Sequential Chase** (motion feedback)
+- **COMPLETE**: Spin finished → **Accelerating Spin** (winner celebration)
+
+**Location**: `src/lib/components/WheelViewer.tsx:142`
+
+### Animation Timing System
+
+#### Delay Calculation
+
+Each animation has specific timing requirements:
+
+```typescript
+// Standard calculation
+delayPerBulb = (duration / totalBulbs) * stagger
+
+// Special cases
+if (animationType === 'carnival-waltz') {
+  const numGroups = Math.ceil(totalBulbs / 3);
+  delayPerBulb = 4.8 / numGroups;  // Delay per group, not per bulb
+}
+
+if (animationType === 'dual-convergence') {
+  const halfBulbs = Math.floor(totalBulbs / 2);
+  delayPerBulb = 4.0 / halfBulbs;  // Delay for each half
+}
+```
+
+#### Stagger Multipliers
+
+| Animation | Duration | Stagger | Delay (16 bulbs) |
+|-----------|----------|---------|------------------|
+| Alternating Carnival | 1.2s | 1.0 | 75ms |
+| Sequential Chase | 1.6s | 1.0 | 100ms |
+| Accelerating Spin | 5.0s | **0.08** | 25ms |
+| Reverse Chase Pulse | 7.0s | **0.12** | 52.5ms |
+| Random Sparkle | 4.0s | **0.37** | 92.5ms |
+| Carnival Waltz | 4.8s | 1.0 | 900ms (per group) |
+| Comet Trail | 3.0s | 1.0 | 187.5ms |
+| Dual Convergence | 4.0s | 1.0 | 500ms (per half) |
+
+**Location**: `src/lib/components/renderers/lights/AnimatedLightsRenderer.tsx:142`
+
+### Visual Design
+
+#### Bulb Structure
+
+Each light bulb consists of **three layers**:
+
+1. **Bulb Core** (8px × 8px)
+   - Solid circle with color from theme data
+   - Off state: `--bulb-off` color (dim base color)
+   - On state: `--bulb-on` color (bright accent color)
+
+2. **Inner Glow** (10px × 10px)
+   - Transparent background with box-shadow
+   - Medium intensity glow (opacity 0.5 static)
+   - Box-shadow: `0 0 4px var(--bulb-on-glow65), 0 0 8px var(--bulb-on-glow45)`
+
+3. **Outer Glow** (12px × 12px)
+   - Transparent background with box-shadow
+   - Diffused glow (opacity 0.35 static)
+   - Box-shadow: `0 0 6px var(--bulb-on-glow50), 0 0 12px var(--bulb-on-glow30)`
+
+#### Color System
+
+Colors are defined using **CSS custom properties**:
+
+```css
+.light-bulb__wrapper {
+  --bulb-on: /* Bright color from theme */;
+  --bulb-off: /* Dim base color */;
+
+  /* Pre-computed color mixes for smooth transitions */
+  --bulb-on-glow80: color-mix(in srgb, var(--bulb-on) 80%, transparent);
+  --bulb-on-glow70: color-mix(in srgb, var(--bulb-on) 70%, transparent);
+  --bulb-on-glow50: color-mix(in srgb, var(--bulb-on) 50%, transparent);
+  --bulb-on-glow30: color-mix(in srgb, var(--bulb-on) 30%, transparent);
+
+  --bulb-off-glow30: color-mix(in srgb, var(--bulb-off) 30%, transparent);
+  --bulb-off-tint30: color-mix(in srgb, var(--bulb-off) 70%, var(--bulb-on) 30%);
+
+  /* Blend states for gradual transitions */
+  --bulb-blend70: color-mix(in srgb, var(--bulb-on) 70%, var(--bulb-off) 30%);
+  --bulb-blend40: color-mix(in srgb, var(--bulb-on) 40%, var(--bulb-off) 60%);
+}
+```
+
+This system allows smooth color transitions without recalculating colors during animations.
+
+#### Cross-Platform Compatibility
+
+The light system follows **strict cross-platform requirements**:
+
+**✅ Allowed (React Native compatible)**:
+- Box-shadow for glow effects (web) → will map to shadow props (React Native)
+- Transform animations (opacity only)
+- Linear gradients (not currently used in lights)
+- Solid color fills
+
+**❌ Forbidden (web-only)**:
+- Radial gradients (would be perfect for glows, but not RN-compatible)
+- Blur filters (no CSS filters in React Native)
+- Text shadows (not used in bulbs)
+
+**Implementation**: Uses `box-shadow` with multiple spreads to approximate radial glow.
+
+### Dynamic Class Assignment
+
+Each bulb receives dynamic CSS classes based on animation requirements:
+
+```typescript
+const classes: string[] = ['light-bulb__wrapper'];
+
+// Add animation class
+if (animationType !== 'none') {
+  classes.push(`light-bulb__wrapper--${animationType}`);
+}
+
+// Add even/odd class (for alternating animations)
+const isEven = index % 2 === 0;
+classes.push(isEven ? 'light-bulb__wrapper--even' : 'light-bulb__wrapper--odd');
+
+// Add carnival-waltz beat class (1, 2, or 3)
+if (animationType === 'carnival-waltz') {
+  classes.push(`light-bulb__wrapper--beat-${groupIndex + 1}`);
+}
+
+// Add dual-convergence half class
+if (animationType === 'dual-convergence') {
+  classes.push(isFirstHalf ? 'light-bulb__wrapper--first-half' : 'light-bulb__wrapper--second-half');
+}
+```
+
+**Location**: `src/lib/components/renderers/lights/LightBulb.tsx:69`
+
+### CSS Animation Structure
+
+Each animation pattern is defined in a separate CSS file:
+
+```
+animations/
+├── alternating-carnival.css    # Even/odd alternation
+├── sequential-chase.css        # One-by-one chase
+├── accelerating-spin.css       # Winner celebration with flash
+├── reverse-chase-pulse.css     # Reverse direction chase
+├── random-sparkle.css          # Pseudo-random sparkles
+├── carnival-waltz.css          # Waltz rhythm (1-2-3)
+├── comet-trail.css             # Bright head + long tail
+└── dual-convergence.css        # Two-sided collision
+```
+
+#### Animation Keyframe Pattern
+
+All animations follow a similar structure:
+
+```css
+/* Bulb animation (background-color + box-shadow) */
+@keyframes animation-name-bulb {
+  0%, 80% { /* Off state (most of cycle) */ }
+  1% { /* Transition start */ }
+  3% { /* Peak brightness */ }
+  8% { /* Hold bright */ }
+  10% { /* Fade start */ }
+  12% { /* Nearly off */ }
+  14%, 100% { /* Off state */ }
+}
+
+/* Glow animation (opacity) */
+@keyframes animation-name-glow {
+  0%, 80% { opacity: 0; }
+  1% { opacity: 0.3; }
+  3% { opacity: 1; }
+  8% { opacity: 1; }
+  10% { opacity: 0.6; }
+  12% { opacity: 0.2; }
+  14%, 100% { opacity: 0; }
+}
+```
+
+**Pattern**:
+- 80% off time ensures bulbs aren't always lit
+- 1-3%: Quick ramp up (creates urgency)
+- 3-8%: Hold at peak (visible brightness)
+- 8-14%: Gradual fadeout (smooth transition)
+
+### Performance Optimizations
+
+#### CSS Optimizations
+
+```css
+.light-bulb__wrapper {
+  /* GPU acceleration */
+  will-change: opacity, transform;
+
+  /* Prevent paint flashing */
+  backface-visibility: hidden;
+
+  /* Smooth animations */
+  transform: translateZ(0);
+}
+```
+
+#### React Optimizations
+
+```typescript
+// Memoize position reordering
+const positions = useMemo(() => {
+  // Reordering logic
+}, [rawPositions]);
+
+// Memoize delay calculation
+const delayPerBulb = useMemo(() => {
+  // Timing logic
+}, [animationType, totalBulbs]);
+
+// Memoize CSS variables
+const cssVariables = useMemo(() => ({
+  '--bulb-on': onColor,
+  '--bulb-off': offColor,
+  '--bulb-index': index,
+  '--delay-per-bulb': `${delayPerBulb}s`,
+}), [onColor, offColor, index, delayPerBulb]);
+```
+
+### Integration with Wheel State
+
+The light animation system is tightly integrated with the wheel state machine:
+
+```typescript
+// In WheelViewer.tsx
+const wheelStateMachine = useWheelStateMachine({
+  segmentCount,
+  winningSegmentIndex: prizeSession?.winningIndex,
+  jackpotSegmentIndex,
+  onSpinComplete: useCallback(() => {
+    setButtonSpinState('default');
+  }, []),
+});
+
+// Animation automatically switches based on state
+<AnimatedLightsRenderer
+  lights={wheelData.lights}
+  scale={scale}
+  animationType={getLightAnimation()}  // Maps state to animation
+/>
+```
+
+**Flow**:
+1. Wheel loads → State: IDLE → Animation: Alternating Carnival
+2. User clicks spin → State: SPINNING → Animation: Sequential Chase
+3. Spin completes → State: COMPLETE → Animation: Accelerating Spin
+4. User resets → State: IDLE → Animation: Alternating Carnival
+
+### Manual Override
+
+The automatic animation mapping can be overridden by passing a `lightAnimationType` prop to `WheelViewer`:
+
+```typescript
+<WheelViewer
+  // ... other props
+  lightAnimationType="comet-trail"  // Force specific animation
+/>
+```
+
+This is useful for:
+- Testing individual animations
+- Custom game states
+- Special events or promotions
+
+**Location**: `src/lib/components/WheelViewer.tsx:58`
 
 ---
 

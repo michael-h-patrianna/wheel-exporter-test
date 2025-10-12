@@ -1,0 +1,161 @@
+/**
+ * LightBulb Component Styles
+ *
+ * Base styles for the unified light bulb component.
+ * Animation-specific styles are loaded from separate CSS files.
+ *
+ * Cross-Platform Compatible:
+ * - Only uses transforms, opacity, background-color, box-shadow
+ * - No radial gradients, blur filters, clip-path, or pseudo-elements
+ * - Works with React Native (future compatibility)
+ */
+
+/* ============================================================================
+   Base Wrapper Styles
+   ========================================================================= */
+
+.light-bulb__wrapper {
+  position: absolute;
+  /* GPU acceleration for better performance */
+  will-change: transform;
+  /* Default z-index for stacking */
+  z-index: 1;
+  /* Prevent text selection */
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ============================================================================
+   Glow Layers (replacing radial gradients with box-shadow)
+   ========================================================================= */
+
+/* Outer glow - largest diffused glow effect */
+.light-bulb__glow-outer {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: transparent;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  /* GPU acceleration */
+  will-change: opacity, transform;
+  /* Box-shadow simulates radial gradient glow - subtle diffusion */
+  box-shadow: 0 0 6px var(--bulb-on-glow50), 0 0 12px var(--bulb-on-glow30);
+}
+
+/* Inner glow - brighter, more focused glow */
+.light-bulb__glow-inner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: transparent;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  /* GPU acceleration */
+  will-change: opacity, transform;
+  /* Brighter box-shadow for inner glow - more focused */
+  box-shadow: 0 0 4px var(--bulb-on-glow65), 0 0 8px var(--bulb-on-glow45);
+}
+
+/* ============================================================================
+   Main Bulb
+   ========================================================================= */
+
+.light-bulb__bulb {
+  position: absolute;
+  width: var(--bulb-size, 12px);
+  height: var(--bulb-size, 12px);
+  /* Default to off state */
+  background-color: var(--bulb-off);
+  border-radius: 50%;
+  /* Subtle border for definition */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  /* GPU acceleration for transform and background */
+  will-change: transform, background-color, box-shadow;
+  /* Containment for performance */
+  contain: layout style paint;
+}
+
+/* ============================================================================
+   Filament (bright center when lit)
+   ========================================================================= */
+
+.light-bulb__filament {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  will-change: opacity;
+  pointer-events: none;
+}
+
+/* ============================================================================
+   Glass Shine Overlay (static for performance)
+   ========================================================================= */
+
+.light-bulb__glass-shine {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /* Linear gradient is cross-platform compatible */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, transparent 50%);
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+/* ============================================================================
+   Static State (no animation)
+   ========================================================================= */
+
+/* When animation is 'none', show bulbs in 'on' state */
+.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not([class*='--accelerating']):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not([class*='--comet']):not([class*='--dual']) .light-bulb__bulb {
+  background-color: var(--bulb-on);
+  box-shadow: 0 0 4px var(--bulb-on-glow70), 0 0 6px var(--bulb-on-glow50);
+}
+
+.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not([class*='--accelerating']):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not([class*='--comet']):not([class*='--dual']) .light-bulb__filament {
+  opacity: 0.85;
+}
+
+.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not([class*='--accelerating']):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not([class*='--comet']):not([class*='--dual']) .light-bulb__glow-outer {
+  opacity: 0.35;
+}
+
+.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not([class*='--accelerating']):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not([class*='--comet']):not([class*='--dual']) .light-bulb__glow-inner {
+  opacity: 0.5;
+}
+
+/* ============================================================================
+   Animation-Specific Styles
+
+   Each animation type has its own CSS file in the animations/ directory:
+   - alternating-carnival.css
+   - sequential-chase.css
+   - accelerating-spin.css
+   - reverse-chase-pulse.css
+   - random-sparkle.css
+   - carnival-waltz.css
+   - comet-trail.css
+   - dual-convergence.css
+
+   These files are imported in the AnimatedLightsRenderer component.
+   ========================================================================= */
