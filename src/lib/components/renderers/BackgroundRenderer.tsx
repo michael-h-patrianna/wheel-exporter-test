@@ -1,4 +1,5 @@
 import React from 'react';
+import { logger } from '../../services/logger';
 
 /**
  * BackgroundRenderer Component
@@ -66,8 +67,14 @@ export const BackgroundRenderer: React.FC<BackgroundRendererProps> = ({
         alt="Background"
         className="background-image"
         draggable={false}
-        onError={(e) => {
-          console.warn('Background image failed to load:', backgroundImage);
+        onError={(_e) => {
+          logger.warn('Background image failed to load', {
+            component: 'BackgroundRenderer',
+            imageUrl: backgroundImage,
+            frameWidth,
+            frameHeight,
+            scale
+          });
         }}
       />
     </div>

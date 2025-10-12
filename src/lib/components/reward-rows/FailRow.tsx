@@ -4,13 +4,13 @@
  */
 
 import React from 'react';
-import { RewardsComponent } from '../../types';
+import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '../../types';
 
 export interface FailRowProps {
   message?: string;
   rewards: RewardsComponent | undefined;
-  buildTextStyle: (textStyle: any, fontSize: number) => React.CSSProperties;
-  buildBoxStyle: (bgStyle: any) => React.CSSProperties;
+  buildTextStyle: (textStyle: RewardsPrizeTextStyle | undefined, fontSize: number) => React.CSSProperties;
+  buildBoxStyle: (bgStyle: RewardsBackgroundStyle | undefined) => React.CSSProperties;
   scale: number;
 }
 

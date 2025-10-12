@@ -196,7 +196,7 @@ describe('ResultViewer Integration', () => {
       });
     });
 
-    it('should apply drop shadows when defined', () => {
+    it('should convert drop shadows to borders for cross-platform compatibility', () => {
       const wheelDataWithShadows: ExtractedAssets['wheelData'] = {
         ...mockWheelData,
         rewards: {
@@ -208,8 +208,8 @@ describe('ResultViewer Integration', () => {
                 color: '#1a1a1a',
               },
               stroke: {
-                width: 1,
-                color: '#ffffff',
+                width: 0,
+                color: '',
               },
               dropShadows: [
                 {
@@ -235,12 +235,13 @@ describe('ResultViewer Integration', () => {
 
       const defaultBox = container.querySelector('.result-default-box');
       expect(defaultBox).toBeInTheDocument();
+      // Shadows are converted to borders for React Native compatibility (CIB-001.5)
       expect(defaultBox).toHaveStyle({
-        boxShadow: '10px 10px 20px 5px #00000080',
+        border: '1px solid #00000080',
       });
     });
 
-    it('should apply multiple drop shadows correctly', () => {
+    it('should use first drop shadow color for border when multiple shadows defined', () => {
       const wheelDataWithMultipleShadows: ExtractedAssets['wheelData'] = {
         ...mockWheelData,
         rewards: {
@@ -252,8 +253,8 @@ describe('ResultViewer Integration', () => {
                 color: '#1a1a1a',
               },
               stroke: {
-                width: 1,
-                color: '#ffffff',
+                width: 0,
+                color: '',
               },
               dropShadows: [
                 {
@@ -286,8 +287,9 @@ describe('ResultViewer Integration', () => {
 
       const defaultBox = container.querySelector('.result-default-box');
       expect(defaultBox).toBeInTheDocument();
+      // Multiple shadows: only first shadow color is used for border (CIB-001.5)
       expect(defaultBox).toHaveStyle({
-        boxShadow: '5px 5px 10px 2px #ff000080, -5px -5px 10px 2px #0000ff80',
+        border: '1px solid #ff000080',
       });
     });
   });

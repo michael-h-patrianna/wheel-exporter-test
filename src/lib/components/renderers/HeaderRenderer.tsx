@@ -1,5 +1,6 @@
 import React from 'react';
 import { HeaderState, HeaderComponent } from '../../types';
+import { logger } from '../../services/logger';
 
 /**
  * HeaderRenderer Component
@@ -106,8 +107,14 @@ export const HeaderRenderer: React.FC<HeaderRendererProps> = ({
         alt={`Header ${currentState}`}
         className="header-image"
         draggable={false}
-        onError={(e) => {
-          console.warn(`Header image failed to load for state ${currentState}:`, headerImage);
+        onError={(_e) => {
+          logger.warn('Header image failed to load', {
+            component: 'HeaderRenderer',
+            state: currentState,
+            imageUrl: headerImage,
+            bounds,
+            scale
+          });
         }}
       />
     </div>

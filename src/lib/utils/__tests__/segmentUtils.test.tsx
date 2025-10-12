@@ -523,9 +523,12 @@ describe('segmentUtils', () => {
       const element = createSvgGradientDef(gradient, 'test-gradient', 0);
 
       expect(element).toBeNull();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'Gradient type "radial" is not supported. Only "linear" gradients are supported.'
-      );
+      // Verify logger.warn was called with structured logging
+      expect(consoleSpy).toHaveBeenCalledTimes(1);
+      const callArg = consoleSpy.mock.calls[0][0];
+      expect(callArg).toContain('[WARN]');
+      expect(callArg).toContain('Unsupported gradient type');
+      expect(callArg).toContain('radial');
 
       consoleSpy.mockRestore();
     });

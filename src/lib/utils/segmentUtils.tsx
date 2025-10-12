@@ -8,6 +8,7 @@ import {
   MIN_TEXT_FONT_SIZE,
   TEXT_FONT_FAMILY,
 } from '../constants';
+import { logger } from '../services/logger';
 
 // Re-export for backwards compatibility
 export { SEGMENT_KINDS, SEGMENT_PREVIEW_INNER_RADIUS_RATIO, TEXT_GRID_RADII_FACTORS, MIN_TEXT_FONT_SIZE, TEXT_FONT_FAMILY };
@@ -271,7 +272,13 @@ export function createSvgGradientDef(
 
   // Only support linear gradients
   if (gradient.type !== 'linear') {
-    console.warn(`Gradient type "${gradient.type}" is not supported. Only "linear" gradients are supported.`);
+    logger.warn('Unsupported gradient type', {
+      component: 'segmentUtils',
+      function: 'createSvgGradientDef',
+      gradientType: gradient.type,
+      gradientId,
+      supportedType: 'linear'
+    });
     return null;
   }
 

@@ -25,6 +25,13 @@
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/no-explicit-any": "off"
       }
+    },
+    {
+      "files": ["src/lib/**/*.ts", "src/lib/**/*.tsx"],
+      "excludedFiles": ["src/lib/services/logger.ts"],
+      "rules": {
+        "no-console": "error"
+      }
     }
   ]
 }

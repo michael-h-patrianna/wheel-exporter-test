@@ -10,7 +10,7 @@ import { FreeSpinsRow } from './FreeSpinsRow';
 import { XPRow } from './XPRow';
 import { RRRow } from './RRRow';
 import { FailRow } from './FailRow';
-import { RewardsComponent } from '../../types';
+import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '../../types';
 
 export interface RewardRowProps {
   rowData: RewardRowData;
@@ -19,8 +19,8 @@ export interface RewardRowProps {
   gcIcon?: string;
   scIcon?: string;
   scaledIconSize: number;
-  buildTextStyle: (textStyle: any, fontSize: number) => React.CSSProperties;
-  buildBoxStyle: (bgStyle: any) => React.CSSProperties;
+  buildTextStyle: (textStyle: RewardsPrizeTextStyle | undefined, fontSize: number) => React.CSSProperties;
+  buildBoxStyle: (bgStyle: RewardsBackgroundStyle | undefined) => React.CSSProperties;
   scale: number;
 }
 

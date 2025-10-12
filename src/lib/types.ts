@@ -648,7 +648,13 @@ export interface RewardsBackgroundStyle {
     color: string;
   }>;
   /** Border stroke properties */
-  stroke?: { width: number; color: string };
+  stroke?: {
+    width: number;
+    /** Legacy color string (deprecated, use fill instead) */
+    color?: string;
+    /** Stroke fill (solid or gradient) - preferred over color */
+    fill?: Fill;
+  };
 }
 
 /**

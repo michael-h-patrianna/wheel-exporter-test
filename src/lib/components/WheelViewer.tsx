@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback, CSSProperties } from 
 import { WheelExport, ExtractedAssets, HeaderState, ButtonSpinState } from '../types';
 import { useWheelStateMachine } from '../hooks/useWheelStateMachine';
 import type { PrizeProviderResult } from '../services/prizeProvider';
+import type { SegmentLayoutType } from '../types/segmentLayoutTypes';
 
 // Import all renderer components
 import { BackgroundRenderer } from './renderers/BackgroundRenderer';
@@ -37,6 +38,7 @@ interface WheelViewerProps {
   onToggleCenter: (show: boolean) => void;
   prizeSession?: PrizeProviderResult | null;
   onResetReady?: (resetFn: () => void) => void;
+  layoutType?: SegmentLayoutType;
 }
 
 export const WheelViewer: React.FC<WheelViewerProps> = ({
@@ -49,6 +51,7 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   onToggleCenter,
   prizeSession,
   onResetReady,
+  layoutType = 'original',
 }) => {
   // Component state management
   const [headerState, setHeaderState] = useState<HeaderState>('active');
@@ -172,6 +175,7 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
             rewardsPrizeImages={assets.rewardsPrizeImages}
             purchaseImageFilename={wheelData.rewards?.prizes?.images?.purchase?.img}
             prizeSession={prizeSession}
+            layoutType={layoutType}
           />
         )}
 

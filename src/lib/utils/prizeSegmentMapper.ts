@@ -3,8 +3,8 @@
  * Maps prize data to wheel segment display properties
  */
 
-import type { Prize } from '../types/prizeTypes';
 import type { WheelSegmentKind } from '../types';
+import type { Prize } from '../types/prizeTypes';
 import { getSlotDisplayText } from '../types/prizeTypes';
 import { abbreviateNumber } from './prizeUtils';
 
@@ -73,7 +73,7 @@ export function mapPrizesToSegments(prizes: Prize[]): PrizeSegment[] {
       const hasOnlySpins = freeReward.spins && !freeReward.sc && !freeReward.gc && !freeReward.xp && !freeReward.randomReward;
 
       if (hasOnlySC) {
-        displayText = `FREE SC\n${abbreviateNumber(freeReward.sc!)}`;
+        displayText = `SC\n${abbreviateNumber(freeReward.sc!)}`;
       } else if (hasOnlyGC) {
         displayText = `GC\n${abbreviateNumber(freeReward.gc!)}`;
       } else if (hasOnlySpins) {

@@ -5,17 +5,18 @@ import { ResultViewer, ExtractedAssets, ErrorBoundary } from '../lib';
 import { loadWheelFromZip, WheelLoadError } from '../lib/services/wheelLoader';
 import { PrizeTable } from '../lib/components/prize/PrizeTable';
 import { createDefaultPrizeProvider, type PrizeProviderResult } from '../lib/services/prizeProvider';
+import { SEGMENT_LAYOUTS, type SegmentLayoutType } from '../lib/types/segmentLayoutTypes';
 
 function App() {
   const [extractedAssets, setExtractedAssets] = useState<ExtractedAssets | null>(null);
   const [wheelWidth, setWheelWidth] = useState(800);
   const [wheelHeight, setWheelHeight] = useState(600);
-  const [segmentCount, setSegmentCount] = useState(6);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [prizeSession, setPrizeSession] = useState<PrizeProviderResult | null>(null);
   const [prizeRefreshTrigger, setPrizeRefreshTrigger] = useState(0);
   const wheelResetRef = useRef<(() => void) | null>(null);
+  const [layoutType, setLayoutType] = useState<SegmentLayoutType>('original');
 
   // Component visibility state
   const [componentVisibility, setComponentVisibility] = useState({
@@ -38,22 +39,17 @@ function App() {
     }));
   };
 
-  // Generate prize session when segment count changes or refresh is triggered
+  // Generate prize session when refresh is triggered
+  // Segment count is always determined by the prize table
   useEffect(() => {
     const generatePrizes = async () => {
       try {
-        // Generate a random count between 3 and 8 when triggered by refresh
+        // Generate a random count between 3 and 8
         const randomCount = Math.floor(Math.random() * 6) + 3; // 3-8 inclusive
-        const countToUse = prizeRefreshTrigger === 0 ? segmentCount : randomCount;
 
-        const provider = createDefaultPrizeProvider({ count: countToUse });
+        const provider = createDefaultPrizeProvider({ count: randomCount });
         const session = await provider.load();
         setPrizeSession(session);
-
-        // Update segment count to match the generated prize count
-        if (prizeRefreshTrigger > 0) {
-          setSegmentCount(randomCount);
-        }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Failed to generate prizes:', err);
@@ -61,7 +57,7 @@ function App() {
     };
 
     generatePrizes();
-  }, [segmentCount, prizeRefreshTrigger]);
+  }, [prizeRefreshTrigger]);
 
   // Handler for generating new prizes
   const handleNewPrizes = () => {
@@ -212,14 +208,27 @@ function App() {
                   </div>
                   <div className="control-group">
                     <label>
-                      Segments: {segmentCount}
-                      <input
-                        type="range"
-                        min="3"
-                        max="8"
-                        value={segmentCount}
-                        onChange={(e) => setSegmentCount(Number(e.target.value))}
-                      />
+                      Segment Layout Style:
+                      <select
+                        value={layoutType}
+                        onChange={(e) => setLayoutType(e.target.value as SegmentLayoutType)}
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          marginTop: '4px',
+                          borderRadius: '4px',
+                          border: '1px solid #ccc'
+                        }}
+                      >
+                        {SEGMENT_LAYOUTS.map(layout => (
+                          <option key={layout.id} value={layout.id}>
+                            {layout.name}
+                          </option>
+                        ))}
+                      </select>
+                      <small style={{ display: 'block', marginTop: '4px', color: '#666' }}>
+                        {SEGMENT_LAYOUTS.find(l => l.id === layoutType)?.description}
+                      </small>
                     </label>
                   </div>
                 </div>
@@ -332,24 +341,23 @@ function App() {
                 <>
                   {/* Wheel Preview */}
                   <div className="wheel-container">
-                    <h3>Wheel Preview</h3>
                     <WheelViewer
                       wheelData={extractedAssets.wheelData}
                       assets={extractedAssets}
                       wheelWidth={wheelWidth}
                       wheelHeight={wheelHeight}
-                      segmentCount={segmentCount}
+                      segmentCount={prizeSession?.prizes.length || 6}
                       componentVisibility={componentVisibility}
                       onToggleCenter={(show) => setComponentVisibility(prev => ({ ...prev, center: show }))}
                       prizeSession={prizeSession}
                       onResetReady={(resetFn) => { wheelResetRef.current = resetFn; }}
+                      layoutType={layoutType}
                     />
                   </div>
 
                   {/* Result View Preview */}
                   {extractedAssets.wheelData.rewards && (
                     <div className="result-container">
-                      <h3 className="result-title">Result View Preview</h3>
                       <ResultViewer
                         wheelData={extractedAssets.wheelData}
                         assets={extractedAssets}

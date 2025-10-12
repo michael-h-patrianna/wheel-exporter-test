@@ -1,5 +1,6 @@
 import React from 'react';
 import { WheelOverlay } from '../../types';
+import { logger } from '../../services/logger';
 
 /**
  * WheelTopRenderer Component
@@ -90,8 +91,14 @@ export const WheelTopRenderer: React.FC<WheelTopRendererProps> = ({
         alt={`Wheel Top ${layerNumber}`}
         className="wheeltop-image"
         draggable={false}
-        onError={(e) => {
-          console.warn(`WheelTop${layerNumber} image failed to load:`, wheelTopImage);
+        onError={(_e) => {
+          logger.warn('WheelTop image failed to load', {
+            component: 'WheelTopRenderer',
+            layer: layerNumber,
+            imageUrl: wheelTopImage,
+            bounds: wheelTop?.bounds,
+            scale
+          });
         }}
       />
     </div>

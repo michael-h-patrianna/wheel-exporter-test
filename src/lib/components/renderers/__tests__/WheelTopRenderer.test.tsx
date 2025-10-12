@@ -153,10 +153,12 @@ describe('WheelTopRenderer', () => {
 
     img.dispatchEvent(new Event('error'));
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'WheelTop1 image failed to load:',
-      defaultProps.wheelTopImage
-    );
+    // Verify logger.warn was called with structured logging
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
+    const callArg = consoleSpy.mock.calls[0][0];
+    expect(callArg).toContain('[WARN]');
+    expect(callArg).toContain('WheelTop image failed to load');
+    expect(callArg).toContain(defaultProps.wheelTopImage);
 
     consoleSpy.mockRestore();
   });
@@ -169,10 +171,12 @@ describe('WheelTopRenderer', () => {
 
     img.dispatchEvent(new Event('error'));
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'WheelTop2 image failed to load:',
-      defaultProps.wheelTopImage
-    );
+    // Verify logger.warn was called with structured logging
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
+    const callArg = consoleSpy.mock.calls[0][0];
+    expect(callArg).toContain('[WARN]');
+    expect(callArg).toContain('WheelTop image failed to load');
+    expect(callArg).toContain(defaultProps.wheelTopImage);
 
     consoleSpy.mockRestore();
   });

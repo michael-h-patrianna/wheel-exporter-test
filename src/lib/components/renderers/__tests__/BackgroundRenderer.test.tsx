@@ -87,10 +87,12 @@ describe('BackgroundRenderer', () => {
     // Trigger error
     img.dispatchEvent(new Event('error'));
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Background image failed to load:',
-      defaultProps.backgroundImage
-    );
+    // Verify logger.warn was called with structured logging
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
+    const callArg = consoleSpy.mock.calls[0][0];
+    expect(callArg).toContain('[WARN]');
+    expect(callArg).toContain('Background image failed to load');
+    expect(callArg).toContain(defaultProps.backgroundImage);
 
     consoleSpy.mockRestore();
   });

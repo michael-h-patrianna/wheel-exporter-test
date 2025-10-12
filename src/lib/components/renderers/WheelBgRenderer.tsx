@@ -1,5 +1,6 @@
 import React from 'react';
 import { WheelOverlay } from '../../types';
+import { logger } from '../../services/logger';
 
 /**
  * WheelBgRenderer Component
@@ -86,8 +87,13 @@ export const WheelBgRenderer: React.FC<WheelBgRendererProps> = ({
         alt="Wheel Background"
         className="wheelbg-image"
         draggable={false}
-        onError={(e) => {
-          console.warn('WheelBg image failed to load:', wheelBgImage);
+        onError={(_e) => {
+          logger.warn('WheelBg image failed to load', {
+            component: 'WheelBgRenderer',
+            imageUrl: wheelBgImage,
+            bounds: wheelBg?.bounds,
+            scale
+          });
         }}
       />
     </div>

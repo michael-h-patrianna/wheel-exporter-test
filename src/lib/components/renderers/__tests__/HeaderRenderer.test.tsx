@@ -208,10 +208,12 @@ describe('HeaderRenderer', () => {
     // Trigger error
     img.dispatchEvent(new Event('error'));
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Header image failed to load for state success:',
-      defaultProps.headerImage
-    );
+    // Verify logger.warn was called with structured logging
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
+    const callArg = consoleSpy.mock.calls[0][0];
+    expect(callArg).toContain('[WARN]');
+    expect(callArg).toContain('Header image failed to load');
+    expect(callArg).toContain(defaultProps.headerImage);
 
     consoleSpy.mockRestore();
   });

@@ -114,10 +114,12 @@ describe('WheelBgRenderer', () => {
 
     img.dispatchEvent(new Event('error'));
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'WheelBg image failed to load:',
-      defaultProps.wheelBgImage
-    );
+    // Verify logger.warn was called with structured logging
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
+    const callArg = consoleSpy.mock.calls[0][0];
+    expect(callArg).toContain('[WARN]');
+    expect(callArg).toContain('WheelBg image failed to load');
+    expect(callArg).toContain(defaultProps.wheelBgImage);
 
     consoleSpy.mockRestore();
   });

@@ -195,17 +195,19 @@ describe('styleBuilders', () => {
       expect(result.border).toBe('4px solid #ffffff');
     });
 
-    it('applies single drop shadow with scaling', () => {
+    it('renders single drop shadow as box-shadow', () => {
       const bgStyle: RewardsBackgroundStyle = {
         borderRadius: 4,
         backgroundFill: { type: 'solid', color: '#000000' },
         dropShadows: [{ x: 10, y: 10, blur: 20, spread: 5, color: '#00000080' }],
       };
       const result = buildBoxStyle(bgStyle, 2);
+      // Drop shadows are rendered as actual box-shadows for web
       expect(result.boxShadow).toBe('20px 20px 40px 10px #00000080');
+      expect(result.border).toBeUndefined();
     });
 
-    it('applies multiple drop shadows with scaling', () => {
+    it('renders multiple drop shadows as comma-separated box-shadow', () => {
       const bgStyle: RewardsBackgroundStyle = {
         borderRadius: 4,
         backgroundFill: { type: 'solid', color: '#000000' },
@@ -215,7 +217,22 @@ describe('styleBuilders', () => {
         ],
       };
       const result = buildBoxStyle(bgStyle, 1);
+      // Multiple shadows are rendered as comma-separated list
       expect(result.boxShadow).toBe('5px 5px 10px 2px #ff000080, -5px -5px 10px 2px #0000ff80');
+      expect(result.border).toBeUndefined();
+    });
+
+    it('renders both stroke and drop shadow together', () => {
+      const bgStyle: RewardsBackgroundStyle = {
+        borderRadius: 4,
+        backgroundFill: { type: 'solid', color: '#000000' },
+        stroke: { width: 2, color: '#ffffff' },
+        dropShadows: [{ x: 10, y: 10, blur: 20, spread: 5, color: '#00000080' }],
+      };
+      const result = buildBoxStyle(bgStyle, 2);
+      // Both stroke and shadow should be applied
+      expect(result.border).toBe('4px solid #ffffff');
+      expect(result.boxShadow).toBe('20px 20px 40px 10px #00000080');
     });
   });
 
@@ -300,7 +317,7 @@ describe('styleBuilders', () => {
       expect(result.container.border).toBe('4px solid #ffffff');
     });
 
-    it('applies button drop shadows with scaling', () => {
+    it('renders button drop shadows as box-shadow', () => {
       const btnStyle: RewardsButtonStyle = {
         frame: {
           borderRadius: 8,
@@ -315,7 +332,9 @@ describe('styleBuilders', () => {
         },
       };
       const result = buildButtonStyle(btnStyle, 'default', 2);
+      // Drop shadows are rendered as actual box-shadows for web
       expect(result.container.boxShadow).toBe('10px 10px 20px 4px #00000080');
+      expect(result.container.border).toBeUndefined();
     });
 
     it('builds button text style with scaling', () => {

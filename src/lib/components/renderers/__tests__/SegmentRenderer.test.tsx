@@ -181,26 +181,17 @@ describe('SegmentRenderer', () => {
     });
 
     it('should apply spinning transition when wheelState is SPINNING', () => {
-      const { container } = render(
+      const { container} = render(
         <SegmentRenderer {...defaultProps} wheelState="SPINNING" />
       );
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
-        transition: 'transform 5s cubic-bezier(0.15, 0, 0.25, 1)',
+        transition: 'transform 8s cubic-bezier(0.11, 0.83, 0.36, 0.97)',
       });
     });
 
-    it('should apply settling transition when wheelState is SETTLING', () => {
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} wheelState="SETTLING" />
-      );
-
-      const svg = container.querySelector('svg');
-      expect(svg).toHaveStyle({
-        transition: 'transform 1.5s cubic-bezier(0.35, 0, 0.25, 1)',
-      });
-    });
+    // Note: SETTLING state was removed - only IDLE, SPINNING, and COMPLETE are valid states
 
     it('should apply no transition when wheelState is IDLE', () => {
       const { container } = render(

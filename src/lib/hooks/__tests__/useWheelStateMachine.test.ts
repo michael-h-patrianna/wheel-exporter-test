@@ -24,7 +24,8 @@ describe('useWheelStateMachine', () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    // Clear all timers without running them to avoid act warnings
+    jest.clearAllTimers();
     jest.useRealTimers();
   });
 
@@ -100,59 +101,14 @@ describe('useWheelStateMachine', () => {
 
       expect(result.current.state).toBe(firstState);
       expect(logger.warn).toHaveBeenCalledWith(
-        'Attempted to start spin while not in IDLE state',
+        'Attempted to start spin while not in IDLE or COMPLETE state',
         expect.objectContaining({ currentState: 'SPINNING' })
       );
     });
   });
 
-  describe('State Transitions - SPINNING -> SETTLING', () => {
-    it('should transition to SETTLING after 5 seconds', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
-
-      act(() => {
-        result.current.startSpin();
-      });
-
-      expect(result.current.state).toBe('SPINNING');
-
-      act(() => {
-        jest.advanceTimersByTime(5000);
-      });
-
-      expect(result.current.state).toBe('SETTLING');
-      expect(result.current.isSpinning).toBe(true);
-    });
-
-    it('should log state transition to SETTLING', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
-
-      act(() => {
-        result.current.startSpin();
-      });
-
-      jest.clearAllMocks();
-
-      act(() => {
-        jest.advanceTimersByTime(5000);
-      });
-
-      expect(logger.info).toHaveBeenCalledWith(
-        'Wheel state: SPINNING -> SETTLING',
-        expect.objectContaining({
-          currentState: 'SPINNING',
-          event: 'SPIN_COMPLETE',
-        })
-      );
-    });
-  });
-
-  describe('State Transitions - SETTLING -> COMPLETE', () => {
-    it('should transition to COMPLETE after 6.5 seconds total', () => {
+  describe('State Transitions - SPINNING -> COMPLETE', () => {
+    it('should transition to COMPLETE after 8 seconds', () => {
       const { result } = renderHook(() =>
         useWheelStateMachine({ segmentCount: 8 })
       );
@@ -162,7 +118,7 @@ describe('useWheelStateMachine', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(6500);
+        jest.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -180,7 +136,7 @@ describe('useWheelStateMachine', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(6500);
+        jest.advanceTimersByTime(8000);
       });
 
       expect(onSpinComplete).toHaveBeenCalledWith(expect.any(Number));
@@ -199,14 +155,14 @@ describe('useWheelStateMachine', () => {
       jest.clearAllMocks();
 
       act(() => {
-        jest.advanceTimersByTime(6500);
+        jest.advanceTimersByTime(8000);
       });
 
       expect(logger.info).toHaveBeenCalledWith(
-        'Wheel state: SETTLING -> COMPLETE',
+        'Wheel state: SPINNING -> COMPLETE',
         expect.objectContaining({
-          currentState: 'SETTLING',
-          event: 'SETTLE_COMPLETE',
+          currentState: 'SPINNING',
+          event: 'SPIN_COMPLETE',
           targetSegment: expect.any(Number),
         })
       );
@@ -224,7 +180,7 @@ describe('useWheelStateMachine', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(6500);
+        jest.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -244,7 +200,7 @@ describe('useWheelStateMachine', () => {
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(6500);
+        jest.advanceTimersByTime(8000);
       });
 
       jest.clearAllMocks();
@@ -263,6 +219,54 @@ describe('useWheelStateMachine', () => {
     });
   });
 
+  describe('State Transitions - COMPLETE -> SPINNING', () => {
+    it('should allow starting a new spin from COMPLETE state', () => {
+      const { result } = renderHook(() =>
+        useWheelStateMachine({ segmentCount: 8 })
+      );
+
+      act(() => {
+        result.current.startSpin();
+        jest.advanceTimersByTime(8000);
+      });
+
+      expect(result.current.state).toBe('COMPLETE');
+
+      act(() => {
+        result.current.startSpin();
+      });
+
+      expect(result.current.state).toBe('SPINNING');
+      expect(result.current.isSpinning).toBe(true);
+    });
+
+    it('should log auto-reset when spinning from COMPLETE', () => {
+      const { result } = renderHook(() =>
+        useWheelStateMachine({ segmentCount: 8 })
+      );
+
+      act(() => {
+        result.current.startSpin();
+        jest.advanceTimersByTime(8000);
+      });
+
+      jest.clearAllMocks();
+
+      act(() => {
+        result.current.startSpin();
+      });
+
+      expect(logger.info).toHaveBeenCalledWith(
+        'Wheel state: COMPLETE -> SPINNING (auto-reset)',
+        expect.objectContaining({
+          currentState: 'COMPLETE',
+          event: 'START_SPIN',
+          targetSegment: expect.any(Number),
+        })
+      );
+    });
+  });
+
   describe('Rotation Calculations', () => {
     it('should calculate rotation for 8 segments', () => {
       const { result } = renderHook(() =>
@@ -275,8 +279,7 @@ describe('useWheelStateMachine', () => {
 
       // Target rotation should be set during SPINNING
       expect(result.current.targetRotation).toBeGreaterThan(0);
-      // Should have at least 5 full spins minus max segment angle (5 * 360 - 360 = 1440 degrees)
-      // Account for overshoot (15-25 degrees added)
+      // Should have at least 4 full spins (4 * 360 = 1440 degrees)
       expect(result.current.targetRotation).toBeGreaterThanOrEqual(1440);
     });
 
@@ -289,33 +292,8 @@ describe('useWheelStateMachine', () => {
         result.current.startSpin();
       });
 
-      // Should have at least 5 full spins minus max segment angle (5 * 360 - 360 = 1440 degrees)
+      // Should have at least 4 full spins (4 * 360 = 1440 degrees)
       expect(result.current.targetRotation).toBeGreaterThanOrEqual(1440);
-    });
-
-    it('should apply overshoot during SPINNING', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
-
-      act(() => {
-        result.current.startSpin();
-      });
-
-      const spinningRotation = result.current.targetRotation;
-
-      act(() => {
-        jest.advanceTimersByTime(5000);
-      });
-
-      const settlingRotation = result.current.targetRotation;
-
-      // Settling rotation should be less than spinning rotation (overshoot removed)
-      expect(settlingRotation).toBeLessThan(spinningRotation);
-      // Difference should be between 15-25 degrees
-      const overshoot = spinningRotation - settlingRotation;
-      expect(overshoot).toBeGreaterThanOrEqual(15);
-      expect(overshoot).toBeLessThanOrEqual(25);
     });
 
     it('should update rotation to final value when COMPLETE', () => {
@@ -325,17 +303,16 @@ describe('useWheelStateMachine', () => {
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(5000);
       });
 
-      const targetBeforeComplete = result.current.targetRotation;
+      const targetRotation = result.current.targetRotation;
 
       act(() => {
-        jest.advanceTimersByTime(1500);
+        jest.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
-      expect(result.current.rotation).toBe(targetBeforeComplete);
+      expect(result.current.rotation).toBe(targetRotation);
     });
   });
 
@@ -352,7 +329,7 @@ describe('useWheelStateMachine', () => {
             result.current.reset();
           }
           result.current.startSpin();
-          jest.advanceTimersByTime(6500);
+          jest.advanceTimersByTime(8000);
         });
 
         // Check that debug log was called with valid segment
@@ -413,7 +390,7 @@ describe('useWheelStateMachine', () => {
 
       unmount();
 
-      expect(clearTimeoutSpy).toHaveBeenCalledTimes(2); // Two timeouts
+      expect(clearTimeoutSpy).toHaveBeenCalledTimes(1); // One timeout for 8s animation
       clearTimeoutSpy.mockRestore();
     });
 
@@ -432,7 +409,7 @@ describe('useWheelStateMachine', () => {
         result.current.reset();
       });
 
-      expect(clearTimeoutSpy).toHaveBeenCalledTimes(2);
+      expect(clearTimeoutSpy).toHaveBeenCalledTimes(1); // One timeout for 8s animation
       clearTimeoutSpy.mockRestore();
     });
 
@@ -494,7 +471,7 @@ describe('useWheelStateMachine', () => {
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(6500);
+        jest.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -508,7 +485,7 @@ describe('useWheelStateMachine', () => {
       expect(() => {
         act(() => {
           result.current.startSpin();
-          jest.advanceTimersByTime(6500);
+          jest.advanceTimersByTime(8000);
         });
       }).not.toThrow();
     });
@@ -542,7 +519,7 @@ describe('useWheelStateMachine', () => {
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(6500);
+        jest.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -560,7 +537,7 @@ describe('useWheelStateMachine', () => {
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(6500);
+        jest.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -584,20 +561,6 @@ describe('useWheelStateMachine', () => {
       expect(result.current.isSpinning).toBe(true);
     });
 
-    it('should be true during SETTLING state', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
-
-      act(() => {
-        result.current.startSpin();
-        jest.advanceTimersByTime(5000);
-      });
-
-      expect(result.current.state).toBe('SETTLING');
-      expect(result.current.isSpinning).toBe(true);
-    });
-
     it('should be false during IDLE state', () => {
       const { result } = renderHook(() =>
         useWheelStateMachine({ segmentCount: 8 })
@@ -613,7 +576,7 @@ describe('useWheelStateMachine', () => {
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(6500);
+        jest.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');

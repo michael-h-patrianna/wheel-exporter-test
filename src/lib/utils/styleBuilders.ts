@@ -100,22 +100,35 @@ export function buildBoxStyle(
     background: buildGradient(bgStyle.backgroundFill),
   };
 
-  // Handle stroke
-  if (bgStyle.stroke && bgStyle.stroke.width > 0) {
-    style.border = `${Math.round(bgStyle.stroke.width * scale)}px solid ${bgStyle.stroke.color}`;
+  // Handle stroke (border)
+  if (bgStyle.stroke) {
+    const strokeWidth = Math.round(bgStyle.stroke.width * scale);
+    const strokeColor = bgStyle.stroke.fill
+      ? buildGradient(bgStyle.stroke.fill)
+      : bgStyle.stroke.color || 'transparent';
+
+    // For gradient strokes, we need to use border-image or fallback to solid
+    if (bgStyle.stroke.fill?.type === 'gradient') {
+      // Fallback to first color in gradient for border (CSS border doesn't support gradients well)
+      const firstColor = bgStyle.stroke.fill.gradient?.stops[0]?.color || '#000000';
+      style.border = `${strokeWidth}px solid ${firstColor}`;
+    } else {
+      style.border = `${strokeWidth}px solid ${strokeColor}`;
+    }
   }
 
-  // Handle drop shadows (scaled)
+  // Handle drop shadows (box-shadow)
+  // NOTE: While box shadows are not supported in React Native, this is currently a web-only implementation
+  // For future React Native compatibility, these will need platform-specific handling
   if (bgStyle.dropShadows && bgStyle.dropShadows.length > 0) {
-    style.boxShadow = bgStyle.dropShadows
-      .map((shadow) => {
-        const x = Math.round(shadow.x * scale);
-        const y = Math.round(shadow.y * scale);
-        const blur = Math.round(shadow.blur * scale);
-        const spread = Math.round(shadow.spread * scale);
-        return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
-      })
-      .join(', ');
+    const shadows = bgStyle.dropShadows.map(shadow => {
+      const x = Math.round(shadow.x * scale);
+      const y = Math.round(shadow.y * scale);
+      const blur = Math.round(shadow.blur * scale);
+      const spread = Math.round((shadow.spread || 0) * scale);
+      return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
+    }).join(', ');
+    style.boxShadow = shadows;
   }
 
   return style;
@@ -154,22 +167,23 @@ export function buildButtonStyle(
     containerStyle.height = `${Math.round(btnStyle.frame.dimensions.height * scale)}px`;
   }
 
-  // Handle stroke
+  // Handle stroke (border)
   if (btnStyle.frame.stroke && btnStyle.frame.stroke.width > 0) {
     containerStyle.border = `${Math.round(btnStyle.frame.stroke.width * scale)}px solid ${btnStyle.frame.stroke.color}`;
   }
 
-  // Handle drop shadows (scaled)
+  // Handle drop shadows (box-shadow)
+  // NOTE: While box shadows are not supported in React Native, this is currently a web-only implementation
+  // For future React Native compatibility, these will need platform-specific handling
   if (btnStyle.frame.dropShadows && btnStyle.frame.dropShadows.length > 0) {
-    containerStyle.boxShadow = btnStyle.frame.dropShadows
-      .map((shadow) => {
-        const x = Math.round(shadow.x * scale);
-        const y = Math.round(shadow.y * scale);
-        const blur = Math.round(shadow.blur * scale);
-        const spread = Math.round(shadow.spread * scale);
-        return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
-      })
-      .join(', ');
+    const shadows = btnStyle.frame.dropShadows.map(shadow => {
+      const x = Math.round(shadow.x * scale);
+      const y = Math.round(shadow.y * scale);
+      const blur = Math.round(shadow.blur * scale);
+      const spread = Math.round(shadow.spread * scale);
+      return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
+    }).join(', ');
+    containerStyle.boxShadow = shadows;
   }
 
   const textStyle: React.CSSProperties = {

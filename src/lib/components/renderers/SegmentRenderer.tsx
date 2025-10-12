@@ -15,10 +15,10 @@ import {
   formatNumber
 } from '../../utils/segmentUtils';
 import offerPng from '../../../assets/offer.png';
-import randomRewardPng from '../../../assets/random_reward.png';
-import xpPng from '../../../assets/xp.png';
 import type { PrizeProviderResult } from '../../services/prizeProvider';
 import { mapPrizesToSegments, type PrizeSegment } from '../../utils/prizeSegmentMapper';
+import type { SegmentLayoutType } from '../../types/segmentLayoutTypes';
+import { OriginalLayout } from './layouts/OriginalLayout';
 
 interface SegmentRendererProps {
   segments?: WheelSegmentStyles;
@@ -35,6 +35,7 @@ interface SegmentRendererProps {
   };
   purchaseImageFilename?: string;
   prizeSession?: PrizeProviderResult | null;
+  layoutType?: SegmentLayoutType;
 }
 
 // Memoized gradient definitions component
@@ -555,6 +556,7 @@ interface SegmentProps {
   scale: number;
   jackpotImageUrl?: string;
   purchaseImageUrl?: string;
+  layoutType: SegmentLayoutType;
 }
 
 const Segment: React.FC<SegmentProps> = React.memo(({
@@ -566,7 +568,8 @@ const Segment: React.FC<SegmentProps> = React.memo(({
   segmentAngle,
   scale,
   jackpotImageUrl,
-  purchaseImageUrl
+  purchaseImageUrl,
+  layoutType
 }) => {
   // Memoize outer path calculation
   const outerPath = useMemo(() =>
@@ -604,74 +607,29 @@ const Segment: React.FC<SegmentProps> = React.memo(({
     [styles.outer.stroke?.width, scale]
   );
 
-  // Memoize content elements - choose layout based on prize type
+  // Memoize content elements - use strategy pattern based on layoutType
   const contentElements = useMemo(() => {
-    const prizeSegment = segment.prizeSegment;
+    const layoutProps = {
+      segment,
+      styles,
+      cx,
+      cy,
+      outerRadius,
+      segmentAngle,
+      scale,
+      jackpotImageUrl,
+      purchaseImageUrl
+    };
 
-    // Layout 1: Image Only (purchase offers, random rewards, jackpot)
-    if (prizeSegment?.usePurchaseImage) {
-      return (
-        <SegmentImageOnly
-          segment={segment}
-          cx={cx}
-          cy={cy}
-          outerRadius={outerRadius}
-          imageUrl={purchaseImageUrl || offerPng}
-        />
-      );
+    // Route to appropriate layout strategy
+    // Currently only 'original' is supported, but infrastructure
+    // is ready for additional layout strategies to be added
+    switch (layoutType) {
+      case 'original':
+      default:
+        return <OriginalLayout {...layoutProps} />;
     }
-
-    if (prizeSegment?.useRandomRewardImage) {
-      return (
-        <SegmentImageOnly
-          segment={segment}
-          cx={cx}
-          cy={cy}
-          outerRadius={outerRadius}
-          imageUrl={randomRewardPng}
-        />
-      );
-    }
-
-    if (segment.kind === 'jackpot' && jackpotImageUrl) {
-      return (
-        <SegmentImageOnly
-          segment={segment}
-          cx={cx}
-          cy={cy}
-          outerRadius={outerRadius}
-          imageUrl={jackpotImageUrl}
-        />
-      );
-    }
-
-    // Layout 2: Text with Image Below (XP prizes)
-    if (prizeSegment?.useXpImage) {
-      return (
-        <SegmentTextWithImage
-          segment={segment}
-          styles={styles}
-          cx={cx}
-          cy={cy}
-          outerRadius={outerRadius}
-          segmentAngle={segmentAngle}
-          imageUrl={xpPng}
-        />
-      );
-    }
-
-    // Layout 3: Two Line Text (all other prizes)
-    return (
-      <SegmentTwoLineText
-        segment={segment}
-        styles={styles}
-        cx={cx}
-        cy={cy}
-        outerRadius={outerRadius}
-        segmentAngle={segmentAngle}
-      />
-    );
-  }, [segment, styles, cx, cy, outerRadius, segmentAngle, jackpotImageUrl, purchaseImageUrl]);
+  }, [segment, styles, cx, cy, outerRadius, segmentAngle, scale, jackpotImageUrl, purchaseImageUrl, layoutType]);
 
   return (
     <g key={`segment-${segment.index}`}>
@@ -702,7 +660,8 @@ const Segment: React.FC<SegmentProps> = React.memo(({
     prevProps.segmentAngle === nextProps.segmentAngle &&
     prevProps.scale === nextProps.scale &&
     prevProps.jackpotImageUrl === nextProps.jackpotImageUrl &&
-    prevProps.purchaseImageUrl === nextProps.purchaseImageUrl
+    prevProps.purchaseImageUrl === nextProps.purchaseImageUrl &&
+    prevProps.layoutType === nextProps.layoutType
   );
 });
 
@@ -717,7 +676,8 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
   targetRotation = 0,
   rewardsPrizeImages,
   purchaseImageFilename,
-  prizeSession
+  prizeSession,
+  layoutType = 'original'
 }) => {
   // Map prizes to segments if prizeSession is available
   const prizeSegments = useMemo<PrizeSegment[] | null>(() => {
@@ -882,6 +842,7 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
               scale={scale}
               jackpotImageUrl={jackpotImageUrl}
               purchaseImageUrl={purchaseImageUrl}
+              layoutType={layoutType}
             />
           );
         })}
