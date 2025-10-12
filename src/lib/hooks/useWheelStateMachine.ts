@@ -51,7 +51,8 @@ function calculateRotation(
   const segmentAngle = 360 / segmentCount;
 
   // Calculate target position: center of the target segment
-  const targetSegmentAngle = targetSegment * segmentAngle + segmentAngle / 2;
+  // Subtract 90° to align with rendering coordinate system (segments start at -90°/12 o'clock)
+  const targetSegmentAngle = targetSegment * segmentAngle + segmentAngle / 2 - 90;
 
   // Normalize current rotation to 0-360 range to find current position
   const normalizedCurrent = ((currentRotation % 360) + 360) % 360;

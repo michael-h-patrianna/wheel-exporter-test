@@ -283,6 +283,55 @@ describe('useWheelStateMachine', () => {
       expect(result.current.targetRotation).toBeGreaterThanOrEqual(1440);
     });
 
+    it('should account for 90° offset to align with segment rendering at 12 o\'clock', () => {
+      // Mock Math.random to target segment 0
+      const originalRandom = Math.random;
+      Math.random = jest.fn(() => 0.1); // Will select segment 0
+
+      const { result } = renderHook(() =>
+        useWheelStateMachine({ segmentCount: 8, winningSegmentIndex: 0 })
+      );
+
+      act(() => {
+        result.current.startSpin();
+      });
+
+      const targetRotation = result.current.targetRotation;
+
+      // With 8 segments, segment angle = 45°
+      // Segment 0 center should be at: 0 * 45 + 22.5 - 90 = -67.5°
+      // After 4 full spins (1440°), the final position normalized should be: -67.5° + 360n
+      // Normalized to 0-360: 292.5°
+      const normalizedRotation = ((targetRotation % 360) + 360) % 360;
+
+      // Expected position: 292.5° (which is -67.5° + 360°)
+      expect(normalizedRotation).toBeCloseTo(292.5, 1);
+
+      Math.random = originalRandom;
+    });
+
+    it('should align segment centers correctly for different segment counts', () => {
+      const testCases = [
+        { segmentCount: 3, winningIndex: 0, expectedNormalized: 330 }, // 0*120+60-90 = -30, normalized = 330
+        { segmentCount: 4, winningIndex: 0, expectedNormalized: 315 }, // 0*90+45-90 = -45, normalized = 315
+        { segmentCount: 6, winningIndex: 0, expectedNormalized: 300 }, // 0*60+30-90 = -60, normalized = 300
+        { segmentCount: 8, winningIndex: 0, expectedNormalized: 292.5 }, // 0*45+22.5-90 = -67.5, normalized = 292.5
+      ];
+
+      testCases.forEach(({ segmentCount, winningIndex, expectedNormalized }) => {
+        const { result } = renderHook(() =>
+          useWheelStateMachine({ segmentCount, winningSegmentIndex: winningIndex })
+        );
+
+        act(() => {
+          result.current.startSpin();
+        });
+
+        const normalizedRotation = ((result.current.targetRotation % 360) + 360) % 360;
+        expect(normalizedRotation).toBeCloseTo(expectedNormalized, 1);
+      });
+    });
+
     it('should calculate rotation for 12 segments', () => {
       const { result } = renderHook(() =>
         useWheelStateMachine({ segmentCount: 12 })

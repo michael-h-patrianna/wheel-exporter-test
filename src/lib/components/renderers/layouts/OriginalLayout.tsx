@@ -328,17 +328,9 @@ export const OriginalLayout: React.FC<SegmentLayoutProps> = (props) => {
       );
     }
 
-    if (segment.kind === 'jackpot' && jackpotImageUrl) {
-      return (
-        <SegmentImageOnly
-          segment={segment}
-          cx={cx}
-          cy={cy}
-          outerRadius={outerRadius}
-          imageUrl={jackpotImageUrl}
-        />
-      );
-    }
+    // Note: We removed the jackpot image-only logic here
+    // Jackpot now just uses the jackpot segment styles (colors, etc.)
+    // but displays the prize content normally (text layout below)
 
     // Layout 2: Text with Image Below (XP prizes)
     if (prizeSegment?.useXpImage) {

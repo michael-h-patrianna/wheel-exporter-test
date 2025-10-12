@@ -141,6 +141,16 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wheelData.wheelId]); // Only reset when wheelId changes, not when wheelStateMachine updates
 
+  // Reset wheel when prize session changes (new prize table generated)
+  useEffect(() => {
+    if (prizeSession) {
+      setHeaderState('active');
+      setButtonSpinState('default');
+      wheelStateMachine.reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prizeSession?.seed]); // Reset when prize session seed changes
+
   return (
     <div className="wheel-viewer">
       <div style={containerStyle} className="wheel-container">

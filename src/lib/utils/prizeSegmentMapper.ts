@@ -28,20 +28,38 @@ export interface PrizeSegment {
  * @returns Array of prize segments with display properties
  */
 export function mapPrizesToSegments(prizes: Prize[]): PrizeSegment[] {
-  return prizes.map((prize, index) => {
-    // Determine segment kind based on prize type and position
-    let kind: WheelSegmentKind;
-    const isNoWin = prize.type === 'no_win';
+  // Find the index of the prize with the lowest probability (excluding no_win)
+  // This is the jackpot prize - the rarest/most valuable prize
+  let jackpotIndex = -1;
+  let lowestProbability = Infinity;
 
-    if (isNoWin) {
-      kind = 'nowin';
-    } else if (index === 0 && prize.type === 'free' && prize.freeReward?.sc && prize.freeReward.sc >= 500) {
-      // First high-value SC prize is jackpot
-      kind = 'jackpot';
-    } else {
-      // Alternate between odd and even for remaining prizes
-      kind = index % 2 === 0 ? 'even' : 'odd';
+  prizes.forEach((prize, idx) => {
+    if (prize.type !== 'no_win' && prize.probability < lowestProbability) {
+      lowestProbability = prize.probability;
+      jackpotIndex = idx;
     }
+  });
+
+  // First pass: assign special kinds (nowin, jackpot)
+  const kinds: WheelSegmentKind[] = prizes.map((prize, index) => {
+    const isNoWin = prize.type === 'no_win';
+    if (isNoWin) return 'nowin';
+    if (index === jackpotIndex) return 'jackpot';
+    return 'even'; // Placeholder, will be updated in next pass
+  });
+
+  // Second pass: assign odd/even alternating only to non-special segments
+  let oddEvenCounter = 0;
+  kinds.forEach((kind, index) => {
+    if (kind !== 'nowin' && kind !== 'jackpot') {
+      kinds[index] = oddEvenCounter % 2 === 0 ? 'even' : 'odd';
+      oddEvenCounter++;
+    }
+  });
+
+  return prizes.map((prize, index) => {
+    const kind = kinds[index];
+    const isNoWin = prize.type === 'no_win';
 
     // Check if this is a purchase offer
     const usePurchaseImage = prize.type === 'purchase';
