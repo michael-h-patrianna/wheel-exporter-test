@@ -1,0 +1,160 @@
+.prize-table {
+  margin-top: 20px;
+  padding: 25px;
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: 12px;
+  box-shadow: var(--elev-1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.prize-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.prize-table-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--pf-fg-strong);
+}
+
+.prize-table-new-button {
+  padding: 6px 16px;
+  background: color-mix(in srgb, var(--pf-border) 20%, var(--pf-surface));
+  color: var(--pf-fg-strong);
+  border: 1px solid var(--pf-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.prize-table-new-button:hover {
+  background: color-mix(in srgb, var(--pf-border) 30%, var(--pf-surface));
+  border-color: var(--pf-fg-strong);
+  transform: translateY(-1px);
+}
+
+.prize-table-new-button:active {
+  transform: translateY(0);
+}
+
+.prize-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prize-item-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.prize-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  position: relative;
+  background: color-mix(in srgb, var(--pf-border) 10%, var(--pf-surface));
+  border: 1px solid color-mix(in srgb, var(--pf-border) 20%, transparent);
+}
+
+.prize-item:hover {
+  transform: translateX(2px);
+  background: color-mix(in srgb, var(--pf-border) 15%, var(--pf-surface));
+  border-color: color-mix(in srgb, var(--pf-border) 40%, transparent);
+}
+
+.prize-item-winner {
+  border: 2px solid #ef4444;
+  background: color-mix(in srgb, #ef4444 10%, var(--pf-surface));
+  box-shadow: 0 0 8px color-mix(in srgb, #ef4444 30%, transparent);
+}
+
+.winner-indicator {
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ef4444;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.prize-text {
+  font-weight: 500;
+  color: var(--pf-fg-strong);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.expand-icon {
+  color: var(--pf-muted);
+  font-size: 10px;
+}
+
+.prize-probability {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--pf-border);
+  background: color-mix(in srgb, var(--pf-border) 15%, transparent);
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--pf-border) 30%, transparent);
+}
+
+.prize-details {
+  margin: 4px 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--pf-muted);
+  background: color-mix(in srgb, var(--pf-border) 5%, var(--pf-surface));
+  border-left: 3px solid var(--pf-border);
+  animation: slideDown 0.2s ease;
+}
+
+.prize-details > div {
+  margin: 2px 0;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 100px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+}

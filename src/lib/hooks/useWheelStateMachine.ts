@@ -164,6 +164,7 @@ function wheelStateMachineReducer(
 interface UseWheelStateMachineConfig {
   segmentCount: number;
   onSpinComplete?: (segment: number) => void;
+  winningSegmentIndex?: number | null; // Pre-determined winning segment from prize session
 }
 
 /**
@@ -195,7 +196,7 @@ interface UseWheelStateMachineReturn {
 export function useWheelStateMachine(
   config: UseWheelStateMachineConfig
 ): UseWheelStateMachineReturn {
-  const { segmentCount, onSpinComplete } = config;
+  const { segmentCount, onSpinComplete, winningSegmentIndex } = config;
 
   // Initialize state
   const [machineState, dispatch] = useReducer(wheelStateMachineReducer, {
@@ -219,7 +220,7 @@ export function useWheelStateMachine(
   }, []);
 
   /**
-   * Start a spin with a random segment
+   * Start a spin to a target segment (from prize session) or random
    */
   const startSpin = useCallback(() => {
     // Allow spinning from IDLE or COMPLETE states
@@ -230,22 +231,27 @@ export function useWheelStateMachine(
       return;
     }
 
-    // Pick random segment (0 to segmentCount-1)
-    const randomSegment = Math.floor(Math.random() * segmentCount);
+    // Use predetermined winning segment if available, otherwise random
+    // IMPORTANT: Access the latest winningSegmentIndex value from config
+    const targetSegment = winningSegmentIndex != null
+      ? winningSegmentIndex
+      : Math.floor(Math.random() * segmentCount);
 
     // Calculate final rotation
-    const rotation = calculateRotation(machineState.rotation, randomSegment, segmentCount);
+    const rotation = calculateRotation(machineState.rotation, targetSegment, segmentCount);
     const finalRotation = rotation.final;
 
     // Dispatch START_SPIN event
     dispatch({
       type: 'START_SPIN',
-      targetSegment: randomSegment,
+      targetSegment,
       finalRotation,
     });
 
     logger.debug('Starting wheel spin', {
-      targetSegment: randomSegment,
+      targetSegment,
+      predeterminedWinner: winningSegmentIndex != null,
+      winningSegmentIndex,
       fullSpins: Math.floor((finalRotation - machineState.rotation) / 360),
       finalRotation,
     });
@@ -256,10 +262,10 @@ export function useWheelStateMachine(
 
       // Call completion callback
       if (onSpinComplete) {
-        onSpinComplete(randomSegment);
+        onSpinComplete(targetSegment);
       }
     }, TIMING.SPIN);
-  }, [machineState.state, machineState.rotation, segmentCount, onSpinComplete]);
+  }, [machineState.state, machineState.rotation, segmentCount, onSpinComplete, winningSegmentIndex]);
 
   /**
    * Reset to IDLE state

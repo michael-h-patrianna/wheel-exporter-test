@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import { WheelViewer, ResultViewer, ExtractedAssets, ErrorBoundary } from '../lib';
+import { WheelViewer } from '../lib/components/WheelViewer';
+import { ResultViewer, ExtractedAssets, ErrorBoundary } from '../lib';
 import { loadWheelFromZip, WheelLoadError } from '../lib/services/wheelLoader';
+import { PrizeTable } from '../lib/components/prize/PrizeTable';
+import { createDefaultPrizeProvider, type PrizeProviderResult } from '../lib/services/prizeProvider';
 
 function App() {
   const [extractedAssets, setExtractedAssets] = useState<ExtractedAssets | null>(null);
@@ -10,6 +13,9 @@ function App() {
   const [segmentCount, setSegmentCount] = useState(6);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [prizeSession, setPrizeSession] = useState<PrizeProviderResult | null>(null);
+  const [prizeRefreshTrigger, setPrizeRefreshTrigger] = useState(0);
+  const wheelResetRef = useRef<(() => void) | null>(null);
 
   // Component visibility state
   const [componentVisibility, setComponentVisibility] = useState({
@@ -31,6 +37,82 @@ function App() {
       [component]: !prev[component]
     }));
   };
+
+  // Generate prize session when segment count changes or refresh is triggered
+  useEffect(() => {
+    const generatePrizes = async () => {
+      try {
+        // Generate a random count between 3 and 8 when triggered by refresh
+        const randomCount = Math.floor(Math.random() * 6) + 3; // 3-8 inclusive
+        const countToUse = prizeRefreshTrigger === 0 ? segmentCount : randomCount;
+
+        const provider = createDefaultPrizeProvider({ count: countToUse });
+        const session = await provider.load();
+        setPrizeSession(session);
+
+        // Update segment count to match the generated prize count
+        if (prizeRefreshTrigger > 0) {
+          setSegmentCount(randomCount);
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to generate prizes:', err);
+      }
+    };
+
+    generatePrizes();
+  }, [segmentCount, prizeRefreshTrigger]);
+
+  // Handler for generating new prizes
+  const handleNewPrizes = () => {
+    // Reset wheel if it's spinning
+    if (wheelResetRef.current) {
+      wheelResetRef.current();
+    }
+    // Trigger new prize generation
+    setPrizeRefreshTrigger(prev => prev + 1);
+  };
+
+  // Auto-load theme.zip if it exists in public/assets
+  useEffect(() => {
+    const autoLoadTheme = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Attempt to fetch the theme.zip file
+        const response = await fetch('/assets/theme.zip');
+
+        if (!response.ok) {
+          // Theme file doesn't exist, silently continue
+          return;
+        }
+
+        // Convert response to blob and then to File
+        const blob = await response.blob();
+        const file = new File([blob], 'theme.zip', { type: 'application/zip' });
+
+        // Load the theme using the same logic as handleFileUpload
+        const assets = await loadWheelFromZip(file);
+        setExtractedAssets(assets);
+
+        // Auto-set wheel dimensions to match the original frame size
+        const frameWidth = assets.wheelData.frameSize?.width || 800;
+        const frameHeight = assets.wheelData.frameSize?.height || 600;
+        setWheelWidth(frameWidth);
+        setWheelHeight(frameHeight);
+      } catch (err) {
+        // Silently fail if theme doesn't exist or can't be loaded
+        // No action needed - user can still upload their own theme
+        // eslint-disable-next-line no-console
+        console.debug('Theme auto-load failed (this is normal if no theme.zip exists):', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    autoLoadTheme();
+  }, []); // Only run once on mount
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -91,6 +173,16 @@ function App() {
 
             {extractedAssets && (
               <>
+                {/* Prize Table */}
+                {prizeSession && (
+                  <PrizeTable
+                    prizes={prizeSession.prizes}
+                    winningIndex={prizeSession.winningIndex}
+                    showWinner={true}
+                    onNewPrizes={handleNewPrizes}
+                  />
+                )}
+
                 {/* Controls */}
                 <div className="controls-section">
                   <h3>Wheel Settings</h3>
@@ -249,6 +341,8 @@ function App() {
                       segmentCount={segmentCount}
                       componentVisibility={componentVisibility}
                       onToggleCenter={(show) => setComponentVisibility(prev => ({ ...prev, center: show }))}
+                      prizeSession={prizeSession}
+                      onResetReady={(resetFn) => { wheelResetRef.current = resetFn; }}
                     />
                   </div>
 

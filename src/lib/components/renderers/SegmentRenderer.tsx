@@ -15,6 +15,10 @@ import {
   formatNumber
 } from '../../utils/segmentUtils';
 import offerPng from '../../../assets/offer.png';
+import randomRewardPng from '../../../assets/random_reward.png';
+import xpPng from '../../../assets/xp.png';
+import type { PrizeProviderResult } from '../../services/prizeProvider';
+import { mapPrizesToSegments, type PrizeSegment } from '../../utils/prizeSegmentMapper';
 
 interface SegmentRendererProps {
   segments?: WheelSegmentStyles;
@@ -30,6 +34,7 @@ interface SegmentRendererProps {
     [key: string]: string | undefined;
   };
   purchaseImageFilename?: string;
+  prizeSession?: PrizeProviderResult | null;
 }
 
 // Memoized gradient definitions component
@@ -222,6 +227,317 @@ const ArcPathDefs: React.FC<ArcPathDefsProps> = React.memo(({
 
 ArcPathDefs.displayName = 'ArcPathDefs';
 
+// Layout Component 1: Image Only (purchase offers, random rewards)
+interface SegmentImageOnlyProps {
+  segment: {
+    index: number;
+    startAngle: number;
+    endAngle: number;
+    kind: string;
+  };
+  cx: number;
+  cy: number;
+  outerRadius: number;
+  imageUrl: string;
+}
+
+const SegmentImageOnly: React.FC<SegmentImageOnlyProps> = React.memo(({
+  segment,
+  cx,
+  cy,
+  outerRadius,
+  imageUrl
+}) => {
+  const segmentMidAngle = (segment.startAngle + segment.endAngle) / 2;
+  const imageRadius = outerRadius * 0.62;
+  const imageCenterX = cx + imageRadius * Math.cos(segmentMidAngle);
+  const imageCenterY = cy + imageRadius * Math.sin(segmentMidAngle);
+  const imageSize = outerRadius * 0.55;
+  const rotationDeg = (segmentMidAngle * 180) / Math.PI + 90;
+
+  return (
+    <image
+      key={`wheel-segment-${segment.index}-image`}
+      href={imageUrl}
+      x={imageCenterX - imageSize / 2}
+      y={imageCenterY - imageSize / 2}
+      width={imageSize}
+      height={imageSize}
+      preserveAspectRatio="xMidYMid meet"
+      transform={`rotate(${rotationDeg} ${imageCenterX} ${imageCenterY})`}
+      data-segment-kind={segment.kind}
+    />
+  );
+});
+
+SegmentImageOnly.displayName = 'SegmentImageOnly';
+
+// Layout Component 2: Text with Image Below (XP prizes)
+interface SegmentTextWithImageProps {
+  segment: {
+    index: number;
+    startAngle: number;
+    endAngle: number;
+    kind: string;
+    prizeSegment?: PrizeSegment;
+  };
+  styles: import('../../types').WheelSegmentTypeStyles;
+  cx: number;
+  cy: number;
+  outerRadius: number;
+  segmentAngle: number;
+  imageUrl: string;
+}
+
+const SegmentTextWithImage: React.FC<SegmentTextWithImageProps> = React.memo(({
+  segment,
+  styles,
+  cx,
+  cy,
+  outerRadius,
+  segmentAngle,
+  imageUrl
+}) => {
+  const elements: React.ReactElement[] = [];
+
+  if (!styles.text) return null;
+
+  const angleInset = Math.min(segmentAngle * 0.22, Math.PI / 12);
+  const arcStart = segment.startAngle + angleInset;
+  const arcEnd = segment.endAngle - angleInset;
+  const textAngleSpan = arcEnd - arcStart;
+
+  if (textAngleSpan > 0 && outerRadius > 0) {
+    const gridRadii = TEXT_GRID_RADII_FACTORS.map((factor) =>
+      Math.max(outerRadius * factor, outerRadius * 0.3)
+    );
+
+    // Get text from prize data
+    const prizeSegment = segment.prizeSegment;
+    const displayText = prizeSegment?.displayText || '';
+
+    // Text on primary arc (top position)
+    const primaryArcId = `wheel-segment-${segment.index}-primary-arc`;
+    const lineRadius = gridRadii[0];
+    const baseFontSize = computeArcFontSize(displayText, lineRadius, textAngleSpan);
+    const fontSize = Math.max(MIN_TEXT_FONT_SIZE, baseFontSize);
+
+    const textFillPaint = fillToSvgPaint(
+      styles.text?.fill,
+      `segment-text-fill-${segment.index}`
+    );
+
+    let textStroke = 'none';
+    if (styles.text?.stroke) {
+      if (styles.text.stroke.fill) {
+        textStroke = fillToSvgPaint(
+          styles.text.stroke.fill,
+          `segment-text-stroke-${segment.index}`
+        );
+      } else if (styles.text.stroke.color) {
+        textStroke = styles.text.stroke.color;
+      }
+    }
+    const textStrokeWidth = styles.text?.stroke?.width || 0;
+
+    const textFilter = styles.text?.dropShadows && styles.text.dropShadows.length > 0
+      ? `url(#segment-text-shadow-${segment.index})`
+      : undefined;
+
+    elements.push(
+      <text
+        key={`wheel-segment-${segment.index}-text`}
+        fontFamily={TEXT_FONT_FAMILY}
+        fontWeight={700}
+        fontSize={formatNumber(fontSize)}
+        fill={textFillPaint !== 'none' ? textFillPaint : undefined}
+        stroke={textStroke}
+        strokeWidth={textStrokeWidth ? formatNumber(textStrokeWidth) : undefined}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        filter={textFilter}
+        data-segment-kind={segment.kind}
+        data-segment-line="primary"
+        textRendering="optimizeLegibility"
+      >
+        <textPath
+          href={`#${primaryArcId}`}
+          xlinkHref={`#${primaryArcId}`}
+          startOffset="50%"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          spacing="auto"
+        >
+          {displayText}
+        </textPath>
+      </text>
+    );
+
+    // Image below text (at secondary arc position)
+    const segmentMidAngle = (segment.startAngle + segment.endAngle) / 2;
+    const imageRadius = gridRadii[2]; // Use secondary arc radius
+    const imageCenterX = cx + imageRadius * Math.cos(segmentMidAngle);
+    const imageCenterY = cy + imageRadius * Math.sin(segmentMidAngle);
+    const imageSize = outerRadius * 0.25; // Smaller than image-only size
+    const rotationDeg = (segmentMidAngle * 180) / Math.PI + 90;
+
+    elements.push(
+      <image
+        key={`wheel-segment-${segment.index}-xp-image`}
+        href={imageUrl}
+        x={imageCenterX - imageSize / 2}
+        y={imageCenterY - imageSize / 2}
+        width={imageSize}
+        height={imageSize}
+        preserveAspectRatio="xMidYMid meet"
+        transform={`rotate(${rotationDeg} ${imageCenterX} ${imageCenterY})`}
+        data-segment-kind={segment.kind}
+      />
+    );
+  }
+
+  return <>{elements}</>;
+});
+
+SegmentTextWithImage.displayName = 'SegmentTextWithImage';
+
+// Layout Component 3: Two Line Text (all other prizes)
+interface SegmentTwoLineTextProps {
+  segment: {
+    index: number;
+    startAngle: number;
+    endAngle: number;
+    kind: string;
+    prizeSegment?: PrizeSegment;
+  };
+  styles: import('../../types').WheelSegmentTypeStyles;
+  cx: number;
+  cy: number;
+  outerRadius: number;
+  segmentAngle: number;
+}
+
+const SegmentTwoLineText: React.FC<SegmentTwoLineTextProps> = React.memo(({
+  segment,
+  styles,
+  cx: _cx,
+  cy: _cy,
+  outerRadius,
+  segmentAngle
+}) => {
+  const elements: React.ReactElement[] = [];
+
+  if (!styles.text) return null;
+
+  const angleInset = Math.min(segmentAngle * 0.22, Math.PI / 12);
+  const arcStart = segment.startAngle + angleInset;
+  const arcEnd = segment.endAngle - angleInset;
+  const textAngleSpan = arcEnd - arcStart;
+
+  if (textAngleSpan > 0 && outerRadius > 0) {
+    const gridRadii = TEXT_GRID_RADII_FACTORS.map((factor) =>
+      Math.max(outerRadius * factor, outerRadius * 0.3)
+    );
+
+    // Get text from prize data
+    const prizeSegment = segment.prizeSegment;
+    const displayText = prizeSegment?.displayText || '';
+    const isNoWin = prizeSegment?.isNoWin || segment.kind === 'nowin';
+
+    // Split text on newline for two-line display
+    const textLines = displayText.includes('\n')
+      ? displayText.split('\n')
+      : [displayText];
+
+    const lineDefinitions: Array<{
+      key: 'primary' | 'secondary';
+      label: string;
+      radius: number;
+      fontScale: number;
+    }> = [
+      {
+        key: 'primary',
+        label: textLines[0] || (isNoWin ? 'NO' : 'Lorem'),
+        radius: gridRadii[0],
+        fontScale: 1,
+      },
+      {
+        key: 'secondary',
+        label: textLines[1] || (isNoWin ? 'WIN' : 'Ipsum'),
+        radius: gridRadii[2],
+        fontScale: 0.92,
+      },
+    ];
+
+    lineDefinitions.forEach((line) => {
+      const { label, radius: lineRadius, fontScale, key } = line;
+      const trimmed = label.trim();
+      if (!trimmed.length || lineRadius <= 0) {
+        return;
+      }
+
+      const arcPathId = `wheel-segment-${segment.index}-${key}-arc`;
+      const baseFontSize = computeArcFontSize(trimmed, lineRadius, textAngleSpan) * fontScale;
+      const fontSize = Math.max(MIN_TEXT_FONT_SIZE, baseFontSize);
+
+      const textFillPaint = fillToSvgPaint(
+        styles.text?.fill,
+        `segment-text-fill-${segment.index}`
+      );
+
+      let textStroke = 'none';
+      if (styles.text?.stroke) {
+        if (styles.text.stroke.fill) {
+          textStroke = fillToSvgPaint(
+            styles.text.stroke.fill,
+            `segment-text-stroke-${segment.index}`
+          );
+        } else if (styles.text.stroke.color) {
+          textStroke = styles.text.stroke.color;
+        }
+      }
+      const textStrokeWidth = styles.text?.stroke?.width || 0;
+
+      const textFilter = styles.text?.dropShadows && styles.text.dropShadows.length > 0
+        ? `url(#segment-text-shadow-${segment.index})`
+        : undefined;
+
+      elements.push(
+        <text
+          key={`wheel-segment-${segment.index}-${key}-text`}
+          fontFamily={TEXT_FONT_FAMILY}
+          fontWeight={700}
+          fontSize={formatNumber(fontSize)}
+          fill={textFillPaint !== 'none' ? textFillPaint : undefined}
+          stroke={textStroke}
+          strokeWidth={textStrokeWidth ? formatNumber(textStrokeWidth) : undefined}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          filter={textFilter}
+          data-segment-kind={segment.kind}
+          data-segment-line={key}
+          textRendering="optimizeLegibility"
+        >
+          <textPath
+            href={`#${arcPathId}`}
+            xlinkHref={`#${arcPathId}`}
+            startOffset="50%"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            spacing="auto"
+          >
+            {trimmed}
+          </textPath>
+        </text>
+      );
+    });
+  }
+
+  return <>{elements}</>;
+});
+
+SegmentTwoLineText.displayName = 'SegmentTwoLineText';
+
 // Memoized individual segment component
 interface SegmentProps {
   segment: {
@@ -229,6 +545,7 @@ interface SegmentProps {
     startAngle: number;
     endAngle: number;
     kind: string;
+    prizeSegment?: PrizeSegment;
   };
   styles: import('../../types').WheelSegmentTypeStyles;
   cx: number;
@@ -237,6 +554,7 @@ interface SegmentProps {
   segmentAngle: number;
   scale: number;
   jackpotImageUrl?: string;
+  purchaseImageUrl?: string;
 }
 
 const Segment: React.FC<SegmentProps> = React.memo(({
@@ -247,7 +565,8 @@ const Segment: React.FC<SegmentProps> = React.memo(({
   outerRadius,
   segmentAngle,
   scale,
-  jackpotImageUrl
+  jackpotImageUrl,
+  purchaseImageUrl
 }) => {
   // Memoize outer path calculation
   const outerPath = useMemo(() =>
@@ -285,140 +604,74 @@ const Segment: React.FC<SegmentProps> = React.memo(({
     [styles.outer.stroke?.width, scale]
   );
 
-  // Memoize text elements
-  const textElements = useMemo(() => {
-    const elements: React.ReactElement[] = [];
+  // Memoize content elements - choose layout based on prize type
+  const contentElements = useMemo(() => {
+    const prizeSegment = segment.prizeSegment;
 
-    // For jackpot segments, render an image instead of text
-    if (segment.kind === 'jackpot' && jackpotImageUrl) {
-      // Calculate center of segment
-      const segmentMidAngle = (segment.startAngle + segment.endAngle) / 2;
-      const imageRadius = outerRadius * 0.62; // Position at ~62% of radius
-      const imageCenterX = cx + imageRadius * Math.cos(segmentMidAngle);
-      const imageCenterY = cy + imageRadius * Math.sin(segmentMidAngle);
-
-      // Image size relative to segment - increased to fill more space
-      const imageSize = outerRadius * 0.55;
-
-      elements.push(
-        <image
-          key={`wheel-segment-${segment.index}-jackpot-image`}
-          href={jackpotImageUrl}
-          x={imageCenterX - imageSize / 2}
-          y={imageCenterY - imageSize / 2}
-          width={imageSize}
-          height={imageSize}
-          preserveAspectRatio="xMidYMid meet"
-          data-segment-kind={segment.kind}
+    // Layout 1: Image Only (purchase offers, random rewards, jackpot)
+    if (prizeSegment?.usePurchaseImage) {
+      return (
+        <SegmentImageOnly
+          segment={segment}
+          cx={cx}
+          cy={cy}
+          outerRadius={outerRadius}
+          imageUrl={purchaseImageUrl || offerPng}
         />
       );
-    } else if (styles.text) {
-      // Render text for non-jackpot segments
-      const angleInset = Math.min(segmentAngle * 0.22, Math.PI / 12);
-      const arcStart = segment.startAngle + angleInset;
-      const arcEnd = segment.endAngle - angleInset;
-      const textAngleSpan = arcEnd - arcStart;
-
-      if (textAngleSpan > 0 && outerRadius > 0) {
-        const gridRadii = TEXT_GRID_RADII_FACTORS.map((factor) =>
-          Math.max(outerRadius * factor, outerRadius * 0.3)
-        );
-
-        const lineDefinitions: Array<{
-          key: 'primary' | 'secondary';
-          label: string;
-          radius: number;
-          fontScale: number;
-        }> = [
-          {
-            key: 'primary',
-            label: segment.kind === 'nowin' ? 'NO' : 'Lorem',
-            radius: gridRadii[0],
-            fontScale: 1,
-          },
-          {
-            key: 'secondary',
-            label: segment.kind === 'nowin' ? 'WIN' : 'Ipsum',
-            radius: gridRadii[2],
-            fontScale: 0.92,
-          },
-        ];
-
-        lineDefinitions.forEach((line) => {
-          const { label, radius: lineRadius, fontScale, key } = line;
-          const trimmed = label.trim();
-          if (!trimmed.length || lineRadius <= 0) {
-            return;
-          }
-
-          const arcPathId = `wheel-segment-${segment.index}-${key}-arc`;
-          const baseFontSize = computeArcFontSize(trimmed, lineRadius, textAngleSpan) * fontScale;
-          const fontSize = Math.max(MIN_TEXT_FONT_SIZE, baseFontSize);
-          const arcLength = lineRadius * textAngleSpan;
-
-          // Get text fill
-          const textFillPaint = fillToSvgPaint(
-            styles.text?.fill,
-            `segment-text-fill-${segment.index}`
-          );
-
-          // Get text stroke - support both new fill structure and legacy color string
-          let textStroke = 'none';
-          if (styles.text?.stroke) {
-            if (styles.text.stroke.fill) {
-              // Use new fill structure (solid or gradient)
-              textStroke = fillToSvgPaint(
-                styles.text.stroke.fill,
-                `segment-text-stroke-${segment.index}`
-              );
-            } else if (styles.text.stroke.color) {
-              // Fallback to legacy color string
-              textStroke = styles.text.stroke.color;
-            }
-          }
-          const textStrokeWidth = styles.text?.stroke?.width || 0;
-
-          // Get text filter
-          const textFilter = styles.text?.dropShadows && styles.text.dropShadows.length > 0
-            ? `url(#segment-text-shadow-${segment.index})`
-            : undefined;
-
-          elements.push(
-            <text
-              key={`wheel-segment-${segment.index}-${key}-text`}
-              fontFamily={TEXT_FONT_FAMILY}
-              fontWeight={700}
-              fontSize={formatNumber(fontSize)}
-              textLength={formatNumber(arcLength)}
-              lengthAdjust="spacing"
-              fill={textFillPaint !== 'none' ? textFillPaint : undefined}
-              stroke={textStroke}
-              strokeWidth={textStrokeWidth ? formatNumber(textStrokeWidth) : undefined}
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              filter={textFilter}
-              data-segment-kind={segment.kind}
-              data-segment-line={key}
-              textRendering="optimizeLegibility"
-            >
-              <textPath
-                href={`#${arcPathId}`}
-                xlinkHref={`#${arcPathId}`}
-                startOffset="50%"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                spacing="auto"
-              >
-                {trimmed}
-              </textPath>
-            </text>
-          );
-        });
-      }
     }
 
-    return elements;
-  }, [segment, styles, cx, cy, outerRadius, segmentAngle, jackpotImageUrl]);
+    if (prizeSegment?.useRandomRewardImage) {
+      return (
+        <SegmentImageOnly
+          segment={segment}
+          cx={cx}
+          cy={cy}
+          outerRadius={outerRadius}
+          imageUrl={randomRewardPng}
+        />
+      );
+    }
+
+    if (segment.kind === 'jackpot' && jackpotImageUrl) {
+      return (
+        <SegmentImageOnly
+          segment={segment}
+          cx={cx}
+          cy={cy}
+          outerRadius={outerRadius}
+          imageUrl={jackpotImageUrl}
+        />
+      );
+    }
+
+    // Layout 2: Text with Image Below (XP prizes)
+    if (prizeSegment?.useXpImage) {
+      return (
+        <SegmentTextWithImage
+          segment={segment}
+          styles={styles}
+          cx={cx}
+          cy={cy}
+          outerRadius={outerRadius}
+          segmentAngle={segmentAngle}
+          imageUrl={xpPng}
+        />
+      );
+    }
+
+    // Layout 3: Two Line Text (all other prizes)
+    return (
+      <SegmentTwoLineText
+        segment={segment}
+        styles={styles}
+        cx={cx}
+        cy={cy}
+        outerRadius={outerRadius}
+        segmentAngle={segmentAngle}
+      />
+    );
+  }, [segment, styles, cx, cy, outerRadius, segmentAngle, jackpotImageUrl, purchaseImageUrl]);
 
   return (
     <g key={`segment-${segment.index}`}>
@@ -429,8 +682,8 @@ const Segment: React.FC<SegmentProps> = React.memo(({
         stroke={outerStrokePaint}
         strokeWidth={outerStrokeWidth}
       />
-      {/* Text elements */}
-      {textElements}
+      {/* Content elements (text/images based on layout) */}
+      {contentElements}
     </g>
   );
 }, (prevProps, nextProps) => {
@@ -441,13 +694,15 @@ const Segment: React.FC<SegmentProps> = React.memo(({
     prevProps.segment.startAngle === nextProps.segment.startAngle &&
     prevProps.segment.endAngle === nextProps.segment.endAngle &&
     prevProps.segment.kind === nextProps.segment.kind &&
+    prevProps.segment.prizeSegment === nextProps.segment.prizeSegment &&
     prevProps.styles === nextProps.styles &&
     prevProps.cx === nextProps.cx &&
     prevProps.cy === nextProps.cy &&
     prevProps.outerRadius === nextProps.outerRadius &&
     prevProps.segmentAngle === nextProps.segmentAngle &&
     prevProps.scale === nextProps.scale &&
-    prevProps.jackpotImageUrl === nextProps.jackpotImageUrl
+    prevProps.jackpotImageUrl === nextProps.jackpotImageUrl &&
+    prevProps.purchaseImageUrl === nextProps.purchaseImageUrl
   );
 });
 
@@ -461,33 +716,44 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
   wheelState = 'IDLE',
   targetRotation = 0,
   rewardsPrizeImages,
-  purchaseImageFilename
+  purchaseImageFilename,
+  prizeSession
 }) => {
+  // Map prizes to segments if prizeSession is available
+  const prizeSegments = useMemo<PrizeSegment[] | null>(() => {
+    if (prizeSession && prizeSession.prizes.length === segmentCount) {
+      return mapPrizesToSegments(prizeSession.prizes);
+    }
+    return null;
+  }, [prizeSession, segmentCount]);
+
   // Calculate segment angles
   const segmentAngle = useMemo(() =>
     (Math.PI * 2) / segmentCount,
     [segmentCount]
   );
 
-  // Generate segment data
+  // Generate segment data with prize mapping
   const segmentData = useMemo(() => {
     const data = [];
     for (let i = 0; i < segmentCount; i++) {
       const startAngle = i * segmentAngle - Math.PI / 2; // Start from top
       const endAngle = startAngle + segmentAngle;
 
-      // Determine segment type
-      const segmentKind = SEGMENT_KINDS[i % SEGMENT_KINDS.length];
+      // Use prize segment kind if available, otherwise default pattern
+      const prizeSegment = prizeSegments?.[i];
+      const segmentKind = prizeSegment?.kind || SEGMENT_KINDS[i % SEGMENT_KINDS.length];
 
       data.push({
         index: i,
         startAngle,
         endAngle,
-        kind: segmentKind
+        kind: segmentKind,
+        prizeSegment // Include prize segment data
       });
     }
     return data;
-  }, [segmentCount, segmentAngle]);
+  }, [segmentCount, segmentAngle, prizeSegments]);
 
   // Get jackpot image URL (purchase image or fallback to offer.png)
   const jackpotImageUrl = useMemo(() => {
@@ -496,6 +762,14 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
     }
     return offerPng;
   }, [purchaseImageFilename, rewardsPrizeImages]);
+
+  // Get purchase offer image URL (from theme or fallback to offer.png)
+  const purchaseImageUrl = useMemo(() => {
+    if (rewardsPrizeImages?.purchase) {
+      return rewardsPrizeImages.purchase;
+    }
+    return offerPng;
+  }, [rewardsPrizeImages]);
 
   // Get center position and radius - memoized (with null checks)
   const { cx, cy, outerRadius } = useMemo(() => ({
@@ -607,6 +881,7 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
               segmentAngle={segmentAngle}
               scale={scale}
               jackpotImageUrl={jackpotImageUrl}
+              purchaseImageUrl={purchaseImageUrl}
             />
           );
         })}

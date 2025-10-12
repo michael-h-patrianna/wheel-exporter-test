@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, CSSProperties } from 'react';
 import { WheelExport, ExtractedAssets, HeaderState, ButtonSpinState } from '../types';
 import { useWheelStateMachine } from '../hooks/useWheelStateMachine';
+import type { PrizeProviderResult } from '../services/prizeProvider';
 
 // Import all renderer components
 import { BackgroundRenderer } from './renderers/BackgroundRenderer';
@@ -34,6 +35,8 @@ interface WheelViewerProps {
   segmentCount: number;
   componentVisibility: ComponentVisibility;
   onToggleCenter: (show: boolean) => void;
+  prizeSession?: PrizeProviderResult | null;
+  onResetReady?: (resetFn: () => void) => void;
 }
 
 export const WheelViewer: React.FC<WheelViewerProps> = ({
@@ -44,14 +47,17 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   segmentCount,
   componentVisibility,
   onToggleCenter,
+  prizeSession,
+  onResetReady,
 }) => {
   // Component state management
   const [headerState, setHeaderState] = useState<HeaderState>('active');
   const [buttonSpinState, setButtonSpinState] = useState<ButtonSpinState>('default');
 
-  // Wheel spin state machine
+  // Wheel spin state machine with winning segment from prize session
   const wheelStateMachine = useWheelStateMachine({
     segmentCount,
+    winningSegmentIndex: prizeSession?.winningIndex,
     onSpinComplete: useCallback(() => {
       setButtonSpinState('default');
     }, []),
@@ -113,6 +119,17 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
       : assets.buttonSpinImages.spinning;
   };
 
+  // Expose reset function to parent
+  useEffect(() => {
+    if (onResetReady) {
+      onResetReady(() => {
+        setHeaderState('active');
+        setButtonSpinState('default');
+        wheelStateMachine.reset();
+      });
+    }
+  }, [onResetReady, wheelStateMachine]);
+
   // Reset states when wheel data changes
   useEffect(() => {
     setHeaderState('active');
@@ -154,6 +171,7 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
             targetRotation={wheelStateMachine.targetRotation}
             rewardsPrizeImages={assets.rewardsPrizeImages}
             purchaseImageFilename={wheelData.rewards?.prizes?.images?.purchase?.img}
+            prizeSession={prizeSession}
           />
         )}
 
