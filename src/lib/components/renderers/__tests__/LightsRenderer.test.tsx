@@ -6,16 +6,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { LightsRenderer } from '../LightsRenderer';
 import { LightsComponent } from '../../../types';
+import { createMockLights, createMockLightsWithoutPositions } from '../../../test-utils';
 
 describe('LightsRenderer', () => {
-  const mockLights: LightsComponent = {
-    color: '#FFFF00',
-    positions: [
-      { x: 100, y: 50 },
-      { x: 200, y: 100 },
-      { x: 300, y: 150 },
-    ],
-  };
+  const mockLights = createMockLights();
 
   const defaultProps = {
     lights: mockLights,
@@ -49,9 +43,7 @@ describe('LightsRenderer', () => {
   });
 
   it('should return null when positions array is not provided', () => {
-    const lightsWithoutPositions = {
-      color: '#FFFF00',
-    } as any;
+    const lightsWithoutPositions = createMockLightsWithoutPositions() as unknown as LightsComponent;
 
     const { container } = render(
       <LightsRenderer lights={lightsWithoutPositions} scale={1} />
@@ -61,10 +53,9 @@ describe('LightsRenderer', () => {
   });
 
   it('should return null when positions array is empty', () => {
-    const lightsWithEmptyPositions: LightsComponent = {
-      color: '#FFFF00',
+    const lightsWithEmptyPositions = createMockLights({
       positions: [],
-    };
+    });
 
     const { container } = render(
       <LightsRenderer lights={lightsWithEmptyPositions} scale={1} />
@@ -198,10 +189,10 @@ describe('LightsRenderer', () => {
   });
 
   it('should handle single light', () => {
-    const singleLight: LightsComponent = {
+    const singleLight = createMockLights({
       color: '#FF0000',
       positions: [{ x: 50, y: 50 }],
-    };
+    });
 
     const { container } = render(<LightsRenderer lights={singleLight} scale={1} />);
 
@@ -211,10 +202,10 @@ describe('LightsRenderer', () => {
   });
 
   it('should handle many lights', () => {
-    const manyLights: LightsComponent = {
+    const manyLights = createMockLights({
       color: '#00FF00',
       positions: Array.from({ length: 20 }, (_, i) => ({ x: i * 10, y: i * 10 })),
-    };
+    });
 
     const { container } = render(<LightsRenderer lights={manyLights} scale={1} />);
 

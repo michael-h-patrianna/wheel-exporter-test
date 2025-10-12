@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
-import { WheelViewer, ResultViewer, ExtractedAssets } from '../lib';
-import { extractWheelZip } from './utils/zipExtractor';
+import { WheelViewer, ResultViewer, ExtractedAssets, ErrorBoundary } from '../lib';
+import { loadWheelFromZip, WheelLoadError } from '../lib/services/wheelLoader';
 
 function App() {
   const [extractedAssets, setExtractedAssets] = useState<ExtractedAssets | null>(null);
@@ -39,9 +39,8 @@ function App() {
     try {
       setError(null);
       setIsLoading(true);
-      console.log('Starting ZIP extraction for:', file.name);
 
-      const assets = await extractWheelZip(file);
+      const assets = await loadWheelFromZip(file);
       setExtractedAssets(assets);
 
       // Auto-set wheel dimensions to match the original frame size
@@ -49,12 +48,13 @@ function App() {
       const frameHeight = assets.wheelData.frameSize?.height || 600;
       setWheelWidth(frameWidth);
       setWheelHeight(frameHeight);
-
-      console.log('Successfully loaded wheel:', assets.wheelData.wheelId);
-      console.log('Auto-set dimensions to:', frameWidth, 'x', frameHeight);
     } catch (err) {
-      console.error('Error extracting ZIP:', err);
-      setError(err instanceof Error ? err.message : 'Failed to extract ZIP file');
+      if (err instanceof WheelLoadError) {
+        // Provide actionable error messages
+        setError(err.message);
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to extract ZIP file');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -236,34 +236,36 @@ function App() {
           {/* Main Content Area */}
           <div className="main-content">
             {extractedAssets && (
-              <>
-                {/* Wheel Preview */}
-                <div className="wheel-container">
-                  <h3>Wheel Preview</h3>
-                  <WheelViewer
-                    wheelData={extractedAssets.wheelData}
-                    assets={extractedAssets}
-                    wheelWidth={wheelWidth}
-                    wheelHeight={wheelHeight}
-                    segmentCount={segmentCount}
-                    componentVisibility={componentVisibility}
-                    onToggleCenter={(show) => setComponentVisibility(prev => ({ ...prev, center: show }))}
-                  />
-                </div>
-
-                {/* Result View Preview */}
-                {extractedAssets.wheelData.rewards && (
-                  <div className="result-container">
-                    <h3 className="result-title">Result View Preview</h3>
-                    <ResultViewer
+              <ErrorBoundary onReset={() => setExtractedAssets(null)}>
+                <>
+                  {/* Wheel Preview */}
+                  <div className="wheel-container">
+                    <h3>Wheel Preview</h3>
+                    <WheelViewer
                       wheelData={extractedAssets.wheelData}
                       assets={extractedAssets}
                       wheelWidth={wheelWidth}
                       wheelHeight={wheelHeight}
+                      segmentCount={segmentCount}
+                      componentVisibility={componentVisibility}
+                      onToggleCenter={(show) => setComponentVisibility(prev => ({ ...prev, center: show }))}
                     />
                   </div>
-                )}
-              </>
+
+                  {/* Result View Preview */}
+                  {extractedAssets.wheelData.rewards && (
+                    <div className="result-container">
+                      <h3 className="result-title">Result View Preview</h3>
+                      <ResultViewer
+                        wheelData={extractedAssets.wheelData}
+                        assets={extractedAssets}
+                        wheelWidth={wheelWidth}
+                        wheelHeight={wheelHeight}
+                      />
+                    </div>
+                  )}
+                </>
+              </ErrorBoundary>
             )}
           </div>
         </div>

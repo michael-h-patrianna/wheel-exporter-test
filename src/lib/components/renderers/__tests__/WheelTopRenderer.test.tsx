@@ -6,17 +6,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { WheelTopRenderer } from '../WheelTopRenderer';
 import { WheelOverlay } from '../../../types';
+import { createMockWheelTop, createMockWheelOverlayWithoutBounds } from '../../../test-utils';
 
 describe('WheelTopRenderer', () => {
-  const mockWheelTop: WheelOverlay = {
-    bounds: {
-      x: 400,
-      y: 300,
-      w: 200,
-      h: 200,
-    },
-    img: 'wheeltop.png',
-  };
+  const mockWheelTop = createMockWheelTop();
 
   const defaultProps = {
     wheelTop: mockWheelTop,
@@ -56,9 +49,7 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should return null when bounds are missing', () => {
-    const wheelTopWithoutBounds = {
-      img: 'wheeltop.png',
-    } as any;
+    const wheelTopWithoutBounds = createMockWheelOverlayWithoutBounds() as unknown as WheelOverlay;
 
     const { container } = render(
       <WheelTopRenderer

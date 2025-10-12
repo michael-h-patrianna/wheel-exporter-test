@@ -83,7 +83,7 @@ describe('SegmentRenderer', () => {
     center: mockCenter,
     segmentCount: 8,
     scale: 1,
-    isSpinning: false,
+    wheelState: 'IDLE' as const,
     targetRotation: 0,
   };
 
@@ -180,9 +180,9 @@ describe('SegmentRenderer', () => {
       });
     });
 
-    it('should apply spinning transition when isSpinning is true', () => {
+    it('should apply spinning transition when wheelState is SPINNING', () => {
       const { container } = render(
-        <SegmentRenderer {...defaultProps} isSpinning={true} />
+        <SegmentRenderer {...defaultProps} wheelState="SPINNING" />
       );
 
       const svg = container.querySelector('svg');
@@ -191,14 +191,36 @@ describe('SegmentRenderer', () => {
       });
     });
 
-    it('should apply default transition when not spinning', () => {
+    it('should apply settling transition when wheelState is SETTLING', () => {
       const { container } = render(
-        <SegmentRenderer {...defaultProps} isSpinning={false} />
+        <SegmentRenderer {...defaultProps} wheelState="SETTLING" />
       );
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
         transition: 'transform 1.5s cubic-bezier(0.35, 0, 0.25, 1)',
+      });
+    });
+
+    it('should apply no transition when wheelState is IDLE', () => {
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} wheelState="IDLE" />
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).toHaveStyle({
+        transition: 'none',
+      });
+    });
+
+    it('should apply no transition when wheelState is COMPLETE', () => {
+      const { container } = render(
+        <SegmentRenderer {...defaultProps} wheelState="COMPLETE" />
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).toHaveStyle({
+        transition: 'none',
       });
     });
   });

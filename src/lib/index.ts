@@ -11,6 +11,7 @@
 // Main Components
 export { WheelViewer } from './components/WheelViewer';
 export { ResultViewer } from './components/ResultViewer';
+export { ErrorBoundary } from './components/ErrorBoundary';
 export type { RewardRowData, RewardRowType } from './components/ResultViewer';
 
 // Renderer Components (for advanced customization)

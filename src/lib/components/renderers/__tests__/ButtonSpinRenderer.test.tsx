@@ -6,16 +6,10 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ButtonSpinRenderer } from '../ButtonSpinRenderer';
 import { ButtonSpinComponent, ButtonSpinState } from '../../../types';
+import { createMockButtonSpin, createMockButtonSpinWithMissingSpinningState } from '../../../test-utils';
 
 describe('ButtonSpinRenderer', () => {
-  const mockButtonSpin: ButtonSpinComponent = {
-    stateBounds: {
-      default: { x: 400, y: 500, w: 100, h: 100 },
-      spinning: { x: 400, y: 500, w: 100, h: 100 },
-    },
-    defaultImg: 'button-default.png',
-    spinningImg: 'button-spinning.png',
-  };
+  const mockButtonSpin = createMockButtonSpin();
 
   const defaultProps = {
     buttonSpin: mockButtonSpin,
@@ -61,13 +55,7 @@ describe('ButtonSpinRenderer', () => {
   });
 
   it('should return null when bounds for current state are missing', () => {
-    const buttonSpinWithoutBounds: ButtonSpinComponent = {
-      stateBounds: {
-        default: { x: 400, y: 500, w: 100, h: 100 },
-      } as any, // Missing 'spinning' stateBounds
-      defaultImg: 'button-default.png',
-      spinningImg: 'button-spinning.png',
-    };
+    const buttonSpinWithoutBounds = createMockButtonSpinWithMissingSpinningState() as unknown as ButtonSpinComponent;
 
     const { container } = render(
       <ButtonSpinRenderer
@@ -114,13 +102,12 @@ describe('ButtonSpinRenderer', () => {
   });
 
   it('should apply rotation when provided', () => {
-    const buttonSpinWithRotation: ButtonSpinComponent = {
-      ...mockButtonSpin,
+    const buttonSpinWithRotation = createMockButtonSpin({
       stateBounds: {
         default: { x: 400, y: 500, w: 100, h: 100, rotation: 90 },
         spinning: { x: 400, y: 500, w: 100, h: 100, rotation: 90 },
       },
-    };
+    });
 
     const { container } = render(
       <ButtonSpinRenderer {...defaultProps} buttonSpin={buttonSpinWithRotation} />

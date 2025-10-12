@@ -1,18 +1,16 @@
 import React from 'react';
-import { Fill, Gradient, GradientTransform, WheelSegmentKind, DropShadow } from '../types';
+import { Fill, Gradient, GradientTransform, DropShadow } from '../types';
+import {
+  SEGMENT_KINDS,
+  TAU,
+  SEGMENT_PREVIEW_INNER_RADIUS_RATIO,
+  TEXT_GRID_RADII_FACTORS,
+  MIN_TEXT_FONT_SIZE,
+  TEXT_FONT_FAMILY,
+} from '../constants';
 
-// Constants for segment rendering
-// Segment order: jackpot, nowin, then alternating odd/even
-export const SEGMENT_KINDS: WheelSegmentKind[] = ['jackpot', 'nowin', 'odd', 'even', 'odd', 'even', 'odd', 'even'];
-const TAU = Math.PI * 2;
-export const SEGMENT_PREVIEW_INNER_RADIUS_RATIO = 0.6; // Inner radius is 60% of outer radius
-
-// Text rendering constants
-// Grid radii as factors of outer radius (0-1)
-// [0] = primary text line radius, [1] = middle (unused), [2] = secondary text line radius
-export const TEXT_GRID_RADII_FACTORS = [0.73, 0.59, 0.55] as const;
-export const MIN_TEXT_FONT_SIZE = 10;
-export const TEXT_FONT_FAMILY = '"Inter", "Helvetica Neue", Arial, sans-serif';
+// Re-export for backwards compatibility
+export { SEGMENT_KINDS, SEGMENT_PREVIEW_INNER_RADIUS_RATIO, TEXT_GRID_RADII_FACTORS, MIN_TEXT_FONT_SIZE, TEXT_FONT_FAMILY };
 
 /**
  * Convert hex color string to CSS color

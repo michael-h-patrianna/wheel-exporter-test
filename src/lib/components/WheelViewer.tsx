@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo, CSSProperties } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, CSSProperties } from 'react';
 import { WheelExport, ExtractedAssets, HeaderState, ButtonSpinState } from '../types';
+import { useWheelStateMachine } from '../hooks/useWheelStateMachine';
 
 // Import all renderer components
 import { BackgroundRenderer } from './renderers/BackgroundRenderer';
@@ -47,9 +48,14 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   // Component state management
   const [headerState, setHeaderState] = useState<HeaderState>('active');
   const [buttonSpinState, setButtonSpinState] = useState<ButtonSpinState>('default');
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [targetRotation, setTargetRotation] = useState(0);
-  const [currentRotation, setCurrentRotation] = useState(0);
+
+  // Wheel spin state machine
+  const wheelStateMachine = useWheelStateMachine({
+    segmentCount,
+    onSpinComplete: useCallback(() => {
+      setButtonSpinState('default');
+    }, []),
+  });
 
   // Calculate scale to maintain aspect ratio
   const scale = useMemo(() => {
@@ -69,58 +75,20 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   };
 
   // Handle header state cycling
-  const handleHeaderCycle = () => {
+  const handleHeaderCycle = useCallback(() => {
     const states: HeaderState[] = ['active', 'success', 'fail'];
     const currentIndex = states.indexOf(headerState);
     const nextIndex = (currentIndex + 1) % states.length;
     setHeaderState(states[nextIndex]);
-  };
+  }, [headerState]);
 
   // Handle spin button click
-  const handleSpin = () => {
-    if (isSpinning) return;
+  const handleSpin = useCallback(() => {
+    if (wheelStateMachine.isSpinning) return;
 
-    // Pick random segment (0 to segmentCount-1)
-    const randomSegment = Math.floor(Math.random() * segmentCount);
-
-    // Calculate angle for each segment
-    const segmentAngle = 360 / segmentCount;
-
-    // Calculate where the chosen segment should end up
-    // First segment starts at top, segments go clockwise
-    // To land on segment N, we need to rotate so it's at top
-    const targetSegmentAngle = randomSegment * segmentAngle;
-
-    // Add multiple full rotations (5-7 spins) for excitement
-    const fullSpins = 5 + Math.floor(Math.random() * 3);
-
-    // Total rotation: spin multiple times and land on target
-    const baseRotation = fullSpins * 360 - targetSegmentAngle;
-
-    // Add overshoot (15-25 degrees)
-    const overshoot = 15 + Math.random() * 10;
-    const totalRotation = baseRotation + overshoot;
-
-    // Set the new target rotation with overshoot
-    const rotationWithOvershoot = currentRotation + totalRotation;
-    const finalRotation = currentRotation + baseRotation;
-
-    setTargetRotation(rotationWithOvershoot);
-    setIsSpinning(true);
     setButtonSpinState('spinning');
-
-    // After main animation (5s), bounce back from overshoot
-    setTimeout(() => {
-      setTargetRotation(finalRotation);
-      setIsSpinning(false); // Mark as not spinning for bounce-back transition
-    }, 5000);
-
-    // Complete after bounce back (1.5s for the bounce)
-    setTimeout(() => {
-      setButtonSpinState('default');
-      setCurrentRotation(finalRotation);
-    }, 6500);
-  };
+    wheelStateMachine.startSpin();
+  }, [wheelStateMachine]);
 
   // Get current header image
   const getCurrentHeaderImage = () => {
@@ -149,8 +117,9 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   useEffect(() => {
     setHeaderState('active');
     setButtonSpinState('default');
-    setIsSpinning(false);
-  }, [wheelData.wheelId]);
+    wheelStateMachine.reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wheelData.wheelId]); // Only reset when wheelId changes, not when wheelStateMachine updates
 
   return (
     <div className="wheel-viewer">
@@ -181,8 +150,8 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
             center={wheelData.center}
             segmentCount={segmentCount}
             scale={scale}
-            isSpinning={isSpinning}
-            targetRotation={targetRotation}
+            wheelState={wheelStateMachine.state}
+            targetRotation={wheelStateMachine.targetRotation}
             rewardsPrizeImages={assets.rewardsPrizeImages}
             purchaseImageFilename={wheelData.rewards?.prizes?.images?.purchase?.img}
           />
@@ -235,7 +204,7 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
             buttonImage={getCurrentButtonImage()}
             scale={scale}
             onSpin={handleSpin}
-            isSpinning={isSpinning}
+            isSpinning={wheelStateMachine.isSpinning}
           />
         )}
 

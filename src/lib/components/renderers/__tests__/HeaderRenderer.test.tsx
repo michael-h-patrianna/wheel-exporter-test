@@ -6,18 +6,10 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HeaderRenderer } from '../HeaderRenderer';
 import { HeaderComponent, HeaderState } from '../../../types';
+import { createMockHeader, createMockHeaderWithMissingFailState } from '../../../test-utils';
 
 describe('HeaderRenderer', () => {
-  const mockHeader: HeaderComponent = {
-    stateBounds: {
-      active: { x: 400, y: 100, w: 200, h: 50 },
-      success: { x: 400, y: 100, w: 200, h: 50 },
-      fail: { x: 400, y: 100, w: 200, h: 50 },
-    },
-    activeImg: 'header-active.png',
-    successImg: 'header-success.png',
-    failImg: 'header-fail.png',
-  };
+  const mockHeader = createMockHeader();
 
   const defaultProps = {
     header: mockHeader,
@@ -43,7 +35,7 @@ describe('HeaderRenderer', () => {
     const { container } = render(
       <HeaderRenderer
         {...defaultProps}
-        header={undefined as any}
+        header={undefined as unknown as HeaderComponent}
       />
     );
 
@@ -62,15 +54,7 @@ describe('HeaderRenderer', () => {
   });
 
   it('should return null when bounds for current state are missing', () => {
-    const headerWithoutBounds: HeaderComponent = {
-      stateBounds: {
-        active: { x: 400, y: 100, w: 200, h: 50 },
-        success: { x: 400, y: 100, w: 200, h: 50 },
-      } as any,
-      activeImg: 'header-active.png',
-      successImg: 'header-success.png',
-      failImg: 'header-fail.png',
-    };
+    const headerWithoutBounds = createMockHeaderWithMissingFailState() as unknown as HeaderComponent;
 
     const { container } = render(
       <HeaderRenderer
@@ -117,14 +101,13 @@ describe('HeaderRenderer', () => {
   });
 
   it('should apply rotation when provided', () => {
-    const headerWithRotation: HeaderComponent = {
-      ...mockHeader,
+    const headerWithRotation = createMockHeader({
       stateBounds: {
         active: { x: 400, y: 100, w: 200, h: 50, rotation: 45 },
         success: { x: 400, y: 100, w: 200, h: 50, rotation: 45 },
         fail: { x: 400, y: 100, w: 200, h: 50, rotation: 45 },
       },
-    };
+    });
 
     const { container } = render(
       <HeaderRenderer {...defaultProps} header={headerWithRotation} />
