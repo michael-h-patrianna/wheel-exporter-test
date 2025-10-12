@@ -6,12 +6,14 @@ import {
   SEGMENT_PREVIEW_INNER_RADIUS_RATIO,
   TEXT_GRID_RADII_FACTORS,
   MIN_TEXT_FONT_SIZE,
+  MAX_TEXT_FONT_SIZE_PER_LINE,
+  MAX_IMAGE_ONLY_SIZE_FACTOR,
   TEXT_FONT_FAMILY,
 } from '../constants';
 import { logger } from '../services/logger';
 
 // Re-export for backwards compatibility
-export { SEGMENT_KINDS, SEGMENT_PREVIEW_INNER_RADIUS_RATIO, TEXT_GRID_RADII_FACTORS, MIN_TEXT_FONT_SIZE, TEXT_FONT_FAMILY };
+export { SEGMENT_KINDS, SEGMENT_PREVIEW_INNER_RADIUS_RATIO, TEXT_GRID_RADII_FACTORS, MIN_TEXT_FONT_SIZE, MAX_TEXT_FONT_SIZE_PER_LINE, MAX_IMAGE_ONLY_SIZE_FACTOR, TEXT_FONT_FAMILY };
 
 /**
  * Convert hex color string to CSS color
@@ -340,7 +342,7 @@ export function computeArcFontSize(
   const effectiveCharacters = Math.max(text.trim().length || 1, 1.5);
   const estimate = arcLength / (effectiveCharacters * 0.66);
   const minSize = Math.max(MIN_TEXT_FONT_SIZE, radius * 0.1);
-  const maxSize = radius * 0.36;
+  const maxSize = Math.min(radius * 0.36, MAX_TEXT_FONT_SIZE_PER_LINE);
 
   return Math.max(minSize, Math.min(maxSize, estimate));
 }

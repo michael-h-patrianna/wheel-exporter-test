@@ -40,43 +40,52 @@ const ROTATION_CONFIG = {
 } as const;
 
 /**
- * Calculate rotation angles for a spin
+ * Calculate rotation needed to land winning segment at 12 o'clock position
+ *
+ * The wheel segments are fixed to the wheel. When we rotate the wheel,
+ * the segments rotate with it. To land a segment at 12 o'clock (0° absolute),
+ * we need to calculate how much to rotate the wheel.
+ *
+ * Segments are rendered starting at -90° (12 o'clock), so:
+ * - Segment 0 center is at: 0 * segmentAngle + segmentAngle/2 - 90°
+ * - Segment 1 center is at: 1 * segmentAngle + segmentAngle/2 - 90°
+ * - etc.
+ *
+ * To land the target segment at 12 o'clock (0° absolute), we rotate the wheel
+ * by the NEGATIVE of the segment's offset, normalized to positive degrees.
  */
 function calculateRotation(
   currentRotation: number,
   targetSegment: number,
   segmentCount: number
 ): { withOvershoot: number; final: number; overshoot: number } {
-  // Calculate angle for each segment
+  // Calculate angle for each segment (in degrees)
   const segmentAngle = 360 / segmentCount;
 
-  // Calculate target position: center of the target segment
-  // Subtract 90° to align with rendering coordinate system (segments start at -90°/12 o'clock)
-  const targetSegmentAngle = targetSegment * segmentAngle + segmentAngle / 2 - 90;
+  // Calculate the segment's ORIGINAL position (before any rotation)
+  // Segments start at -90° (top), so segment center is at:
+  const segmentOriginalAngle = targetSegment * segmentAngle + segmentAngle / 2 - 90;
 
-  // Normalize current rotation to 0-360 range to find current position
-  const normalizedCurrent = ((currentRotation % 360) + 360) % 360;
+  // Calculate where this segment CURRENTLY is (after previous rotations)
+  // The wheel has already rotated by currentRotation degrees, so the segment moved with it
+  const segmentCurrentAngle = (segmentOriginalAngle + currentRotation) % 360;
 
-  // Calculate the angle difference needed to reach target from current position
-  // We need to go from normalizedCurrent to targetSegmentAngle
-  let angleDelta = targetSegmentAngle - normalizedCurrent;
+  // The pointer is at -90° (12 o'clock, top of wheel)
+  // Calculate how much ADDITIONAL rotation needed from the segment's CURRENT position
+  const pointerAngle = -90;
+  let additionalRotationNeeded = (pointerAngle - segmentCurrentAngle + 360) % 360;
 
-  // If the delta is positive but small, we might want to go the "long way" with full spins
-  // If negative, add 360 to go forward
-  if (angleDelta < 0) {
-    angleDelta += 360;
-  }
-
-  // Add 4-5 full rotations for excitement
+  // Add 4-5 full rotations for excitement (minimum 1440°, maximum 1800°)
   const fullSpins =
     ROTATION_CONFIG.MIN_FULL_SPINS +
     Math.floor(Math.random() * (ROTATION_CONFIG.MAX_FULL_SPINS - ROTATION_CONFIG.MIN_FULL_SPINS + 1));
 
-  // Calculate total rotation: current + full spins + angle to target
-  const totalRotation = currentRotation + fullSpins * 360 + angleDelta;
+  // Calculate total rotation:
+  // Current position + full spins for excitement + additional rotation to reach pointer
+  const totalRotation = currentRotation + fullSpins * 360 + additionalRotationNeeded;
 
   return {
-    withOvershoot: totalRotation, // No actual overshoot, single smooth animation
+    withOvershoot: totalRotation,
     final: totalRotation,
     overshoot: 0,
   };
@@ -109,6 +118,16 @@ function wheelStateMachineReducer(
           targetRotation: event.finalRotation,
         };
       }
+      // Allow reset from IDLE state (idempotent operation)
+      if (event.type === 'RESET') {
+        logger.debug('Wheel state: IDLE -> IDLE (reset called)', logContext);
+        return {
+          state: 'IDLE',
+          rotation: 0,
+          targetRotation: 0,
+          targetSegment: null,
+        };
+      }
       break;
 
     case 'SPINNING':
@@ -123,14 +142,25 @@ function wheelStateMachineReducer(
           rotation: state.targetRotation,
         };
       }
+      // Allow reset from SPINNING state (e.g., when generating new prize table)
+      if (event.type === 'RESET') {
+        logger.info('Wheel state: SPINNING -> IDLE (forced reset)', logContext);
+        return {
+          state: 'IDLE',
+          rotation: 0,
+          targetRotation: 0,
+          targetSegment: null,
+        };
+      }
       break;
 
     case 'COMPLETE':
       if (event.type === 'RESET') {
         logger.info('Wheel state: COMPLETE -> IDLE', logContext);
         return {
-          ...state,
           state: 'IDLE',
+          rotation: 0,
+          targetRotation: 0,
           targetSegment: null,
         };
       }

@@ -299,23 +299,22 @@ describe('useWheelStateMachine', () => {
       const targetRotation = result.current.targetRotation;
 
       // With 8 segments, segment angle = 45°
-      // Segment 0 center should be at: 0 * 45 + 22.5 - 90 = -67.5°
-      // After 4 full spins (1440°), the final position normalized should be: -67.5° + 360n
-      // Normalized to 0-360: 292.5°
+      // Segment 0 center is at: 0 * 45 + 22.5 - 90 = -67.5°
+      // To land at -90° (12 o'clock pointer position), we rotate by (-90 - (-67.5)) = -22.5° = 337.5°
       const normalizedRotation = ((targetRotation % 360) + 360) % 360;
 
-      // Expected position: 292.5° (which is -67.5° + 360°)
-      expect(normalizedRotation).toBeCloseTo(292.5, 1);
+      // Expected rotation: 337.5° (which lands the segment at -90°/12 o'clock)
+      expect(normalizedRotation).toBeCloseTo(337.5, 1);
 
       Math.random = originalRandom;
     });
 
     it('should align segment centers correctly for different segment counts', () => {
       const testCases = [
-        { segmentCount: 3, winningIndex: 0, expectedNormalized: 330 }, // 0*120+60-90 = -30, normalized = 330
-        { segmentCount: 4, winningIndex: 0, expectedNormalized: 315 }, // 0*90+45-90 = -45, normalized = 315
-        { segmentCount: 6, winningIndex: 0, expectedNormalized: 300 }, // 0*60+30-90 = -60, normalized = 300
-        { segmentCount: 8, winningIndex: 0, expectedNormalized: 292.5 }, // 0*45+22.5-90 = -67.5, normalized = 292.5
+        { segmentCount: 3, winningIndex: 0, expectedNormalized: 300 }, // 0*120+60-90 = -30, rotation = -60 = 300
+        { segmentCount: 4, winningIndex: 0, expectedNormalized: 315 }, // 0*90+45-90 = -45, rotation = -45 = 315
+        { segmentCount: 6, winningIndex: 0, expectedNormalized: 330 }, // 0*60+30-90 = -60, rotation = -30 = 330
+        { segmentCount: 8, winningIndex: 0, expectedNormalized: 337.5 }, // 0*45+22.5-90 = -67.5, rotation = -22.5 = 337.5
       ];
 
       testCases.forEach(({ segmentCount, winningIndex, expectedNormalized }) => {
@@ -544,18 +543,78 @@ describe('useWheelStateMachine', () => {
         useWheelStateMachine({ segmentCount: 8 })
       );
 
-      // Try to reset from IDLE (invalid transition)
+      // Start a spin
+      act(() => {
+        result.current.startSpin();
+      });
+
+      // Try to start another spin while already spinning (invalid transition)
+      act(() => {
+        result.current.startSpin();
+      });
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        'Attempted to start spin while not in IDLE or COMPLETE state',
+        expect.objectContaining({
+          currentState: 'SPINNING',
+        })
+      );
+    });
+
+    it('should allow reset from SPINNING state', () => {
+      const { result } = renderHook(() =>
+        useWheelStateMachine({ segmentCount: 8 })
+      );
+
+      // Start a spin
+      act(() => {
+        result.current.startSpin();
+      });
+
+      expect(result.current.state).toBe('SPINNING');
+      expect(result.current.isSpinning).toBe(true);
+
+      // Reset while spinning (simulates generating new prize table)
       act(() => {
         result.current.reset();
       });
 
-      expect(logger.warn).toHaveBeenCalledWith(
-        'Invalid state transition attempted',
-        expect.objectContaining({
-          currentState: 'IDLE',
-          attemptedEvent: 'RESET',
-        })
+      // Should be back to IDLE state with rotation reset to 0
+      expect(result.current.state).toBe('IDLE');
+      expect(result.current.isSpinning).toBe(false);
+      expect(result.current.rotation).toBe(0);
+      expect(result.current.targetRotation).toBe(0);
+
+      // Should be able to start a new spin
+      act(() => {
+        result.current.startSpin();
+      });
+
+      expect(result.current.state).toBe('SPINNING');
+      expect(result.current.isSpinning).toBe(true);
+    });
+
+    it('should reset rotation to 0 from any state', () => {
+      const { result } = renderHook(() =>
+        useWheelStateMachine({ segmentCount: 8 })
       );
+
+      // Spin to accumulate rotation
+      act(() => {
+        result.current.startSpin();
+        jest.advanceTimersByTime(8000);
+      });
+
+      expect(result.current.state).toBe('COMPLETE');
+      expect(result.current.rotation).toBeGreaterThan(0);
+
+      // Reset should clear rotation
+      act(() => {
+        result.current.reset();
+      });
+
+      expect(result.current.rotation).toBe(0);
+      expect(result.current.targetRotation).toBe(0);
     });
   });
 

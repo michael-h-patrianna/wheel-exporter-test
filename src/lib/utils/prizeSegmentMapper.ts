@@ -84,6 +84,9 @@ export function mapPrizesToSegments(prizes: Prize[]): PrizeSegment[] {
 
     if (isNoWin) {
       displayText = 'NO\nWIN';
+    } else if (usePurchaseImage) {
+      // Purchase offers show "200%" text with image
+      displayText = '200%';
     } else if (freeReward) {
       // Check for single reward types and format accordingly
       const hasOnlySC = freeReward.sc && !freeReward.gc && !freeReward.spins && !freeReward.xp && !freeReward.randomReward;

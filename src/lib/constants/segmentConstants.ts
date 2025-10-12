@@ -45,6 +45,18 @@ export const TEXT_GRID_RADII_FACTORS = [0.73, 0.59, 0.55] as const;
 export const MIN_TEXT_FONT_SIZE = 10;
 
 /**
+ * Maximum font size per line of text rendering on wheel segments
+ * Prevents text from getting too large when there are few segments
+ */
+export const MAX_TEXT_FONT_SIZE_PER_LINE = 48;
+
+/**
+ * Maximum image size for image-only segments as a factor of outer radius
+ * Prevents images from touching segment borders
+ */
+export const MAX_IMAGE_ONLY_SIZE_FACTOR = 0.45;
+
+/**
  * Font family for wheel segment text
  */
 export const TEXT_FONT_FAMILY = '"Inter", "Helvetica Neue", Arial, sans-serif';

@@ -8,6 +8,7 @@ import {
   computeArcFontSize,
   TEXT_GRID_RADII_FACTORS,
   MIN_TEXT_FONT_SIZE,
+  MAX_IMAGE_ONLY_SIZE_FACTOR,
   TEXT_FONT_FAMILY,
   formatNumber
 } from '../../../utils/segmentUtils';
@@ -34,7 +35,8 @@ const SegmentImageOnly: React.FC<{
   const imageRadius = outerRadius * 0.62;
   const imageCenterX = cx + imageRadius * Math.cos(segmentMidAngle);
   const imageCenterY = cy + imageRadius * Math.sin(segmentMidAngle);
-  const imageSize = outerRadius * 0.55;
+  // Apply max size constraint to prevent images from touching borders
+  const imageSize = outerRadius * MAX_IMAGE_ONLY_SIZE_FACTOR;
   const rotationDeg = (segmentMidAngle * 180) / Math.PI + 90;
 
   return (
@@ -54,8 +56,8 @@ const SegmentImageOnly: React.FC<{
 
 SegmentImageOnly.displayName = 'SegmentImageOnly';
 
-// Layout Component 2: Text with Image Below
-const SegmentTextWithImage: React.FC<{
+// Layout Component 2: Image Above Text (XP prizes, purchase offers)
+const SegmentImageAboveText: React.FC<{
   segment: SegmentLayoutProps['segment'];
   styles: SegmentLayoutProps['styles'];
   cx: number;
@@ -81,8 +83,31 @@ const SegmentTextWithImage: React.FC<{
     const prizeSegment = segment.prizeSegment;
     const displayText = prizeSegment?.displayText || '';
 
-    const primaryArcId = `wheel-segment-${segment.index}-primary-arc`;
-    const lineRadius = gridRadii[0];
+    // Image above text (at primary arc position)
+    const segmentMidAngle = (segment.startAngle + segment.endAngle) / 2;
+    const imageRadius = gridRadii[0]; // Use primary arc radius for image
+    const imageCenterX = cx + imageRadius * Math.cos(segmentMidAngle);
+    const imageCenterY = cy + imageRadius * Math.sin(segmentMidAngle);
+    const imageSize = outerRadius * 0.25;
+    const rotationDeg = (segmentMidAngle * 180) / Math.PI + 90;
+
+    elements.push(
+      <image
+        key={`wheel-segment-${segment.index}-image`}
+        href={imageUrl}
+        x={imageCenterX - imageSize / 2}
+        y={imageCenterY - imageSize / 2}
+        width={imageSize}
+        height={imageSize}
+        preserveAspectRatio="xMidYMid meet"
+        transform={`rotate(${rotationDeg} ${imageCenterX} ${imageCenterY})`}
+        data-segment-kind={segment.kind}
+      />
+    );
+
+    // Text below image (at secondary arc position)
+    const secondaryArcId = `wheel-segment-${segment.index}-secondary-arc`;
+    const lineRadius = gridRadii[2]; // Use secondary arc radius for text
     const baseFontSize = computeArcFontSize(displayText, lineRadius, textAngleSpan);
     const fontSize = Math.max(MIN_TEXT_FONT_SIZE, baseFontSize);
 
@@ -121,12 +146,12 @@ const SegmentTextWithImage: React.FC<{
         strokeLinecap="round"
         filter={textFilter}
         data-segment-kind={segment.kind}
-        data-segment-line="primary"
+        data-segment-line="secondary"
         textRendering="optimizeLegibility"
       >
         <textPath
-          href={`#${primaryArcId}`}
-          xlinkHref={`#${primaryArcId}`}
+          href={`#${secondaryArcId}`}
+          xlinkHref={`#${secondaryArcId}`}
           startOffset="50%"
           textAnchor="middle"
           dominantBaseline="middle"
@@ -136,33 +161,12 @@ const SegmentTextWithImage: React.FC<{
         </textPath>
       </text>
     );
-
-    const segmentMidAngle = (segment.startAngle + segment.endAngle) / 2;
-    const imageRadius = gridRadii[2];
-    const imageCenterX = cx + imageRadius * Math.cos(segmentMidAngle);
-    const imageCenterY = cy + imageRadius * Math.sin(segmentMidAngle);
-    const imageSize = outerRadius * 0.25;
-    const rotationDeg = (segmentMidAngle * 180) / Math.PI + 90;
-
-    elements.push(
-      <image
-        key={`wheel-segment-${segment.index}-xp-image`}
-        href={imageUrl}
-        x={imageCenterX - imageSize / 2}
-        y={imageCenterY - imageSize / 2}
-        width={imageSize}
-        height={imageSize}
-        preserveAspectRatio="xMidYMid meet"
-        transform={`rotate(${rotationDeg} ${imageCenterX} ${imageCenterY})`}
-        data-segment-kind={segment.kind}
-      />
-    );
   }
 
   return <>{elements}</>;
 });
 
-SegmentTextWithImage.displayName = 'SegmentTextWithImage';
+SegmentImageAboveText.displayName = 'SegmentImageAboveText';
 
 // Layout Component 3: Two Line Text
 const SegmentTwoLineText: React.FC<{
@@ -296,26 +300,13 @@ export const OriginalLayout: React.FC<SegmentLayoutProps> = (props) => {
     cy,
     outerRadius,
     segmentAngle,
-    jackpotImageUrl,
     purchaseImageUrl
   } = props;
 
   const contentElements = useMemo(() => {
     const prizeSegment = segment.prizeSegment;
 
-    // Layout 1: Image Only (purchase offers, random rewards, jackpot)
-    if (prizeSegment?.usePurchaseImage) {
-      return (
-        <SegmentImageOnly
-          segment={segment}
-          cx={cx}
-          cy={cy}
-          outerRadius={outerRadius}
-          imageUrl={purchaseImageUrl || offerPng}
-        />
-      );
-    }
-
+    // Layout 1: Image Only (random rewards only)
     if (prizeSegment?.useRandomRewardImage) {
       return (
         <SegmentImageOnly
@@ -328,14 +319,24 @@ export const OriginalLayout: React.FC<SegmentLayoutProps> = (props) => {
       );
     }
 
-    // Note: We removed the jackpot image-only logic here
-    // Jackpot now just uses the jackpot segment styles (colors, etc.)
-    // but displays the prize content normally (text layout below)
+    // Layout 2: Image Above Text (purchase offers, XP prizes)
+    if (prizeSegment?.usePurchaseImage) {
+      return (
+        <SegmentImageAboveText
+          segment={segment}
+          styles={styles}
+          cx={cx}
+          cy={cy}
+          outerRadius={outerRadius}
+          segmentAngle={segmentAngle}
+          imageUrl={purchaseImageUrl || offerPng}
+        />
+      );
+    }
 
-    // Layout 2: Text with Image Below (XP prizes)
     if (prizeSegment?.useXpImage) {
       return (
-        <SegmentTextWithImage
+        <SegmentImageAboveText
           segment={segment}
           styles={styles}
           cx={cx}
@@ -358,7 +359,7 @@ export const OriginalLayout: React.FC<SegmentLayoutProps> = (props) => {
         segmentAngle={segmentAngle}
       />
     );
-  }, [segment, styles, cx, cy, outerRadius, segmentAngle, jackpotImageUrl, purchaseImageUrl]);
+  }, [segment, styles, cx, cy, outerRadius, segmentAngle, purchaseImageUrl]);
 
   return <>{contentElements}</>;
 };
