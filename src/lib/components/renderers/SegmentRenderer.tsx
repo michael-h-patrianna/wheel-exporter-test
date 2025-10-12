@@ -513,12 +513,18 @@ export const SegmentRenderer: React.FC<SegmentRendererProps> = ({
 
     switch (wheelState) {
       case 'SPINNING':
-        // Main spin animation - 5 seconds with ease-out
-        transition = 'transform 5s cubic-bezier(0.15, 0, 0.25, 1)';
-        break;
-      case 'SETTLING':
-        // Bounce-back animation - 1.5 seconds with bounce easing
-        transition = 'transform 1.5s cubic-bezier(0.35, 0, 0.25, 1)';
+        // Exciting single-phase animation - 8 seconds with extreme ease-out
+        // cubic-bezier(0.11, 0.83, 0.36, 0.97) creates natural "near miss" excitement:
+        //
+        // Timing breakdown:
+        // - First 3 seconds (37.5%): Covers ~80% of rotation (fast blur)
+        // - Next 4 seconds (50%): Covers ~18% of rotation (6-8 segments visible - "near misses!")
+        // - Last 1 second (12.5%): Covers ~2% of rotation (final 1-2 segments crawling)
+        //
+        // This mimics real friction physics while creating psychological tension.
+        // Players see segments pass slowly enough to believe "it could stop now!"
+        // but the wheel keeps going, building excitement until the final stop.
+        transition = 'transform 8s cubic-bezier(0.11, 0.83, 0.36, 0.97)';
         break;
       case 'IDLE':
       case 'COMPLETE':

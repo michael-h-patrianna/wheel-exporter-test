@@ -4,15 +4,14 @@ import { logger } from '../services/logger';
 /**
  * Wheel spin states
  */
-export type WheelState = 'IDLE' | 'SPINNING' | 'SETTLING' | 'COMPLETE';
+export type WheelState = 'IDLE' | 'SPINNING' | 'COMPLETE';
 
 /**
  * Events that trigger state transitions
  */
 export type WheelEvent =
-  | { type: 'START_SPIN'; targetSegment: number; rotationWithOvershoot: number; finalRotation: number }
-  | { type: 'SPIN_COMPLETE'; finalRotation: number }
-  | { type: 'SETTLE_COMPLETE' }
+  | { type: 'START_SPIN'; targetSegment: number; finalRotation: number }
+  | { type: 'SPIN_COMPLETE' }
   | { type: 'RESET' };
 
 /**
@@ -29,19 +28,15 @@ interface WheelStateMachineState {
  * Animation timing constants (milliseconds)
  */
 const TIMING = {
-  MAIN_SPIN: 5000,
-  SETTLE: 1500,
-  TOTAL: 6500, // MAIN_SPIN + SETTLE
+  SPIN: 8000, // Single 8-second animation with natural deceleration
 } as const;
 
 /**
  * Rotation calculation parameters
  */
 const ROTATION_CONFIG = {
-  MIN_FULL_SPINS: 5,
-  MAX_FULL_SPINS: 7,
-  MIN_OVERSHOOT: 15,
-  MAX_OVERSHOOT: 25,
+  MIN_FULL_SPINS: 4, // 4-5 full rotations for excitement
+  MAX_FULL_SPINS: 5,
 } as const;
 
 /**
@@ -55,26 +50,34 @@ function calculateRotation(
   // Calculate angle for each segment
   const segmentAngle = 360 / segmentCount;
 
-  // Calculate where the chosen segment should end up
-  const targetSegmentAngle = targetSegment * segmentAngle;
+  // Calculate target position: center of the target segment
+  const targetSegmentAngle = targetSegment * segmentAngle + segmentAngle / 2;
 
-  // Add multiple full rotations (5-7 spins) for excitement
+  // Normalize current rotation to 0-360 range to find current position
+  const normalizedCurrent = ((currentRotation % 360) + 360) % 360;
+
+  // Calculate the angle difference needed to reach target from current position
+  // We need to go from normalizedCurrent to targetSegmentAngle
+  let angleDelta = targetSegmentAngle - normalizedCurrent;
+
+  // If the delta is positive but small, we might want to go the "long way" with full spins
+  // If negative, add 360 to go forward
+  if (angleDelta < 0) {
+    angleDelta += 360;
+  }
+
+  // Add 4-5 full rotations for excitement
   const fullSpins =
     ROTATION_CONFIG.MIN_FULL_SPINS +
     Math.floor(Math.random() * (ROTATION_CONFIG.MAX_FULL_SPINS - ROTATION_CONFIG.MIN_FULL_SPINS + 1));
 
-  // Total rotation: spin multiple times and land on target
-  const baseRotation = fullSpins * 360 - targetSegmentAngle;
-
-  // Add overshoot (15-25 degrees)
-  const overshoot =
-    ROTATION_CONFIG.MIN_OVERSHOOT +
-    Math.random() * (ROTATION_CONFIG.MAX_OVERSHOOT - ROTATION_CONFIG.MIN_OVERSHOOT);
+  // Calculate total rotation: current + full spins + angle to target
+  const totalRotation = currentRotation + fullSpins * 360 + angleDelta;
 
   return {
-    withOvershoot: currentRotation + baseRotation + overshoot,
-    final: currentRotation + baseRotation,
-    overshoot,
+    withOvershoot: totalRotation, // No actual overshoot, single smooth animation
+    final: totalRotation,
+    overshoot: 0,
   };
 }
 
@@ -102,25 +105,14 @@ function wheelStateMachineReducer(
           ...state,
           state: 'SPINNING',
           targetSegment: event.targetSegment,
-          targetRotation: event.rotationWithOvershoot,
+          targetRotation: event.finalRotation,
         };
       }
       break;
 
     case 'SPINNING':
       if (event.type === 'SPIN_COMPLETE') {
-        logger.info('Wheel state: SPINNING -> SETTLING', logContext);
-        return {
-          ...state,
-          state: 'SETTLING',
-          targetRotation: event.finalRotation,
-        };
-      }
-      break;
-
-    case 'SETTLING':
-      if (event.type === 'SETTLE_COMPLETE') {
-        logger.info('Wheel state: SETTLING -> COMPLETE', {
+        logger.info('Wheel state: SPINNING -> COMPLETE', {
           ...logContext,
           targetSegment: state.targetSegment,
         });
@@ -151,7 +143,7 @@ function wheelStateMachineReducer(
           ...state,
           state: 'SPINNING',
           targetSegment: event.targetSegment,
-          targetRotation: event.rotationWithOvershoot,
+          targetRotation: event.finalRotation,
         };
       }
       break;
@@ -191,9 +183,11 @@ interface UseWheelStateMachineReturn {
  *
  * States:
  * - IDLE: Wheel at rest, ready to spin
- * - SPINNING: Main spin animation (5s)
- * - SETTLING: Bounce-back from overshoot (1.5s)
+ * - SPINNING: Single 8-second animation with natural deceleration (creates "near miss" excitement)
  * - COMPLETE: Spin finished, showing result
+ *
+ * The extreme ease-out curve creates excitement by making the wheel crawl past
+ * several segments slowly enough that players believe it could stop on each one.
  *
  * @param config - Configuration object
  * @returns State machine interface
@@ -211,21 +205,16 @@ export function useWheelStateMachine(
     targetSegment: null,
   });
 
-  // Use refs for timeout IDs to avoid re-renders and enable cleanup
+  // Use ref for timeout ID to avoid re-renders and enable cleanup
   const spinCompleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const settleCompleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
-   * Cleanup all timeouts
+   * Cleanup timeout
    */
   const cleanupTimeouts = useCallback(() => {
     if (spinCompleteTimeoutRef.current) {
       clearTimeout(spinCompleteTimeoutRef.current);
       spinCompleteTimeoutRef.current = null;
-    }
-    if (settleCompleteTimeoutRef.current) {
-      clearTimeout(settleCompleteTimeoutRef.current);
-      settleCompleteTimeoutRef.current = null;
     }
   }, []);
 
@@ -244,38 +233,32 @@ export function useWheelStateMachine(
     // Pick random segment (0 to segmentCount-1)
     const randomSegment = Math.floor(Math.random() * segmentCount);
 
-    // Calculate rotation angles
+    // Calculate final rotation
     const rotation = calculateRotation(machineState.rotation, randomSegment, segmentCount);
+    const finalRotation = rotation.final;
 
-    // Dispatch START_SPIN event with rotation values
+    // Dispatch START_SPIN event
     dispatch({
       type: 'START_SPIN',
       targetSegment: randomSegment,
-      rotationWithOvershoot: rotation.withOvershoot,
-      finalRotation: rotation.final,
+      finalRotation,
     });
 
     logger.debug('Starting wheel spin', {
       targetSegment: randomSegment,
-      fullSpins: Math.floor((rotation.final - machineState.rotation) / 360),
-      overshoot: rotation.overshoot,
-      finalRotation: rotation.final,
+      fullSpins: Math.floor((finalRotation - machineState.rotation) / 360),
+      finalRotation,
     });
 
-    // Schedule SPIN_COMPLETE after main animation
+    // Schedule SPIN_COMPLETE after 8-second animation
     spinCompleteTimeoutRef.current = setTimeout(() => {
-      dispatch({ type: 'SPIN_COMPLETE', finalRotation: rotation.final });
-    }, TIMING.MAIN_SPIN);
-
-    // Schedule SETTLE_COMPLETE after bounce back
-    settleCompleteTimeoutRef.current = setTimeout(() => {
-      dispatch({ type: 'SETTLE_COMPLETE' });
+      dispatch({ type: 'SPIN_COMPLETE' });
 
       // Call completion callback
       if (onSpinComplete) {
         onSpinComplete(randomSegment);
       }
-    }, TIMING.TOTAL);
+    }, TIMING.SPIN);
   }, [machineState.state, machineState.rotation, segmentCount, onSpinComplete]);
 
   /**
@@ -297,7 +280,7 @@ export function useWheelStateMachine(
     state: machineState.state,
     rotation: machineState.rotation,
     targetRotation: machineState.targetRotation,
-    isSpinning: machineState.state === 'SPINNING' || machineState.state === 'SETTLING',
+    isSpinning: machineState.state === 'SPINNING',
     startSpin,
     reset,
   };
