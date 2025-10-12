@@ -190,8 +190,8 @@ export const AnimatedLightsRenderer: React.FC<AnimatedLightsRendererProps> = ({
       {positions.map((position, index) => (
         <LightBulb
           key={index}
-          x={position.x * scale - (bulbSize * scale / 2)}
-          y={position.y * scale - (bulbSize * scale / 2)}
+          x={position.x * scale}
+          y={position.y * scale}
           index={index}
           totalBulbs={totalBulbs}
           animationType={animationType}

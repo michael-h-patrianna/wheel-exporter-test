@@ -57,8 +57,17 @@ export const LightBulb: React.FC<LightBulbProps> = ({
   groupIndex,
   isFirstHalf,
 }) => {
-  // Calculate radius from size
+  // Calculate dimensions
+  // The wrapper must be sized to the largest visual layer (outer glow)
+  // Outer glow is 1.5x the bulb size (12px for 8px bulb)
+  const wrapperSize = size * 1.5;
   const radius = size / 2;
+
+  // Calculate offsets for child layers to center them in wrapper
+  const outerGlowOffset = 0; // Outer glow fills entire wrapper
+  const innerGlowSize = size * 1.25; // 10px for 8px bulb
+  const innerGlowOffset = (wrapperSize - innerGlowSize) / 2;
+  const bulbOffset = (wrapperSize - size) / 2;
 
   // Build class names
   const classes: string[] = ['light-bulb__wrapper'];
@@ -82,13 +91,14 @@ export const LightBulb: React.FC<LightBulbProps> = ({
     classes.push(isFirstHalf ? 'light-bulb__wrapper--first-half' : 'light-bulb__wrapper--second-half');
   }
 
-  // Positioning style (top-left corner positioning)
-  // The x,y passed in are already scaled and centered,
-  // so we just position directly without additional offset
+  // Positioning style (center-based positioning)
+  // The x,y passed in represent the center point of the bulb from the theme data.
+  // We use CSS transform to center the wrapper at this position.
   const positionStyle: React.CSSProperties = {
     position: 'absolute',
     left: `${x}px`,
     top: `${y}px`,
+    transform: 'translate(-50%, -50%)',
   };
 
   return (
@@ -96,11 +106,19 @@ export const LightBulb: React.FC<LightBulbProps> = ({
       className={classes.join(' ')}
       style={{
         ...positionStyle,
+        width: `${wrapperSize}px`,
+        height: `${wrapperSize}px`,
         // CSS custom properties for animation calculations
         ['--bulb-index' as string]: index,
         ['--total-bulbs' as string]: totalBulbs,
         ['--bulb-size' as string]: `${size}px`,
         ['--bulb-radius' as string]: `${radius}px`,
+        ['--wrapper-size' as string]: `${wrapperSize}px`,
+        ['--outer-glow-size' as string]: `${wrapperSize}px`,
+        ['--outer-glow-offset' as string]: `${outerGlowOffset}px`,
+        ['--inner-glow-size' as string]: `${innerGlowSize}px`,
+        ['--inner-glow-offset' as string]: `${innerGlowOffset}px`,
+        ['--bulb-offset' as string]: `${bulbOffset}px`,
         // For carnival waltz, set group index CSS variable
         ...(animationType === 'carnival-waltz' && {
           ['--group-index' as string]: groupIndex,

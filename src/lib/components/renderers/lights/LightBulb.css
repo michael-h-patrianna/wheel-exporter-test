@@ -16,6 +16,7 @@
 
 .light-bulb__wrapper {
   position: absolute;
+  /* Size set dynamically via inline style to account for scaling */
   /* GPU acceleration for better performance */
   will-change: transform;
   /* Default z-index for stacking */
@@ -32,13 +33,12 @@
 /* Outer glow - largest diffused glow effect */
 .light-bulb__glow-outer {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: var(--outer-glow-size, 12px);
+  height: var(--outer-glow-size, 12px);
   background-color: transparent;
   border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: var(--outer-glow-offset, 0px);
+  left: var(--outer-glow-offset, 0px);
   opacity: 0;
   pointer-events: none;
   /* GPU acceleration */
@@ -50,13 +50,12 @@
 /* Inner glow - brighter, more focused glow */
 .light-bulb__glow-inner {
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: var(--inner-glow-size, 10px);
+  height: var(--inner-glow-size, 10px);
   background-color: transparent;
   border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: var(--inner-glow-offset, 1px);
+  left: var(--inner-glow-offset, 1px);
   opacity: 0;
   pointer-events: none;
   /* GPU acceleration */
@@ -78,9 +77,8 @@
   border-radius: 50%;
   /* Subtle border for definition */
   border: 1px solid rgba(255, 255, 255, 0.15);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: var(--bulb-offset, 2px);
+  left: var(--bulb-offset, 2px);
   transform-origin: center center;
   /* GPU acceleration for transform and background */
   will-change: transform, background-color, box-shadow;
