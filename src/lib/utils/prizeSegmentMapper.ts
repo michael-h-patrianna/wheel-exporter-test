@@ -48,14 +48,81 @@ export function mapPrizesToSegments(prizes: Prize[]): PrizeSegment[] {
     return 'even'; // Placeholder, will be updated in next pass
   });
 
-  // Second pass: assign odd/even alternating only to non-special segments
-  let oddEvenCounter = 0;
+  // Second pass: assign odd/even in chunks separated by special segments
+  // A chunk is a contiguous group of regular segments between special segments
+  // We must ensure alternation within chunks AND across chunk boundaries (including wrap-around)
+
+  // Find all special segment indices
+  const specialIndices: number[] = [];
   kinds.forEach((kind, index) => {
-    if (kind !== 'nowin' && kind !== 'jackpot') {
-      kinds[index] = oddEvenCounter % 2 === 0 ? 'even' : 'odd';
-      oddEvenCounter++;
+    if (kind === 'nowin' || kind === 'jackpot') {
+      specialIndices.push(index);
     }
   });
+
+  if (specialIndices.length === 0) {
+    // No special segments - all segments form one circular chunk
+    // Assign alternating starting with 'even' at index 0
+    kinds.forEach((kind, index) => {
+      kinds[index] = index % 2 === 0 ? 'even' : 'odd';
+    });
+  } else {
+    // Build chunks of regular segments between special segments
+    interface Chunk {
+      startIndex: number; // Inclusive
+      endIndex: number;   // Inclusive (can wrap around)
+      indices: number[];  // Actual segment indices in this chunk
+    }
+
+    const chunks: Chunk[] = [];
+
+    // For each special segment, the chunk starts after it and ends before the next special
+    for (let i = 0; i < specialIndices.length; i++) {
+      const specialIndex = specialIndices[i];
+      const nextSpecialIndex = specialIndices[(i + 1) % specialIndices.length];
+
+      const chunkIndices: number[] = [];
+      let currentIndex = (specialIndex + 1) % kinds.length;
+
+      // Collect all regular segments until we hit the next special segment
+      while (currentIndex !== nextSpecialIndex) {
+        if (kinds[currentIndex] !== 'nowin' && kinds[currentIndex] !== 'jackpot') {
+          chunkIndices.push(currentIndex);
+        }
+        currentIndex = (currentIndex + 1) % kinds.length;
+      }
+
+      if (chunkIndices.length > 0) {
+        chunks.push({
+          startIndex: chunkIndices[0],
+          endIndex: chunkIndices[chunkIndices.length - 1],
+          indices: chunkIndices,
+        });
+      }
+    }
+
+    // Assign styles to chunks, ensuring alternation across chunk boundaries
+    // Start with the first chunk and assign 'even' to its first segment
+    if (chunks.length > 0) {
+      let currentStyle: 'even' | 'odd' = 'even';
+
+      for (let chunkIdx = 0; chunkIdx < chunks.length; chunkIdx++) {
+        const chunk = chunks[chunkIdx];
+
+        // Assign alternating styles within this chunk
+        for (let i = 0; i < chunk.indices.length; i++) {
+          const segmentIndex = chunk.indices[i];
+          kinds[segmentIndex] = currentStyle;
+          // Flip for next segment in chunk
+          currentStyle = currentStyle === 'even' ? 'odd' : 'even';
+        }
+
+        // After assigning the last segment of this chunk, currentStyle is already
+        // set to the opposite style, which is perfect for the first segment of the next chunk
+        // This ensures alternation across chunk boundaries
+      }
+    }
+  }
 
   return prizes.map((prize, index) => {
     const kind = kinds[index];
