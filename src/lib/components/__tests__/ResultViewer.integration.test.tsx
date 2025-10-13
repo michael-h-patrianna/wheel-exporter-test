@@ -6,8 +6,8 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ResultViewer } from '../ResultViewer';
-import { ExtractedAssets } from '../../types';
+import { ResultViewer } from '@components/ResultViewer';
+import { ExtractedAssets } from '@lib-types';
 
 describe('ResultViewer Integration', () => {
   const mockWheelData: ExtractedAssets['wheelData'] = {

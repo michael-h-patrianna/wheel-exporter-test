@@ -33,19 +33,28 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
+  "@lib": ["./src/lib/index.ts"],
+  "@lib-types": ["./src/lib/types.ts"],
+  "@constants": ["./src/lib/constants/index.ts"],
+  "@test-utils": ["./src/lib/test-utils/index.ts"],
       "@/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"],
       "@lib/*": ["./src/lib/*"],
       "@components/*": ["./src/lib/components/*"],
       "@hooks/*": ["./src/lib/hooks/*"],
       "@services/*": ["./src/lib/services/*"],
-      "@types/*": ["./src/lib/types/*"],
+      "@config/*": ["./src/lib/config/*"],
+  "@constants/*": ["./src/lib/constants/*"],
+  "@lib-types/*": ["./src/lib/types/*"],
       "@utils/*": ["./src/lib/utils/*"],
       "@theme/*": ["./src/lib/theme/*"],
+      "@test-utils/*": ["./src/lib/test-utils/*"],
+      "@tests/*": ["./src/tests/*"],
       "@demo/*": ["./src/demo/*"]
     },
 
     /* Vitest */
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
     "src"

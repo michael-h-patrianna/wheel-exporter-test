@@ -22,7 +22,7 @@ import {
   createMockWheelOverlayWithoutBounds,
   createMockLightsWithoutPositions,
   createMockButtonSpinWithMissingSpinningState,
-} from '../factories';
+} from '@test-utils/factories';
 
 describe('Test Factories', () => {
   describe('Primitive Factories', () => {

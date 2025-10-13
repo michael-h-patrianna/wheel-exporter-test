@@ -12,11 +12,11 @@
 
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import { AnimatedLightsRenderer } from '../AnimatedLightsRenderer';
-import { calculateBulbColors } from '../../../../utils/lightBulbColors';
-import { getAnimationById, getAllAnimations } from '../lightAnimations';
-import type { LightsComponent } from '../../../../types';
-import type { LightAnimationType } from '../lightAnimations';
+import { AnimatedLightsRenderer } from '@components/renderers/lights/AnimatedLightsRenderer';
+import { calculateBulbColors } from '@utils/lightBulbColors';
+import { getAnimationById, getAllAnimations } from '@components/renderers/lights/lightAnimations';
+import type { LightsComponent } from '@lib-types';
+import type { LightAnimationType } from '@components/renderers/lights/lightAnimations';
 
 describe('Light System Integration', () => {
   afterEach(() => {

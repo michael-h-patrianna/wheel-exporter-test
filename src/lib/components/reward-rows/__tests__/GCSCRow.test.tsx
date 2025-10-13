@@ -4,8 +4,8 @@
 
 import React from 'react';
 import { render } from '@testing-library/react';
-import { GCSCRow } from '../GCSCRow';
-import { RewardsComponent } from '../../../types';
+import { GCSCRow } from '@components/reward-rows/GCSCRow';
+import { RewardsComponent } from '@lib-types';
 
 describe('GCSCRow', () => {
   const mockRewards: RewardsComponent = {

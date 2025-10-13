@@ -2,13 +2,13 @@
  * Production prize table with realistic prize configurations
  */
 
-import type { Prize } from '../types/prizeTypes';
-import { createRng, generateSeed } from '../utils/rng';
+import type { Prize } from '@lib-types/prizeTypes';
+import { createRng, generateSeed } from '@utils/rng';
 import {
   getPrizeByIndex as getPrizeByIndexUtil,
   normalizeProbabilities,
   validatePrizeSet,
-} from '../utils/prizeUtils';
+} from '@utils/prizeUtils';
 
 // Placeholder icons - these can be replaced with actual image imports
 const PLACEHOLDER_ICON = '';

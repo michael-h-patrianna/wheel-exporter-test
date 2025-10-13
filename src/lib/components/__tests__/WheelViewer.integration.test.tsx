@@ -6,8 +6,8 @@
 
 import React from 'react';
 import { render } from '@testing-library/react';
-import { WheelViewer } from '../WheelViewer';
-import { WheelExport, ExtractedAssets } from '../../types';
+import { WheelViewer } from '@components/WheelViewer';
+import { WheelExport, ExtractedAssets } from '@lib-types';
 
 describe('WheelViewer Integration', () => {
   const mockWheelData: WheelExport = {

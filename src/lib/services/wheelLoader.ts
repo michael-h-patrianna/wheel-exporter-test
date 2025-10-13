@@ -4,7 +4,7 @@
  */
 
 import JSZip from 'jszip';
-import { ExtractedAssets, WheelExport } from '../types';
+import { ExtractedAssets, WheelExport } from '@lib-types';
 import { logger } from './logger';
 
 /**

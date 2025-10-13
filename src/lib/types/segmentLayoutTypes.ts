@@ -5,8 +5,8 @@
  * Each strategy provides a different approach to handling the varying content types and lengths.
  */
 
-import type { PrizeSegment } from '../utils/prizeSegmentMapper';
-import type { WheelSegmentTypeStyles } from '../types';
+import type { WheelSegmentTypeStyles } from '@lib-types';
+import type { PrizeSegment } from '@utils/prizeSegmentMapper';
 
 /**
  * Available segment layout strategies
@@ -14,7 +14,7 @@ import type { WheelSegmentTypeStyles } from '../types';
  * Infrastructure is ready to support multiple layout strategies.
  * Additional layouts can be added in the future.
  */
-export type SegmentLayoutType = 'original'; // Current implementation (mixed layouts based on prize type)
+export type SegmentLayoutType = 'original' | 'compact' | 'icon-badge';
 
 /**
  * Common props passed to all layout strategies
@@ -62,5 +62,15 @@ export const SEGMENT_LAYOUTS: SegmentLayoutInfo[] = [
     id: 'original',
     name: 'Original',
     description: 'Mixed layout with text and images based on prize type',
+  },
+  {
+    id: 'compact',
+    name: 'Compact Text',
+    description: 'Two-line text layout optimized for dense segment counts',
+  },
+  {
+    id: 'icon-badge',
+    name: 'Icon Badge',
+    description: 'Icon-forward layout with centered badge treatment',
   },
 ];

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import path from 'path';
 
 /**
@@ -6,8 +6,10 @@ import path from 'path';
  * Tests the complete user workflow from file upload to wheel interaction
  */
 
+const PROJECT_ROOT = process.cwd();
+
 test.describe('Wheel Exporter App - E2E Tests', () => {
-  const testZipPath = path.join(__dirname, '../../docs/theme.zip');
+  const testZipPath = path.join(PROJECT_ROOT, 'docs/theme.zip');
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -18,7 +20,9 @@ test.describe('Wheel Exporter App - E2E Tests', () => {
     await expect(page.getByText('Wheel Demo')).toBeVisible();
 
     // Check for upload instructions
-    await expect(page.getByText('Upload a ZIP file exported from the Figma Wheel Plugin')).toBeVisible();
+    await expect(
+      page.getByText('Upload a ZIP file exported from the Figma Wheel Plugin')
+    ).toBeVisible();
 
     // Check for file input (it has .file-input-hidden class but exists in DOM)
     const fileInput = page.locator('input[type="file"]').first();
@@ -60,7 +64,10 @@ test.describe('Wheel Exporter App - E2E Tests', () => {
     await expect(page.getByText('Wheel Settings')).toBeVisible({ timeout: 10000 });
 
     // Find width input
-    const widthInput = page.locator('input[type="range"]').filter({ has: page.locator('label', { hasText: /wheel width/i }) }).first();
+    const widthInput = page
+      .locator('input[type="range"]')
+      .filter({ has: page.locator('label', { hasText: /wheel width/i }) })
+      .first();
     const initialWidth = await widthInput.inputValue();
 
     // Adjust width
@@ -202,7 +209,7 @@ test.describe('Wheel Exporter App - E2E Tests', () => {
 
   test('should handle error for invalid file upload', async ({ page }) => {
     // Create a temporary invalid file
-    const _invalidFilePath = path.join(__dirname, 'invalid.txt');
+    const _invalidFilePath = path.join(PROJECT_ROOT, 'scripts', 'playwright', 'invalid.txt');
 
     // Upload invalid file (this will be handled by browser, but we can test the behavior)
     const fileInput = page.locator('input[type="file"]').first();

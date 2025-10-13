@@ -12,56 +12,55 @@
  * - Accessibility features
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import path from 'path';
 import {
-  THEME_ZIP_PATH,
-  SPIN_ANIMATION_DURATION,
-  SHORT_WAIT,
-  uploadAndWaitForWheel,
-  waitForWheelLoad,
-  uploadWheelZip,
-  getWheelContainer,
-  getComponentToggle,
-  toggleComponent,
-  spinWheel,
-  getSpinButton,
-  cycleHeaderState,
-  getHeaderComponent,
-  setWheelDimensions,
-  setSegmentCount,
-  getWheelDimensionInputs,
-  getSegmentCountInput,
-  expectErrorMessage,
-  isComponentVisible,
-  getSegmentsComponent,
-  getSegmentRotation,
-  expectSegmentsRotating,
-  isResultViewerVisible,
-  getResultViewerElements,
-  expectRewardRowCount,
-  getComponentBounds,
-  calculateAspectRatio,
-  expectImageLoaded,
-  expectControlsVisible,
-  expectControlsHidden,
-  getPageHeader,
-} from './helpers/wheelTestHelpers';
-import {
-  screenshotWheel,
-  screenshotResultViewer,
-  screenshotFullPage,
-  compareWheelScreenshot,
   compareResultViewerScreenshot,
-  expectVisualStability,
-  expectDimensions,
-  expectAspectRatio,
+  compareWheelScreenshot,
   ensureScreenshotDirectories,
+  expectVisualStability,
+  screenshotFullPage,
+  screenshotResultViewer,
+  screenshotWheel,
   takeScreenshot,
 } from './helpers/visualHelpers';
+import {
+  calculateAspectRatio,
+  cycleHeaderState,
+  expectControlsHidden,
+  expectControlsVisible,
+  expectErrorMessage,
+  expectImageLoaded,
+  expectRewardRowCount,
+  expectSegmentsRotating,
+  getComponentBounds,
+  getComponentToggle,
+  getHeaderComponent,
+  getPageHeader,
+  getResultViewerElements,
+  getSegmentCountInput,
+  getSegmentRotation,
+  getSegmentsComponent,
+  getSpinButton,
+  getWheelContainer,
+  getWheelDimensionInputs,
+  isComponentVisible,
+  isResultViewerVisible,
+  setSegmentCount,
+  setWheelDimensions,
+  SHORT_WAIT,
+  SPIN_ANIMATION_DURATION,
+  spinWheel,
+  THEME_ZIP_PATH,
+  toggleComponent,
+  uploadAndWaitForWheel,
+  uploadWheelZip,
+  waitForWheelLoad,
+} from './helpers/wheelTestHelpers';
+
+const PROJECT_ROOT = process.cwd();
 
 test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
-
   // Setup: Ensure screenshot directories exist
   test.beforeAll(async () => {
     await ensureScreenshotDirectories();
@@ -80,7 +79,9 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     test('should display correct page header and title', async ({ page }) => {
       const header = await getPageHeader(page);
       expect(header.title).toContain('Wheel Demo');
-      expect(header.description).toContain('Upload a ZIP file exported from the Figma Wheel Plugin');
+      expect(header.description).toContain(
+        'Upload a ZIP file exported from the Figma Wheel Plugin'
+      );
     });
 
     test('should display file upload button', async ({ page }) => {
@@ -160,7 +161,15 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     test('should display all component toggle buttons', async ({ page }) => {
       await uploadAndWaitForWheel(page);
 
-      const components = ['background', 'header', 'wheelBg', 'segments', 'buttonSpin', 'center', 'pointer'];
+      const components = [
+        'background',
+        'header',
+        'wheelBg',
+        'segments',
+        'buttonSpin',
+        'center',
+        'pointer',
+      ];
 
       for (const component of components) {
         const button = getComponentToggle(page, component);
@@ -256,7 +265,9 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
       await expect(page.getByAltText('Spin button spinning')).toBeVisible();
 
       // Wait for completion
-      await expect(page.getByAltText('Spin button default')).toBeVisible({ timeout: SPIN_ANIMATION_DURATION + 1000 });
+      await expect(page.getByAltText('Spin button default')).toBeVisible({
+        timeout: SPIN_ANIMATION_DURATION + 1000,
+      });
 
       const duration = Date.now() - startTime;
 
@@ -322,7 +333,9 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
       await expect(headerImage).toBeVisible();
     });
 
-    test('should cycle through all header states: active → success → fail → active', async ({ page }) => {
+    test('should cycle through all header states: active → success → fail → active', async ({
+      page,
+    }) => {
       const header = getHeaderComponent(page);
 
       // Start at active
@@ -736,7 +749,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
   test.describe('Error handling', () => {
     test('should handle invalid ZIP file (non-ZIP file)', async ({ page }) => {
       // Use a non-ZIP file (README.md)
-      const invalidFile = path.resolve(__dirname, '../../README.md');
+      const invalidFile = path.resolve(PROJECT_ROOT, 'README.md');
       const fileInput = page.locator('input[type="file"]').first();
 
       await fileInput.setInputFiles(invalidFile);
@@ -758,7 +771,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
 
     test('should handle corrupted ZIP file', async ({ page }) => {
       // Create a fake corrupted ZIP by using a text file
-      const corruptedFile = path.resolve(__dirname, '../../package.json');
+      const corruptedFile = path.resolve(PROJECT_ROOT, 'package.json');
       const fileInput = page.locator('input[type="file"]').first();
 
       await fileInput.setInputFiles(corruptedFile);
@@ -775,7 +788,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
       const fileInput = page.locator('input[type="file"]').first();
 
       // Upload invalid file
-      const invalidFile = path.resolve(__dirname, '../../README.md');
+      const invalidFile = path.resolve(PROJECT_ROOT, 'README.md');
       await fileInput.setInputFiles(invalidFile);
       await expectErrorMessage(page);
 
@@ -789,7 +802,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     });
 
     test('should maintain UI state when upload fails', async ({ page }) => {
-      const invalidFile = path.resolve(__dirname, '../../README.md');
+      const invalidFile = path.resolve(PROJECT_ROOT, 'README.md');
       const fileInput = page.locator('input[type="file"]').first();
 
       await fileInput.setInputFiles(invalidFile);
@@ -1053,7 +1066,9 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
       await uploadAndWaitForWheel(page);
     });
 
-    test('should complete full user workflow: upload → spin → toggle → resize', async ({ page }) => {
+    test('should complete full user workflow: upload → spin → toggle → resize', async ({
+      page,
+    }) => {
       // Wheel already uploaded (from beforeEach)
       const wheelContainer = getWheelContainer(page);
       await expect(wheelContainer).toBeVisible();
@@ -1122,7 +1137,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
 
       // Try invalid file
       const fileInput = page.locator('input[type="file"]').first();
-      const invalidFile = path.resolve(__dirname, '../../README.md');
+      const invalidFile = path.resolve(PROJECT_ROOT, 'README.md');
       await fileInput.setInputFiles(invalidFile);
       await expectErrorMessage(page);
 

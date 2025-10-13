@@ -3,7 +3,7 @@
  * Tests all log levels, context, configuration, and environment-aware behavior
  */
 
-import { logger, LogLevel, LogEntry } from '../logger';
+import { logger, LogLevel, LogEntry } from '@services/logger';
 import { vi } from 'vitest';
 
 describe('logger', () => {

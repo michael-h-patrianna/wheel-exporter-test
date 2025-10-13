@@ -3,6 +3,7 @@ import { spawn } from 'node:child_process';
 
 const env = {
   ...process.env,
+  PLAYWRIGHT_HTML_OPEN: process.env.PLAYWRIGHT_HTML_OPEN ?? 'never',
 };
 
 const args = process.argv.slice(2);

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback, CSSProperties } from 'react';
-import { WheelExport, ExtractedAssets, HeaderState, ButtonSpinState } from '../types';
-import { useWheelStateMachine } from '../hooks/useWheelStateMachine';
-import type { PrizeProviderResult } from '../services/prizeProvider';
-import type { SegmentLayoutType } from '../types/segmentLayoutTypes';
-import { mapPrizesToSegments } from '../utils/prizeSegmentMapper';
+import { WheelExport, ExtractedAssets, HeaderState, ButtonSpinState } from '@lib-types';
+import { useWheelStateMachine } from '@hooks/useWheelStateMachine';
+import type { PrizeProviderResult } from '@services/prizeProvider';
+import type { SegmentLayoutType } from '@lib-types/segmentLayoutTypes';
+import { mapPrizesToSegments } from '@utils/prizeSegmentMapper';
 
 // Import all renderer components
 import { BackgroundRenderer } from './renderers/BackgroundRenderer';

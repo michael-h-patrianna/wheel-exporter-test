@@ -1,6 +1,6 @@
 import React from 'react';
-import { ExtractedAssets } from '../types';
-import { useRewardStyles } from '../hooks/useRewardStyles';
+import { ExtractedAssets } from '@lib-types';
+import { useRewardStyles } from '@hooks/useRewardStyles';
 import { RewardRow } from './reward-rows';
 import type { RewardRowData } from './reward-rows';
 

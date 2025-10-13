@@ -7,13 +7,13 @@ import {
   buildTextStyle,
   buildBoxStyle,
   buildButtonStyle,
-} from '../../lib/utils/styleBuilders';
+} from '@utils/styleBuilders';
 import {
   Fill,
   RewardsPrizeTextStyle,
   RewardsBackgroundStyle,
   RewardsButtonStyle,
-} from '../../lib/types';
+} from '@lib-types';
 
 describe('styleBuilders', () => {
   describe('buildGradient', () => {

@@ -4,7 +4,7 @@
  */
 
 import { cryptoAdapter } from './platform/crypto';
-import type { Prize } from '../types/prizeTypes';
+import type { Prize } from '@lib-types/prizeTypes';
 
 /**
  * Mulberry32 PRNG - Simple, fast, and deterministic

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonSpinComponent, ButtonSpinState } from '../../types';
+import { ButtonSpinComponent, ButtonSpinState } from '@lib-types';
 
 /**
  * ButtonSpinRenderer Component

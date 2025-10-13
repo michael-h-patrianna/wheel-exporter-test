@@ -16,7 +16,7 @@ import {
   getAllAnimations,
   type LightAnimationType,
   type LightAnimationMetadata,
-} from '../lightAnimations';
+} from '@components/renderers/lights/lightAnimations';
 
 describe('lightAnimations', () => {
   describe('LIGHT_ANIMATIONS', () => {

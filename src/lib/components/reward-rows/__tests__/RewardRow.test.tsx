@@ -4,8 +4,8 @@
 
 import React from 'react';
 import { render } from '@testing-library/react';
-import { RewardRow } from '../RewardRow';
-import { RewardsComponent } from '../../../types';
+import { RewardRow } from '@components/reward-rows/RewardRow';
+import { RewardsComponent } from '@lib-types';
 
 describe('RewardRow', () => {
   const mockRewards: RewardsComponent = {

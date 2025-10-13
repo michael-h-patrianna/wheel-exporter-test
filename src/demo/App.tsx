@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import { WheelViewer } from '../lib/components/WheelViewer';
-import { ResultViewer, ExtractedAssets, ErrorBoundary } from '../lib';
-import { loadWheelFromZip, WheelLoadError } from '../lib/services/wheelLoader';
+import { WheelViewer } from '@components/WheelViewer';
+import { ResultViewer, ExtractedAssets, ErrorBoundary } from '@lib';
+import { loadWheelFromZip, WheelLoadError } from '@services/wheelLoader';
 import {
   createDefaultPrizeProvider,
   type PrizeProviderResult,
-} from '../lib/services/prizeProvider';
-import { type SegmentLayoutType } from '../lib/types/segmentLayoutTypes';
-import { type LightAnimationType } from '../lib/components/renderers/lights/lightAnimations';
+} from '@services/prizeProvider';
+import { type SegmentLayoutType } from '@lib-types/segmentLayoutTypes';
+import { type LightAnimationType } from '@components/renderers/lights/lightAnimations';
 import { AppBar } from './components/AppBar';
 import { Sidebar } from './components/Sidebar';
 

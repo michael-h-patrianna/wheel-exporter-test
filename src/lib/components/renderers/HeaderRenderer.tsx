@@ -1,6 +1,6 @@
 import React from 'react';
-import { HeaderState, HeaderComponent } from '../../types';
-import { logger } from '../../services/logger';
+import { HeaderState, HeaderComponent } from '@lib-types';
+import { logger } from '@services/logger';
 
 /**
  * HeaderRenderer Component

@@ -3,16 +3,30 @@
  * Reusable utilities for Playwright E2E tests of the Wheel Exporter
  */
 
-import { Page, Locator, expect } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 import path from 'path';
+import type { SegmentLayoutType } from '../../../src/lib/types/segmentLayoutTypes';
 
 /**
  * Constants
  */
-export const THEME_ZIP_PATH = path.resolve(__dirname, '../../../docs/theme.zip');
+export const THEME_ZIP_PATH = path.resolve(process.cwd(), 'docs/theme.zip');
 export const SPIN_ANIMATION_DURATION = 7000; // 6.5s + buffer
 export const SHORT_WAIT = 500;
 export const MEDIUM_WAIT = 1000;
+
+/**
+ * Select a segment layout from the sidebar control
+ */
+export async function selectSegmentLayout(
+  page: Page,
+  layoutType: SegmentLayoutType
+): Promise<void> {
+  const layoutSelect = page.getByLabel(/segment layout style/i).first();
+  await expect(layoutSelect).toBeVisible();
+  await layoutSelect.selectOption(layoutType);
+  await page.waitForTimeout(SHORT_WAIT);
+}
 
 /**
  * Upload a ZIP file to the wheel viewer
@@ -33,7 +47,10 @@ export async function waitForWheelLoad(page: Page, timeout: number = 10000): Pro
 /**
  * Complete upload and wait for load
  */
-export async function uploadAndWaitForWheel(page: Page, zipPath: string = THEME_ZIP_PATH): Promise<void> {
+export async function uploadAndWaitForWheel(
+  page: Page,
+  zipPath: string = THEME_ZIP_PATH
+): Promise<void> {
   await uploadWheelZip(page, zipPath);
   await waitForWheelLoad(page);
 }
@@ -113,7 +130,10 @@ export function getHeaderComponent(page: Page): Locator {
 /**
  * Cycle header state (active → success → fail → active)
  */
-export async function cycleHeaderState(page: Page, targetState?: 'active' | 'success' | 'fail'): Promise<void> {
+export async function cycleHeaderState(
+  page: Page,
+  targetState?: 'active' | 'success' | 'fail'
+): Promise<void> {
   const header = getHeaderComponent(page);
 
   if (!targetState) {
@@ -127,7 +147,10 @@ export async function cycleHeaderState(page: Page, targetState?: 'active' | 'suc
   const maxClicks = 3; // Prevent infinite loop
   for (let i = 0; i < maxClicks; i++) {
     const altText = `header ${targetState}`;
-    const isTargetVisible = await page.getByAltText(new RegExp(altText, 'i')).isVisible().catch(() => false);
+    const isTargetVisible = await page
+      .getByAltText(new RegExp(altText, 'i'))
+      .isVisible()
+      .catch(() => false);
 
     if (isTargetVisible) {
       break;
@@ -346,7 +369,10 @@ export async function expectControlsHidden(page: Page): Promise<void> {
  */
 export async function getPageHeader(page: Page) {
   const title = await page.getByText('Wheel Demo').first().textContent();
-  const description = await page.getByText('Upload a ZIP file exported from the Figma Wheel Plugin').first().textContent();
+  const description = await page
+    .getByText('Upload a ZIP file exported from the Figma Wheel Plugin')
+    .first()
+    .textContent();
 
   return { title, description };
 }

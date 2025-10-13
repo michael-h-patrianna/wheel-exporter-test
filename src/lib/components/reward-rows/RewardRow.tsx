@@ -10,7 +10,7 @@ import { FreeSpinsRow } from './FreeSpinsRow';
 import { XPRow } from './XPRow';
 import { RRRow } from './RRRow';
 import { FailRow } from './FailRow';
-import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '../../types';
+import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '@lib-types';
 
 export interface RewardRowProps {
   rowData: RewardRowData;

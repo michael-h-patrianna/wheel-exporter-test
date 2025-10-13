@@ -1,5 +1,5 @@
 import React from 'react';
-import { LightsComponent } from '../../types';
+import { LightsComponent } from '@lib-types';
 
 interface LightsRendererProps {
   lights?: LightsComponent;

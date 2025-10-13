@@ -1,16 +1,16 @@
+/// <reference types="@testing-library/jest-dom" />
 /**
  * Comprehensive test suite for SegmentRenderer
  * This is the most complex renderer component requiring extensive testing
  */
 
-import React from 'react';
 import { render } from '@testing-library/react';
-import { SegmentRenderer } from '../SegmentRenderer';
-import { WheelSegmentStyles, CenterComponent, Fill, Gradient } from '../../../types';
 import { vi } from 'vitest';
+import { CenterComponent, Fill, Gradient, WheelSegmentStyles } from '@lib-types';
+import { SegmentRenderer } from '@components/renderers/SegmentRenderer';
 
 // Mock the offer.png import
-vi.mock('../../../../assets/offer.png', () => ({ default: 'mocked-offer.png' }));
+vi.mock('@assets/offer.png', () => ({ default: 'mocked-offer.png' }));
 
 describe('SegmentRenderer', () => {
   const mockCenter: CenterComponent = {
@@ -438,6 +438,25 @@ describe('SegmentRenderer', () => {
         expect(text).toHaveAttribute('font-weight', '700');
         expect(text).toHaveAttribute('font-size');
       });
+    });
+  });
+
+  describe('Layout Variants', () => {
+    it('should render compact layout specific markers', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} layoutType="compact" />);
+
+      const compactPrimary = container.querySelector('text[data-layout-variant="compact-primary"]');
+      expect(compactPrimary).toBeInTheDocument();
+    });
+
+    it('should render icon badge layout with badge elements', () => {
+      const { container } = render(<SegmentRenderer {...defaultProps} layoutType="icon-badge" />);
+
+      const badgeCircle = container.querySelector('[data-layout-variant="icon-badge"]');
+      expect(badgeCircle).toBeInTheDocument();
+
+      const badgeImage = container.querySelector('[data-layout-variant="icon-badge-image"]');
+      expect(badgeImage).toBeInTheDocument();
     });
   });
 

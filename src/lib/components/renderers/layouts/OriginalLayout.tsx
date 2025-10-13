@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import type { SegmentLayoutProps } from '../../../types/segmentLayoutTypes';
-import offerPng from '../../../../assets/offer.png';
-import randomRewardPng from '../../../../assets/random_reward.png';
-import xpPng from '../../../../assets/xp.png';
+import type { SegmentLayoutProps } from '@lib-types/segmentLayoutTypes';
+import offerPng from '@assets/offer.png';
+import randomRewardPng from '@assets/random_reward.png';
+import xpPng from '@assets/xp.png';
 import {
   fillToSvgPaint,
   computeArcFontSize,
@@ -11,7 +11,7 @@ import {
   MAX_IMAGE_ONLY_SIZE_FACTOR,
   TEXT_FONT_FAMILY,
   formatNumber,
-} from '../../../utils/segmentUtils';
+} from '@utils/segmentUtils';
 
 /**
  * Original Layout Strategy

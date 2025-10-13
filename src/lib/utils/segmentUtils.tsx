@@ -1,5 +1,5 @@
 import React from 'react';
-import { Fill, Gradient, GradientTransform, DropShadow } from '../types';
+import { Fill, Gradient, GradientTransform, DropShadow } from '@lib-types';
 import {
   SEGMENT_KINDS,
   TAU,
@@ -9,8 +9,8 @@ import {
   MAX_TEXT_FONT_SIZE_PER_LINE,
   MAX_IMAGE_ONLY_SIZE_FACTOR,
   TEXT_FONT_FAMILY,
-} from '../constants';
-import { logger } from '../services/logger';
+} from '@constants';
+import { logger } from '@services/logger';
 
 // Re-export for backwards compatibility
 export {

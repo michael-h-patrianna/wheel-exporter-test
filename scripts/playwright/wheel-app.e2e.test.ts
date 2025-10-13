@@ -3,10 +3,11 @@
  * Tests full user workflows with real browser interactions
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import path from 'path';
 
-const THEME_ZIP_PATH = path.resolve(__dirname, '../../docs/theme.zip');
+const PROJECT_ROOT = process.cwd();
+const THEME_ZIP_PATH = path.resolve(PROJECT_ROOT, 'docs/theme.zip');
 
 test.describe('Wheel Exporter Test E2E', () => {
   test.beforeEach(async ({ page }) => {
@@ -42,7 +43,9 @@ test.describe('Wheel Exporter Test E2E', () => {
       await fileInput.setInputFiles(THEME_ZIP_PATH);
 
       // Wait for wheel to be displayed (loading may be too fast to catch)
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Check that controls are now visible
       await expect(page.getByText('Wheel Settings').first()).toBeVisible();
@@ -53,7 +56,9 @@ test.describe('Wheel Exporter Test E2E', () => {
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(THEME_ZIP_PATH);
 
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Check for wheel information display
       await expect(page.getByText(/ID:/i).first()).toBeVisible();
@@ -64,7 +69,9 @@ test.describe('Wheel Exporter Test E2E', () => {
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(THEME_ZIP_PATH);
 
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Check dimension inputs have been populated
       const widthInput = page.getByLabel(/wheel width/i).first();
@@ -83,7 +90,9 @@ test.describe('Wheel Exporter Test E2E', () => {
     test.beforeEach(async ({ page }) => {
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(THEME_ZIP_PATH);
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
     });
 
     test('should allow changing wheel dimensions', async ({ page }) => {
@@ -136,7 +145,9 @@ test.describe('Wheel Exporter Test E2E', () => {
     test.beforeEach(async ({ page }) => {
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(THEME_ZIP_PATH);
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
     });
 
     test('should display component toggle buttons', async ({ page }) => {
@@ -190,7 +201,9 @@ test.describe('Wheel Exporter Test E2E', () => {
     test.beforeEach(async ({ page }) => {
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(THEME_ZIP_PATH);
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
     });
 
     test('should cycle header state when clicked', async ({ page }) => {
@@ -259,7 +272,9 @@ test.describe('Wheel Exporter Test E2E', () => {
     test.beforeEach(async ({ page }) => {
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(THEME_ZIP_PATH);
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
     });
 
     test('should render background image', async ({ page }) => {
@@ -267,7 +282,9 @@ test.describe('Wheel Exporter Test E2E', () => {
       await expect(backgroundImage).toBeVisible();
 
       // Verify image has loaded
-      const naturalWidth = await backgroundImage.evaluate((img: HTMLImageElement) => img.naturalWidth);
+      const naturalWidth = await backgroundImage.evaluate(
+        (img: HTMLImageElement) => img.naturalWidth
+      );
       expect(naturalWidth).toBeGreaterThan(0);
     });
 
@@ -292,7 +309,7 @@ test.describe('Wheel Exporter Test E2E', () => {
   test.describe('Error handling', () => {
     test('should handle invalid ZIP file gracefully', async ({ page }) => {
       // Create a temporary text file as invalid ZIP
-      const invalidFile = path.resolve(__dirname, '../../README.md');
+      const invalidFile = path.resolve(PROJECT_ROOT, 'README.md');
 
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(invalidFile);
@@ -306,7 +323,9 @@ test.describe('Wheel Exporter Test E2E', () => {
     test('should maintain aspect ratio when resizing', async ({ page }) => {
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(THEME_ZIP_PATH);
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
 
       const container = page.locator('.wheel-viewer > .wheel-container');
 
@@ -338,7 +357,9 @@ test.describe('Wheel Exporter Test E2E', () => {
     test('should have keyboard navigable controls', async ({ page }) => {
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(THEME_ZIP_PATH);
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Tab through controls
       await page.keyboard.press('Tab');
@@ -352,7 +373,9 @@ test.describe('Wheel Exporter Test E2E', () => {
     test('should have proper ARIA labels', async ({ page }) => {
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles(THEME_ZIP_PATH);
-      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.wheel-viewer > .wheel-container')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Check for ARIA attributes on header
       const header = page.locator('[role="button"][aria-label*="Header"]');

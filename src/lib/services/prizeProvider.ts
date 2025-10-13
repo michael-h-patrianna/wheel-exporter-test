@@ -7,10 +7,10 @@ import {
   createValidatedProductionPrizeSet,
   DEFAULT_PRODUCTION_PRIZE_COUNT,
   type ProductionPrizeSetOptions,
-} from '../config/prizeTable';
-import type { Prize } from '../types/prizeTypes';
-import { validatePrizeSet } from '../utils/prizeUtils';
-import { selectPrize } from '../utils/rng';
+} from '@config/prizeTable';
+import type { Prize } from '@lib-types/prizeTypes';
+import { validatePrizeSet } from '@utils/prizeUtils';
+import { selectPrize } from '@utils/rng';
 
 export type PrizeProviderSource = 'default' | 'fixture' | 'remote';
 

@@ -125,6 +125,9 @@ Respond in the following fenced block. All arrays must be non-empty when present
 }
 ```
 
+=== OUTPUT DESTINATION ===
+Output to an md file in the `docs/` folder. Do not output result in chat.
+
 === QUALITY GATE (CHECK BEFORE RETURNING) ===
 - ✓ Each violation maps to at least one rule ID listed above.
 - ✓ Every `refactor_plan.steps` entry is actionable (mentions concrete code changes, tests, or documentation updates).

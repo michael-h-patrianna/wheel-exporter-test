@@ -3,7 +3,7 @@
  * Used for prize configuration validation and transformation
  */
 
-import type { Prize } from '../types/prizeTypes';
+import type { Prize } from '@lib-types/prizeTypes';
 
 /**
  * Validates that prize probabilities sum to 1.0 and count is within valid range

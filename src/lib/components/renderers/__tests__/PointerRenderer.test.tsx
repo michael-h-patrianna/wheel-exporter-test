@@ -4,8 +4,8 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { PointerRenderer } from '../PointerRenderer';
-import { PointerComponent } from '../../../types';
+import { PointerRenderer } from '@components/renderers/PointerRenderer';
+import { PointerComponent } from '@lib-types';
 
 describe('PointerRenderer', () => {
   const mockPointer: PointerComponent = {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { WheelOverlay } from '../../types';
-import { logger } from '../../services/logger';
+import { WheelOverlay } from '@lib-types';
+import { logger } from '@services/logger';
 
 /**
  * WheelTopRenderer Component

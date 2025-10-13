@@ -4,15 +4,15 @@
  */
 
 import JSZip from 'jszip';
-import { loadWheelFromZip, WheelLoadError, WheelLoadErrorType } from '../wheelLoader';
-import { WheelExport } from '../../types';
+import { loadWheelFromZip, WheelLoadError, WheelLoadErrorType } from '@services/wheelLoader';
+import { WheelExport } from '@lib-types';
 import { vi } from 'vitest';
 
 // Mock the logger module
-vi.mock('../logger');
+vi.mock('@services/logger');
 
 // Import after mock
-import { logger } from '../logger';
+import { logger } from '@services/logger';
 
 describe('wheelLoader', () => {
   let mockZip: JSZip;

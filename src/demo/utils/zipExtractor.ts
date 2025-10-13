@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import { ExtractedAssets, WheelExport } from '../../lib/types';
+import { ExtractedAssets, WheelExport } from '@lib-types';
 
 /**
  * Extracts and processes a wheel theme ZIP file

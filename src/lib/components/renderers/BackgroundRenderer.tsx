@@ -1,5 +1,5 @@
 import React from 'react';
-import { logger } from '../../services/logger';
+import { logger } from '@services/logger';
 
 /**
  * BackgroundRenderer Component

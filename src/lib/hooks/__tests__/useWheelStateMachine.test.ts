@@ -4,12 +4,12 @@
  */
 
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useWheelStateMachine } from '../useWheelStateMachine';
-import { logger } from '../../services/logger';
+import { useWheelStateMachine } from '@hooks/useWheelStateMachine';
+import { logger } from '@services/logger';
 import { vi } from 'vitest';
 
 // Mock logger to prevent console spam and verify telemetry
-vi.mock('../../services/logger', () => ({
+vi.mock('@services/logger', () => ({
   logger: {
     info: vi.fn(),
     debug: vi.fn(),

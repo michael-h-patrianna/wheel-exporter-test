@@ -3,7 +3,7 @@
  * Cross-platform compatible (React Web + React Native future support)
  */
 
-import { Fill, RewardsPrizeTextStyle, RewardsBackgroundStyle, RewardsButtonStyle } from '../types';
+import { Fill, RewardsPrizeTextStyle, RewardsBackgroundStyle, RewardsButtonStyle } from '@lib-types';
 
 /**
  * Build CSS gradient string from Fill object

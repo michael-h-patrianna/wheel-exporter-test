@@ -4,9 +4,9 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { WheelTopRenderer } from '../WheelTopRenderer';
-import { WheelOverlay } from '../../../types';
-import { createMockWheelTop, createMockWheelOverlayWithoutBounds } from '../../../test-utils';
+import { WheelTopRenderer } from '@components/renderers/WheelTopRenderer';
+import { WheelOverlay } from '@lib-types';
+import { createMockWheelTop, createMockWheelOverlayWithoutBounds } from '@test-utils';
 import { vi } from 'vitest';
 
 describe('WheelTopRenderer', () => {

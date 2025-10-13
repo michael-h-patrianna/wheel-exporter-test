@@ -4,8 +4,8 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { CenterRenderer } from '../CenterRenderer';
-import { CenterComponent } from '../../../types';
+import { CenterRenderer } from '@components/renderers/CenterRenderer';
+import { CenterComponent } from '@lib-types';
 
 describe('CenterRenderer', () => {
   const mockCenter: CenterComponent = {

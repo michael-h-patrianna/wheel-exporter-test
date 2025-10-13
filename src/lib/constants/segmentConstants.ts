@@ -3,7 +3,7 @@
  * Extracted from segmentUtils.tsx for better architecture
  */
 
-import { WheelSegmentKind } from '../types';
+import { WheelSegmentKind } from '@lib-types';
 
 /**
  * Default segment order for an 8-segment wheel

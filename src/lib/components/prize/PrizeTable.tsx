@@ -5,9 +5,9 @@
  */
 
 import React, { useState } from 'react';
-import type { Prize } from '../../types/prizeTypes';
-import { getSlotDisplayText } from '../../types/prizeTypes';
-import { abbreviateNumber } from '../../utils/prizeUtils';
+import type { Prize } from '@lib-types/prizeTypes';
+import { getSlotDisplayText } from '@lib-types/prizeTypes';
+import { abbreviateNumber } from '@utils/prizeUtils';
 import './PrizeTable.css';
 
 interface PrizeTableProps {

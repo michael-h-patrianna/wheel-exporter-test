@@ -5,20 +5,20 @@
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { WheelViewer } from '../WheelViewer';
-import { useWheelStateMachine } from '../../hooks/useWheelStateMachine';
-import { createMockWheelExport, createMockExtractedAssets } from '../../test-utils';
+import { WheelViewer } from '@components/WheelViewer';
+import { useWheelStateMachine } from '@hooks/useWheelStateMachine';
+import { createMockWheelExport, createMockExtractedAssets } from '@test-utils';
 import { vi } from 'vitest';
 
 // Mock the useWheelStateMachine hook
-vi.mock('../../hooks/useWheelStateMachine');
+vi.mock('@hooks/useWheelStateMachine');
 
 // Mock all renderer components
-vi.mock('../renderers/BackgroundRenderer', () => ({
+vi.mock('@components/renderers/BackgroundRenderer', () => ({
   BackgroundRenderer: () => <div data-testid="background-renderer">Background</div>,
 }));
 
-vi.mock('../renderers/HeaderRenderer', () => ({
+vi.mock('@components/renderers/HeaderRenderer', () => ({
   HeaderRenderer: ({ onCycleState }: any) => (
     <div data-testid="header-renderer" onClick={onCycleState}>
       Header
@@ -26,17 +26,17 @@ vi.mock('../renderers/HeaderRenderer', () => ({
   ),
 }));
 
-vi.mock('../renderers/WheelBgRenderer', () => ({
+vi.mock('@components/renderers/WheelBgRenderer', () => ({
   WheelBgRenderer: () => <div data-testid="wheelbg-renderer">WheelBg</div>,
 }));
 
-vi.mock('../renderers/WheelTopRenderer', () => ({
+vi.mock('@components/renderers/WheelTopRenderer', () => ({
   WheelTopRenderer: ({ layerNumber }: any) => (
     <div data-testid={`wheeltop${layerNumber}-renderer`}>WheelTop{layerNumber}</div>
   ),
 }));
 
-vi.mock('../renderers/ButtonSpinRenderer', () => ({
+vi.mock('@components/renderers/ButtonSpinRenderer', () => ({
   ButtonSpinRenderer: ({ onSpin }: any) => (
     <button data-testid="button-spin-renderer" onClick={onSpin}>
       Spin Button
@@ -44,19 +44,19 @@ vi.mock('../renderers/ButtonSpinRenderer', () => ({
   ),
 }));
 
-vi.mock('../renderers/CenterRenderer', () => ({
+vi.mock('@components/renderers/CenterRenderer', () => ({
   CenterRenderer: () => <div data-testid="center-renderer">Center</div>,
 }));
 
-vi.mock('../renderers/SegmentRenderer', () => ({
+vi.mock('@components/renderers/SegmentRenderer', () => ({
   SegmentRenderer: () => <div data-testid="segment-renderer">Segments</div>,
 }));
 
-vi.mock('../renderers/PointerRenderer', () => ({
+vi.mock('@components/renderers/PointerRenderer', () => ({
   PointerRenderer: () => <div data-testid="pointer-renderer">Pointer</div>,
 }));
 
-vi.mock('../renderers/lights/AnimatedLightsRenderer', () => ({
+vi.mock('@components/renderers/lights/AnimatedLightsRenderer', () => ({
   AnimatedLightsRenderer: () => <div data-testid="lights-renderer">Lights</div>,
 }));
 

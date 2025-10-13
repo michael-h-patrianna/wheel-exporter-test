@@ -17,7 +17,7 @@ import {
   shiftColorTemperature,
   calculateBulbColors,
   type BulbColors,
-} from '../lightBulbColors';
+} from '@utils/lightBulbColors';
 
 describe('lightBulbColors', () => {
   describe('blendColors', () => {

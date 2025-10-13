@@ -14,8 +14,8 @@
 
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import { LightBulb } from '../LightBulb';
-import type { LightAnimationType } from '../lightAnimations';
+import { LightBulb } from '@components/renderers/lights/LightBulb';
+import type { LightAnimationType } from '@components/renderers/lights/lightAnimations';
 
 describe('LightBulb', () => {
   afterEach(() => {

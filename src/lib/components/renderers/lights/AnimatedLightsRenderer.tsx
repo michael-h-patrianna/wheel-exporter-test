@@ -14,10 +14,10 @@
  */
 
 import React, { useMemo } from 'react';
-import { LightsComponent } from '../../../types';
+import { LightsComponent } from '@lib-types';
 import { LightBulb } from './LightBulb';
 import type { LightAnimationType } from './lightAnimations';
-import { calculateBulbColors } from '../../../utils/lightBulbColors';
+import { calculateBulbColors } from '@utils/lightBulbColors';
 
 // Import all animation CSS files
 import './animations/alternating-carnival.css';

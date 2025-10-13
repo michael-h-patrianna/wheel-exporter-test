@@ -4,8 +4,8 @@
 
 import React from 'react';
 import { render } from '@testing-library/react';
-import { XPRow } from '../XPRow';
-import { RewardsComponent } from '../../../types';
+import { XPRow } from '@components/reward-rows/XPRow';
+import { RewardsComponent } from '@lib-types';
 
 describe('XPRow', () => {
   const mockRewards: RewardsComponent = {

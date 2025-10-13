@@ -4,8 +4,8 @@
 
 import React from 'react';
 import { render } from '@testing-library/react';
-import { FreeSpinsRow } from '../FreeSpinsRow';
-import { RewardsComponent } from '../../../types';
+import { FreeSpinsRow } from '@components/reward-rows/FreeSpinsRow';
+import { RewardsComponent } from '@lib-types';
 
 describe('FreeSpinsRow', () => {
   const mockRewards: RewardsComponent = {

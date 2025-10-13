@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { BackgroundRenderer } from '../BackgroundRenderer';
+import { BackgroundRenderer } from '@components/renderers/BackgroundRenderer';
 import { vi } from 'vitest';
 
 describe('BackgroundRenderer', () => {

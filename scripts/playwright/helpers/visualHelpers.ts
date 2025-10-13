@@ -3,7 +3,7 @@
  * Utilities for screenshot comparison and visual regression testing
  */
 
-import { Page, Locator, expect } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 import path from 'path';
 
 /**
@@ -66,7 +66,7 @@ export const VISUAL_THRESHOLDS = {
  * Get screenshot path
  */
 export function getScreenshotPath(name: string, directory?: string): string {
-  const baseDir = path.resolve(__dirname, '../../../screenshots');
+  const baseDir = path.resolve(process.cwd(), 'screenshots');
   const dir = directory ? path.join(baseDir, directory) : baseDir;
   return path.join(dir, `${name}.png`);
 }
@@ -74,10 +74,7 @@ export function getScreenshotPath(name: string, directory?: string): string {
 /**
  * Take a screenshot with standard configuration
  */
-export async function takeScreenshot(
-  page: Page,
-  options: ScreenshotOptions
-): Promise<Buffer> {
+export async function takeScreenshot(page: Page, options: ScreenshotOptions): Promise<Buffer> {
   const {
     name,
     directory = 'e2e',
@@ -313,11 +310,7 @@ export async function waitForVisualStability(
     stableTime?: number;
   }
 ): Promise<boolean> {
-  const {
-    timeout = 5000,
-    pollInterval = 100,
-    stableTime = 500,
-  } = options ?? {};
+  const { timeout = 5000, pollInterval = 100, stableTime = 500 } = options ?? {};
 
   const startTime = Date.now();
   let lastScreenshot: Buffer | null = null;
@@ -416,7 +409,7 @@ export async function expectAspectRatio(
  */
 export async function ensureScreenshotDirectories(): Promise<void> {
   const fs = await import('fs/promises');
-  const baseDir = path.resolve(__dirname, '../../../screenshots');
+  const baseDir = path.resolve(process.cwd(), 'screenshots');
 
   const dirs = [
     baseDir,
@@ -436,11 +429,7 @@ export async function ensureScreenshotDirectories(): Promise<void> {
 /**
  * Check if two colors are visually similar
  */
-export function areColorsSimilar(
-  color1: string,
-  color2: string,
-  tolerance: number = 10
-): boolean {
+export function areColorsSimilar(color1: string, color2: string, tolerance: number = 10): boolean {
   // Simple hex color comparison
   const hex1 = color1.replace('#', '');
   const hex2 = color2.replace('#', '');

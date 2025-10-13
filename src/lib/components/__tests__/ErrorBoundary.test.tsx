@@ -5,12 +5,12 @@
 
 import React, { ErrorInfo } from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ErrorBoundary } from '../ErrorBoundary';
-import { logger } from '../../services/logger';
+import { ErrorBoundary } from '@components/ErrorBoundary';
+import { logger } from '@services/logger';
 import { vi } from 'vitest';
 
 // Mock the logger
-vi.mock('../../services/logger', () => ({
+vi.mock('@services/logger', () => ({
   logger: {
     error: vi.fn(),
   },

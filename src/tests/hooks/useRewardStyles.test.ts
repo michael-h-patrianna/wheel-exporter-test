@@ -3,13 +3,13 @@
  */
 
 import { renderHook } from '@testing-library/react';
-import { useRewardStyles } from '../../lib/hooks/useRewardStyles';
+import { useRewardStyles } from '@hooks/useRewardStyles';
 import {
   Fill,
   RewardsPrizeTextStyle,
   RewardsBackgroundStyle,
   RewardsButtonStyle,
-} from '../../lib/types';
+} from '@lib-types';
 
 describe('useRewardStyles', () => {
   it('returns memoized style builder functions', () => {

@@ -4,9 +4,9 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { HeaderRenderer } from '../HeaderRenderer';
-import { HeaderComponent, HeaderState } from '../../../types';
-import { createMockHeader, createMockHeaderWithMissingFailState } from '../../../test-utils';
+import { HeaderRenderer } from '@components/renderers/HeaderRenderer';
+import { HeaderComponent, HeaderState } from '@lib-types';
+import { createMockHeader, createMockHeaderWithMissingFailState } from '@test-utils';
 import { vi } from 'vitest';
 
 describe('HeaderRenderer', () => {

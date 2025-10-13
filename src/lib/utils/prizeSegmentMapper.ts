@@ -3,9 +3,9 @@
  * Maps prize data to wheel segment display properties
  */
 
-import type { WheelSegmentKind } from '../types';
-import type { Prize } from '../types/prizeTypes';
-import { getSlotDisplayText } from '../types/prizeTypes';
+import type { WheelSegmentKind } from '@lib-types';
+import type { Prize } from '@lib-types/prizeTypes';
+import { getSlotDisplayText } from '@lib-types/prizeTypes';
 import { abbreviateNumber } from './prizeUtils';
 
 export interface PrizeSegment {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CenterComponent } from '../../types';
+import { CenterComponent } from '@lib-types';
 
 /**
  * CenterRenderer Component

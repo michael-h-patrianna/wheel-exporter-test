@@ -15,8 +15,8 @@
 
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import { AnimatedLightsRenderer } from '../AnimatedLightsRenderer';
-import type { LightsComponent } from '../../../../types';
+import { AnimatedLightsRenderer } from '@components/renderers/lights/AnimatedLightsRenderer';
+import type { LightsComponent } from '@lib-types';
 
 describe('AnimatedLightsRenderer', () => {
   afterEach(() => {

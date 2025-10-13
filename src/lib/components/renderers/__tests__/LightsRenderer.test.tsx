@@ -4,9 +4,9 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { LightsRenderer } from '../LightsRenderer';
-import { LightsComponent } from '../../../types';
-import { createMockLights, createMockLightsWithoutPositions } from '../../../test-utils';
+import { LightsRenderer } from '@components/renderers/LightsRenderer';
+import { LightsComponent } from '@lib-types';
+import { createMockLights, createMockLightsWithoutPositions } from '@test-utils';
 import { vi } from 'vitest';
 
 describe('LightsRenderer', () => {

@@ -4,7 +4,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
-import { useWheelStateMachine } from '../useWheelStateMachine';
+import { useWheelStateMachine } from '@hooks/useWheelStateMachine';
 
 describe('useWheelStateMachine - REAL Consecutive Spins', () => {
   beforeEach(() => {

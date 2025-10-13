@@ -25,8 +25,8 @@ import {
   describeArcPath,
   computeArcFontSize,
   createDropShadowFilter,
-} from '../segmentUtils';
-import { Fill, Gradient, GradientTransform, DropShadow } from '../../types';
+} from '@utils/segmentUtils';
+import { Fill, Gradient, GradientTransform, DropShadow } from '@lib-types';
 
 describe('segmentUtils', () => {
   // ============================================================================

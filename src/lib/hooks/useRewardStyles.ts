@@ -9,8 +9,8 @@ import {
   buildTextStyle,
   buildBoxStyle,
   buildButtonStyle,
-} from '../utils/styleBuilders';
-import { Fill, RewardsPrizeTextStyle, RewardsBackgroundStyle, RewardsButtonStyle } from '../types';
+} from '@utils/styleBuilders';
+import { Fill, RewardsPrizeTextStyle, RewardsBackgroundStyle, RewardsButtonStyle } from '@lib-types';
 
 export interface UseRewardStylesReturn {
   buildGradient: (fill: Fill | undefined) => string;

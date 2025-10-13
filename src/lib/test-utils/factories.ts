@@ -19,7 +19,7 @@ import {
   WheelSegmentStyles,
   WheelSegmentKind,
   Fill,
-} from '../types';
+} from '@lib-types';
 
 // ============================================================================
 // Helper Types

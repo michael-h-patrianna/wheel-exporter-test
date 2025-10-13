@@ -4,12 +4,12 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ButtonSpinRenderer } from '../ButtonSpinRenderer';
-import { ButtonSpinComponent, ButtonSpinState } from '../../../types';
+import { ButtonSpinRenderer } from '@components/renderers/ButtonSpinRenderer';
+import { ButtonSpinComponent, ButtonSpinState } from '@lib-types';
 import {
   createMockButtonSpin,
   createMockButtonSpinWithMissingSpinningState,
-} from '../../../test-utils';
+} from '@test-utils';
 
 describe('ButtonSpinRenderer', () => {
   const mockButtonSpin = createMockButtonSpin();

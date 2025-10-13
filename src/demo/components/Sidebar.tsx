@@ -1,12 +1,12 @@
 import React from 'react';
-import { ExtractedAssets } from '../../lib';
-import { PrizeTable } from '../../lib/components/prize/PrizeTable';
-import { type PrizeProviderResult } from '../../lib/services/prizeProvider';
-import { SEGMENT_LAYOUTS, type SegmentLayoutType } from '../../lib/types/segmentLayoutTypes';
+import { ExtractedAssets } from '@lib';
+import { PrizeTable } from '@components/prize/PrizeTable';
+import { type PrizeProviderResult } from '@services/prizeProvider';
+import { SEGMENT_LAYOUTS, type SegmentLayoutType } from '@lib-types/segmentLayoutTypes';
 import {
   getAllAnimations,
   type LightAnimationType,
-} from '../../lib/components/renderers/lights/lightAnimations';
+} from '@components/renderers/lights/lightAnimations';
 
 type ComponentVisibilityType = {
   background: boolean;

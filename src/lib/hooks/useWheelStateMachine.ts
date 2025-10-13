@@ -1,5 +1,5 @@
 import { useReducer, useEffect, useRef, useCallback } from 'react';
-import { logger } from '../services/logger';
+import { logger } from '@services/logger';
 
 /**
  * Wheel spin states

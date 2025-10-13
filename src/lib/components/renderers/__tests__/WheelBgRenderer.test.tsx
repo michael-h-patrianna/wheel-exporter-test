@@ -4,9 +4,9 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { WheelBgRenderer } from '../WheelBgRenderer';
-import { WheelOverlay } from '../../../types';
-import { createMockWheelBg, createMockWheelOverlayWithoutBounds } from '../../../test-utils';
+import { WheelBgRenderer } from '@components/renderers/WheelBgRenderer';
+import { WheelOverlay } from '@lib-types';
+import { createMockWheelBg, createMockWheelOverlayWithoutBounds } from '@test-utils';
 import { vi } from 'vitest';
 
 describe('WheelBgRenderer', () => {

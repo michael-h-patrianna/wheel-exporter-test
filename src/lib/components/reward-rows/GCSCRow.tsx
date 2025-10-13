@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '../../types';
+import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '@lib-types';
 
 export interface GCSCRowProps {
   gcValue: string;

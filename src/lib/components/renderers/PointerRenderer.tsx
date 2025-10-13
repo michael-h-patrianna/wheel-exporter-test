@@ -1,5 +1,5 @@
 import React from 'react';
-import { PointerComponent } from '../../types';
+import { PointerComponent } from '@lib-types';
 
 interface PointerRendererProps {
   pointer?: PointerComponent;

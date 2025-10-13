@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const htmlOpenMode = process.env.PLAYWRIGHT_HTML_OPEN ?? 'never';
+
 /**
  * Playwright configuration for e2e tests
  * @see https://playwright.dev/docs/test-configuration
@@ -10,9 +12,12 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: [
+    ['list', { printSteps: true }],
+    ['html', { open: htmlOpenMode }],
+  ],
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://127.0.0.1:5173',
     trace: 'on-first-retry',
   },
 
@@ -24,12 +29,21 @@ export default defineConfig({
         headless: true,
       },
     },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'], headless: true },
+    },
+
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'], headless: true },
+    },
   ],
 
   /* Run dev server before starting the tests */
   webServer: {
-    command: 'npm start',
-    url: 'http://localhost:3000',
+    command: 'npm run dev -- --host 127.0.0.1 --port 5173',
+    url: 'http://127.0.0.1:5173',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },

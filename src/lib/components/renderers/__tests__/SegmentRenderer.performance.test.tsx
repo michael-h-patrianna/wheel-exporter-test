@@ -5,12 +5,12 @@
 
 import React from 'react';
 import { render } from '@testing-library/react';
-import { SegmentRenderer } from '../SegmentRenderer';
-import { WheelSegmentStyles, CenterComponent, Fill, Gradient } from '../../../types';
+import { SegmentRenderer } from '@components/renderers/SegmentRenderer';
+import { WheelSegmentStyles, CenterComponent, Fill, Gradient } from '@lib-types';
 import { vi } from 'vitest';
 
 // Mock the offer.png import
-vi.mock('../../../../assets/offer.png', () => ({ default: 'mocked-offer.png' }));
+vi.mock('@assets/offer.png', () => ({ default: 'mocked-offer.png' }));
 
 describe('SegmentRenderer Performance Tests', () => {
   const mockCenter: CenterComponent = {
