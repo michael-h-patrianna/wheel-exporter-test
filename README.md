@@ -22,18 +22,17 @@ The wheel mini-game is part of a larger "random reward" feature in a production 
 
 ## Tech Stack
 
-- **React 18** - UI framework
-- **TypeScript** - Type-safe development
-- **Framer Motion** - Animation library (web-compatible with future React Native portability)
-- **Vitest** - Unit and integration testing
-- **Playwright** - End-to-end testing
-- **JSZip** - ZIP file parsing for theme packages
+- **React 19.2** with **TypeScript 5.9**
+- **Vite 7** for the dev server and production build pipeline
+- **Vitest** + **React Testing Library** for unit and integration coverage
+- **Playwright** for end-to-end browser automation
+- **JSZip** for ZIP file parsing and asset extraction
 
 ## Quick Start
 
 ### Prerequisites
 
-- Node.js 16+ and npm
+- Node.js 18+ and npm (required by Vite 7)
 - Modern browser (Chrome, Firefox, Safari, Edge)
 
 ### Installation
@@ -45,25 +44,28 @@ npm install
 ### Running the Application
 
 ```bash
-npm start
+npm run dev
 ```
 
-Opens the preview application at `http://localhost:3000`
+This starts the Vite dev server on `http://localhost:5173` (or the next available port). Use `npm run build` to produce a production bundle and `npm run preview` to serve the built assets locally.
 
 ### Running Tests
 
 ```bash
-# Unit and integration tests
+# Unit and integration tests (Vitest)
 npm test
 
-# End-to-end tests (requires app running on port 3000)
+# Watch mode for unit tests
+npm run test:watch
+
+# Coverage report
+npm run test:coverage
+
+# End-to-end tests (start the dev server separately)
 npm run test:e2e
 
-# E2E tests with UI
-npm run test:e2e:ui
-
-# Debug E2E tests
-npm run test:e2e:debug
+# Headed/browser-visible E2E run
+npm run test:e2e:headed
 ```
 
 ### Using the Preview Tool

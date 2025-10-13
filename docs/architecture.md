@@ -24,9 +24,8 @@ This is a **production-ready React component library** for rendering themed Whee
 ### Technology Stack
 
 - **React 19.2.0** with TypeScript 5.9.3
-- **React Scripts 5.0.1** (Create React App)
-- **Testing**: React Testing Library + Playwright
-- **Build Tool**: Webpack (via CRA)
+- **Vite 7** for the development server and production bundling
+- **Testing**: Vitest + React Testing Library + Playwright
 - **Package Manager**: npm
 
 ### Key Features
@@ -1306,8 +1305,9 @@ export { SEGMENT_KINDS, TEXT_FONT_FAMILY };
 
 2. **Run dev server**:
    ```bash
-   npm start
+  npm run dev
    ```
+  Vite serves the demo application at `http://localhost:5173` by default.
 
 3. **Run tests**:
    ```bash
