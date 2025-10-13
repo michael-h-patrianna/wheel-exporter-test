@@ -42,9 +42,7 @@ type DeepPartial<T> = {
  * @param overrides - Partial overrides for the bounds
  * @returns Complete ImageBounds object
  */
-export function createMockImageBounds(
-  overrides?: Partial<ImageBounds>
-): ImageBounds {
+export function createMockImageBounds(overrides?: Partial<ImageBounds>): ImageBounds {
   return {
     x: 400,
     y: 300,
@@ -132,9 +130,7 @@ export function createMockGradientFill(overrides?: DeepPartial<Fill>): Fill {
  * });
  * ```
  */
-export function createMockHeader(
-  overrides?: DeepPartial<HeaderComponent>
-): HeaderComponent {
+export function createMockHeader(overrides?: DeepPartial<HeaderComponent>): HeaderComponent {
   const defaultBounds: ImageBounds = {
     x: 400,
     y: 100,
@@ -168,9 +164,7 @@ export function createMockHeader(
  * });
  * ```
  */
-export function createMockWheelBg(
-  overrides?: DeepPartial<WheelOverlay>
-): WheelOverlay {
+export function createMockWheelBg(overrides?: DeepPartial<WheelOverlay>): WheelOverlay {
   return {
     bounds: {
       x: 400,
@@ -197,9 +191,7 @@ export function createMockWheelBg(
  * });
  * ```
  */
-export function createMockWheelTop(
-  overrides?: DeepPartial<WheelOverlay>
-): WheelOverlay {
+export function createMockWheelTop(overrides?: DeepPartial<WheelOverlay>): WheelOverlay {
   return {
     bounds: {
       x: 400,
@@ -230,9 +222,7 @@ export function createMockWheelTop(
  * });
  * ```
  */
-export function createMockLights(
-  overrides?: DeepPartial<LightsComponent>
-): LightsComponent {
+export function createMockLights(overrides?: DeepPartial<LightsComponent>): LightsComponent {
   const defaultPositions = [
     { x: 100, y: 50 },
     { x: 200, y: 100 },
@@ -296,9 +286,7 @@ export function createMockButtonSpin(
  * });
  * ```
  */
-export function createMockPointer(
-  overrides?: DeepPartial<PointerComponent>
-): PointerComponent {
+export function createMockPointer(overrides?: DeepPartial<PointerComponent>): PointerComponent {
   return {
     bounds: {
       x: 400,
@@ -327,9 +315,7 @@ export function createMockPointer(
  * });
  * ```
  */
-export function createMockCenter(
-  overrides?: Partial<CenterComponent>
-): CenterComponent {
+export function createMockCenter(overrides?: Partial<CenterComponent>): CenterComponent {
   return {
     x: 400,
     y: 300,
@@ -395,9 +381,7 @@ export function createMockWheelSegmentStyles(
  * });
  * ```
  */
-export function createMockWheelExport(
-  overrides?: DeepPartial<WheelExport>
-): WheelExport {
+export function createMockWheelExport(overrides?: DeepPartial<WheelExport>): WheelExport {
   return {
     wheelId: overrides?.wheelId ?? 'test-wheel-id',
     frameSize: {
@@ -407,15 +391,34 @@ export function createMockWheelExport(
     background: {
       exportUrl: overrides?.background?.exportUrl ?? 'background.png',
     },
-    header: overrides?.header !== undefined ? createMockHeader(overrides.header) : createMockHeader(),
-    wheelBg: overrides?.wheelBg !== undefined ? createMockWheelBg(overrides.wheelBg) : createMockWheelBg(),
-    wheelTop1: overrides?.wheelTop1 !== undefined ? createMockWheelTop(overrides.wheelTop1) : createMockWheelTop(),
-    wheelTop2: overrides?.wheelTop2 !== undefined ? createMockWheelTop(overrides.wheelTop2) : createMockWheelTop(),
-    buttonSpin: overrides?.buttonSpin !== undefined ? createMockButtonSpin(overrides.buttonSpin) : createMockButtonSpin(),
-    center: overrides?.center !== undefined ? createMockCenter(overrides.center as Partial<CenterComponent>) : createMockCenter(),
-    pointer: overrides?.pointer !== undefined ? createMockPointer(overrides.pointer) : createMockPointer(),
-    lights: overrides?.lights !== undefined ? createMockLights(overrides.lights) : createMockLights(),
-    segments: overrides?.segments !== undefined ? createMockWheelSegmentStyles(overrides.segments) : createMockWheelSegmentStyles(),
+    header:
+      overrides?.header !== undefined ? createMockHeader(overrides.header) : createMockHeader(),
+    wheelBg:
+      overrides?.wheelBg !== undefined ? createMockWheelBg(overrides.wheelBg) : createMockWheelBg(),
+    wheelTop1:
+      overrides?.wheelTop1 !== undefined
+        ? createMockWheelTop(overrides.wheelTop1)
+        : createMockWheelTop(),
+    wheelTop2:
+      overrides?.wheelTop2 !== undefined
+        ? createMockWheelTop(overrides.wheelTop2)
+        : createMockWheelTop(),
+    buttonSpin:
+      overrides?.buttonSpin !== undefined
+        ? createMockButtonSpin(overrides.buttonSpin)
+        : createMockButtonSpin(),
+    center:
+      overrides?.center !== undefined
+        ? createMockCenter(overrides.center as Partial<CenterComponent>)
+        : createMockCenter(),
+    pointer:
+      overrides?.pointer !== undefined ? createMockPointer(overrides.pointer) : createMockPointer(),
+    lights:
+      overrides?.lights !== undefined ? createMockLights(overrides.lights) : createMockLights(),
+    segments:
+      overrides?.segments !== undefined
+        ? createMockWheelSegmentStyles(overrides.segments)
+        : createMockWheelSegmentStyles(),
     rewards: overrides?.rewards,
     exportedAt: overrides?.exportedAt ?? new Date().toISOString(),
     metadata: {

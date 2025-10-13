@@ -14,9 +14,9 @@ export type RewardRowType = 'gcsc' | 'freeSpins' | 'xp' | 'rr' | 'fail';
 
 export interface RewardRowData {
   type: RewardRowType;
-  gcValue?: string;      // For 'gcsc' type
-  scValue?: string;      // For 'gcsc' type
-  value?: string;        // For 'freeSpins', 'xp', 'rr' types
-  label?: string;        // Optional custom label
-  message?: string;      // For 'fail' type
+  gcValue?: string; // For 'gcsc' type
+  scValue?: string; // For 'gcsc' type
+  value?: string; // For 'freeSpins', 'xp', 'rr' types
+  label?: string; // Optional custom label
+  message?: string; // For 'fail' type
 }

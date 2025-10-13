@@ -88,7 +88,9 @@ export const LightBulb: React.FC<LightBulbProps> = ({
 
   // Add dual-convergence half class
   if (animationType === 'dual-convergence') {
-    classes.push(isFirstHalf ? 'light-bulb__wrapper--first-half' : 'light-bulb__wrapper--second-half');
+    classes.push(
+      isFirstHalf ? 'light-bulb__wrapper--first-half' : 'light-bulb__wrapper--second-half'
+    );
   }
 
   // Positioning style (center-based positioning)
@@ -127,15 +129,23 @@ export const LightBulb: React.FC<LightBulbProps> = ({
       data-bulb-index={index}
     >
       {/* Outer glow layer - largest glow effect */}
-      <div className={`light-bulb__glow-outer ${animationType !== 'none' ? `light-bulb__glow-outer--${animationType}` : ''}`} />
+      <div
+        className={`light-bulb__glow-outer ${animationType !== 'none' ? `light-bulb__glow-outer--${animationType}` : ''}`}
+      />
 
       {/* Inner glow layer - brighter, smaller glow */}
-      <div className={`light-bulb__glow-inner ${animationType !== 'none' ? `light-bulb__glow-inner--${animationType}` : ''}`} />
+      <div
+        className={`light-bulb__glow-inner ${animationType !== 'none' ? `light-bulb__glow-inner--${animationType}` : ''}`}
+      />
 
       {/* Main bulb with background and border */}
-      <div className={`light-bulb__bulb ${animationType !== 'none' ? `light-bulb__bulb--${animationType}` : ''}`}>
+      <div
+        className={`light-bulb__bulb ${animationType !== 'none' ? `light-bulb__bulb--${animationType}` : ''}`}
+      >
         {/* Inner filament - small bright core when lit */}
-        <div className={`light-bulb__filament ${animationType !== 'none' ? `light-bulb__filament--${animationType}` : ''}`} />
+        <div
+          className={`light-bulb__filament ${animationType !== 'none' ? `light-bulb__filament--${animationType}` : ''}`}
+        />
 
         {/* Glass shine overlay - static for performance */}
         <div className="light-bulb__glass-shine" />

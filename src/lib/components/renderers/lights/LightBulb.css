@@ -44,7 +44,9 @@
   /* GPU acceleration */
   will-change: opacity, transform;
   /* Box-shadow simulates radial gradient glow - subtle diffusion */
-  box-shadow: 0 0 6px var(--bulb-on-glow50), 0 0 12px var(--bulb-on-glow30);
+  box-shadow:
+    0 0 6px var(--bulb-on-glow50),
+    0 0 12px var(--bulb-on-glow30);
 }
 
 /* Inner glow - brighter, more focused glow */
@@ -61,7 +63,9 @@
   /* GPU acceleration */
   will-change: opacity, transform;
   /* Brighter box-shadow for inner glow - more focused */
-  box-shadow: 0 0 4px var(--bulb-on-glow65), 0 0 8px var(--bulb-on-glow45);
+  box-shadow:
+    0 0 4px var(--bulb-on-glow65),
+    0 0 8px var(--bulb-on-glow45);
 }
 
 /* ============================================================================
@@ -125,20 +129,42 @@
    ========================================================================= */
 
 /* When animation is 'none', show bulbs in 'on' state */
-.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not([class*='--accelerating']):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not([class*='--comet']):not([class*='--dual']) .light-bulb__bulb {
+.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not(
+    [class*='--accelerating']
+  ):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not(
+    [class*='--comet']
+  ):not([class*='--dual'])
+  .light-bulb__bulb {
   background-color: var(--bulb-on);
-  box-shadow: 0 0 4px var(--bulb-on-glow70), 0 0 6px var(--bulb-on-glow50);
+  box-shadow:
+    0 0 4px var(--bulb-on-glow70),
+    0 0 6px var(--bulb-on-glow50);
 }
 
-.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not([class*='--accelerating']):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not([class*='--comet']):not([class*='--dual']) .light-bulb__filament {
+.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not(
+    [class*='--accelerating']
+  ):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not(
+    [class*='--comet']
+  ):not([class*='--dual'])
+  .light-bulb__filament {
   opacity: 0.85;
 }
 
-.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not([class*='--accelerating']):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not([class*='--comet']):not([class*='--dual']) .light-bulb__glow-outer {
+.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not(
+    [class*='--accelerating']
+  ):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not(
+    [class*='--comet']
+  ):not([class*='--dual'])
+  .light-bulb__glow-outer {
   opacity: 0.35;
 }
 
-.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not([class*='--accelerating']):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not([class*='--comet']):not([class*='--dual']) .light-bulb__glow-inner {
+.light-bulb__wrapper:not([class*='--alternating']):not([class*='--sequential']):not(
+    [class*='--accelerating']
+  ):not([class*='--reverse']):not([class*='--random']):not([class*='--carnival']):not(
+    [class*='--comet']
+  ):not([class*='--dual'])
+  .light-bulb__glow-inner {
   opacity: 0.5;
 }
 

@@ -10,7 +10,7 @@ import {
   MIN_TEXT_FONT_SIZE,
   MAX_IMAGE_ONLY_SIZE_FACTOR,
   TEXT_FONT_FAMILY,
-  formatNumber
+  formatNumber,
 } from '../../../utils/segmentUtils';
 
 /**
@@ -111,10 +111,7 @@ const SegmentImageAboveText: React.FC<{
     const baseFontSize = computeArcFontSize(displayText, lineRadius, textAngleSpan);
     const fontSize = Math.max(MIN_TEXT_FONT_SIZE, baseFontSize);
 
-    const textFillPaint = fillToSvgPaint(
-      styles.text?.fill,
-      `segment-text-fill-${segment.index}`
-    );
+    const textFillPaint = fillToSvgPaint(styles.text?.fill, `segment-text-fill-${segment.index}`);
 
     let textStroke = 'none';
     if (styles.text?.stroke) {
@@ -129,9 +126,10 @@ const SegmentImageAboveText: React.FC<{
     }
     const textStrokeWidth = styles.text?.stroke?.width || 0;
 
-    const textFilter = styles.text?.dropShadows && styles.text.dropShadows.length > 0
-      ? `url(#segment-text-shadow-${segment.index})`
-      : undefined;
+    const textFilter =
+      styles.text?.dropShadows && styles.text.dropShadows.length > 0
+        ? `url(#segment-text-shadow-${segment.index})`
+        : undefined;
 
     elements.push(
       <text
@@ -195,9 +193,7 @@ const SegmentTwoLineText: React.FC<{
     const displayText = prizeSegment?.displayText || '';
     const isNoWin = prizeSegment?.isNoWin || segment.kind === 'nowin';
 
-    const textLines = displayText.includes('\n')
-      ? displayText.split('\n')
-      : [displayText];
+    const textLines = displayText.includes('\n') ? displayText.split('\n') : [displayText];
 
     const lineDefinitions: Array<{
       key: 'primary' | 'secondary';
@@ -230,10 +226,7 @@ const SegmentTwoLineText: React.FC<{
       const baseFontSize = computeArcFontSize(trimmed, lineRadius, textAngleSpan) * fontScale;
       const fontSize = Math.max(MIN_TEXT_FONT_SIZE, baseFontSize);
 
-      const textFillPaint = fillToSvgPaint(
-        styles.text?.fill,
-        `segment-text-fill-${segment.index}`
-      );
+      const textFillPaint = fillToSvgPaint(styles.text?.fill, `segment-text-fill-${segment.index}`);
 
       let textStroke = 'none';
       if (styles.text?.stroke) {
@@ -248,9 +241,10 @@ const SegmentTwoLineText: React.FC<{
       }
       const textStrokeWidth = styles.text?.stroke?.width || 0;
 
-      const textFilter = styles.text?.dropShadows && styles.text.dropShadows.length > 0
-        ? `url(#segment-text-shadow-${segment.index})`
-        : undefined;
+      const textFilter =
+        styles.text?.dropShadows && styles.text.dropShadows.length > 0
+          ? `url(#segment-text-shadow-${segment.index})`
+          : undefined;
 
       elements.push(
         <text
@@ -293,15 +287,7 @@ SegmentTwoLineText.displayName = 'SegmentTwoLineText';
  * Chooses between three layouts based on prize type
  */
 export const OriginalLayout: React.FC<SegmentLayoutProps> = (props) => {
-  const {
-    segment,
-    styles,
-    cx,
-    cy,
-    outerRadius,
-    segmentAngle,
-    purchaseImageUrl
-  } = props;
+  const { segment, styles, cx, cy, outerRadius, segmentAngle, purchaseImageUrl } = props;
 
   const contentElements = useMemo(() => {
     const prizeSegment = segment.prizeSegment;

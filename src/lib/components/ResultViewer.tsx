@@ -300,14 +300,21 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
 
         {/* Collect Button */}
         {showButton && rewards?.button?.stateStyles?.[buttonState] && (
-          <div className="result-button-container" style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+          <div
+            className="result-button-container"
+            style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}
+          >
             <button
               className={`result-button result-button-${buttonState}`}
-              style={buildButtonStyle(rewards.button.stateStyles[buttonState], buttonState).container}
+              style={
+                buildButtonStyle(rewards.button.stateStyles[buttonState], buttonState).container
+              }
               onClick={onButtonClick}
               disabled={buttonState === 'disabled'}
             >
-              <span style={buildButtonStyle(rewards.button.stateStyles[buttonState], buttonState).text}>
+              <span
+                style={buildButtonStyle(rewards.button.stateStyles[buttonState], buttonState).text}
+              >
                 {buttonText}
               </span>
             </button>

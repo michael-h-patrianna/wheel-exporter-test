@@ -1,0 +1,18 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+.vite
+
+# Test coverage
+coverage
+
+# Screenshots and assets
+screenshots
+
+# Config files that shouldn't be formatted
+package-lock.json
+pnpm-lock.yaml
+yarn.lock

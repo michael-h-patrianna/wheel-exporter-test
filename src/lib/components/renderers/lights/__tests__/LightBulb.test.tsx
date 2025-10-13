@@ -26,6 +26,8 @@ describe('LightBulb', () => {
     it('should render without crashing', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -39,6 +41,8 @@ describe('LightBulb', () => {
     it('should render all layer elements', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -76,6 +80,8 @@ describe('LightBulb', () => {
     it('should apply correct positioning with default size', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={200}
           index={0}
@@ -94,6 +100,8 @@ describe('LightBulb', () => {
     it('should apply correct positioning with custom size', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={150}
           y={250}
           index={0}
@@ -113,6 +121,8 @@ describe('LightBulb', () => {
     it('should handle negative coordinates', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={-50}
           y={-100}
           index={0}
@@ -129,6 +139,8 @@ describe('LightBulb', () => {
     it('should handle zero coordinates', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={0}
           y={0}
           index={0}
@@ -147,6 +159,8 @@ describe('LightBulb', () => {
     it('should set all CSS custom properties', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={5}
@@ -168,6 +182,8 @@ describe('LightBulb', () => {
     it('should set correct radius for default size', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -177,13 +193,15 @@ describe('LightBulb', () => {
       );
 
       const wrapper = container.querySelector('.light-bulb__wrapper') as HTMLElement;
-      expect(wrapper.style.getPropertyValue('--bulb-size')).toBe('10px');
-      expect(wrapper.style.getPropertyValue('--bulb-radius')).toBe('5px');
+      expect(wrapper.style.getPropertyValue('--bulb-size')).toBe('8px');
+      expect(wrapper.style.getPropertyValue('--bulb-radius')).toBe('4px');
     });
 
     it('should set correct radius for custom size', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -203,6 +221,8 @@ describe('LightBulb', () => {
     it('should set data-bulb-index attribute', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={7}
@@ -220,6 +240,8 @@ describe('LightBulb', () => {
     it('should apply even class for even index', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -236,6 +258,8 @@ describe('LightBulb', () => {
     it('should apply odd class for odd index', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={1}
@@ -252,6 +276,8 @@ describe('LightBulb', () => {
     it('should handle large even index', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={100}
@@ -267,6 +293,8 @@ describe('LightBulb', () => {
     it('should handle large odd index', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={99}
@@ -284,6 +312,8 @@ describe('LightBulb', () => {
     it('should not apply animation classes for "none" type', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -310,10 +340,12 @@ describe('LightBulb', () => {
       'dual-convergence',
     ];
 
-    animationTypes.forEach(animationType => {
+    animationTypes.forEach((animationType) => {
       it(`should apply animation classes for "${animationType}" type`, () => {
         const { container } = render(
           <LightBulb
+            groupIndex={0}
+            isFirstHalf={true}
             x={100}
             y={100}
             index={0}
@@ -328,11 +360,15 @@ describe('LightBulb', () => {
 
         // Check glow-outer class
         const glowOuter = container.querySelector('.light-bulb__glow-outer');
-        expect(glowOuter?.classList.contains(`light-bulb__glow-outer--${animationType}`)).toBe(true);
+        expect(glowOuter?.classList.contains(`light-bulb__glow-outer--${animationType}`)).toBe(
+          true
+        );
 
         // Check glow-inner class
         const glowInner = container.querySelector('.light-bulb__glow-inner');
-        expect(glowInner?.classList.contains(`light-bulb__glow-inner--${animationType}`)).toBe(true);
+        expect(glowInner?.classList.contains(`light-bulb__glow-inner--${animationType}`)).toBe(
+          true
+        );
 
         // Check bulb class
         const bulb = container.querySelector('.light-bulb__bulb');
@@ -347,6 +383,8 @@ describe('LightBulb', () => {
     it('should maintain even/odd classes with animation', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={1}
@@ -365,6 +403,8 @@ describe('LightBulb', () => {
     it('should have correct DOM hierarchy', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -396,6 +436,8 @@ describe('LightBulb', () => {
     it('should have glass-shine as static overlay', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -414,6 +456,8 @@ describe('LightBulb', () => {
     it('should handle index 0', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -429,6 +473,8 @@ describe('LightBulb', () => {
     it('should handle single bulb (totalBulbs = 1)', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -444,6 +490,8 @@ describe('LightBulb', () => {
     it('should handle large number of bulbs', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={99}
@@ -460,6 +508,8 @@ describe('LightBulb', () => {
     it('should handle very small size', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}
@@ -477,6 +527,8 @@ describe('LightBulb', () => {
     it('should handle very large size', () => {
       const { container } = render(
         <LightBulb
+          groupIndex={0}
+          isFirstHalf={true}
           x={100}
           y={100}
           index={0}

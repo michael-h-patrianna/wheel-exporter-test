@@ -33,23 +33,13 @@ describe('PointerRenderer', () => {
   });
 
   it('should return null when pointer is not provided', () => {
-    const { container } = render(
-      <PointerRenderer
-        {...defaultProps}
-        pointer={undefined}
-      />
-    );
+    const { container } = render(<PointerRenderer {...defaultProps} pointer={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when pointerImage is not provided', () => {
-    const { container } = render(
-      <PointerRenderer
-        {...defaultProps}
-        pointerImage={undefined}
-      />
-    );
+    const { container } = render(<PointerRenderer {...defaultProps} pointerImage={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -72,9 +62,7 @@ describe('PointerRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(
-      <PointerRenderer {...defaultProps} scale={0.5} />
-    );
+    const { container } = render(<PointerRenderer {...defaultProps} scale={0.5} />);
 
     const pointerDiv = container.querySelector('.pointer-component');
     // width = 80 * 0.5 = 40, height = 120 * 0.5 = 60
@@ -150,15 +138,31 @@ describe('PointerRenderer', () => {
 
   it('should handle different scale factors correctly', () => {
     const testCases = [
-      { scale: 0.25, expectedLeft: '90px', expectedTop: '10px', expectedWidth: '20px', expectedHeight: '30px' },
-      { scale: 1.5, expectedLeft: '540px', expectedTop: '60px', expectedWidth: '120px', expectedHeight: '180px' },
-      { scale: 2, expectedLeft: '720px', expectedTop: '80px', expectedWidth: '160px', expectedHeight: '240px' },
+      {
+        scale: 0.25,
+        expectedLeft: '90px',
+        expectedTop: '10px',
+        expectedWidth: '20px',
+        expectedHeight: '30px',
+      },
+      {
+        scale: 1.5,
+        expectedLeft: '540px',
+        expectedTop: '60px',
+        expectedWidth: '120px',
+        expectedHeight: '180px',
+      },
+      {
+        scale: 2,
+        expectedLeft: '720px',
+        expectedTop: '80px',
+        expectedWidth: '160px',
+        expectedHeight: '240px',
+      },
     ];
 
     testCases.forEach(({ scale, expectedLeft, expectedTop, expectedWidth, expectedHeight }) => {
-      const { container } = render(
-        <PointerRenderer {...defaultProps} scale={scale} />
-      );
+      const { container } = render(<PointerRenderer {...defaultProps} scale={scale} />);
 
       const pointerDiv = container.querySelector('.pointer-component');
       expect(pointerDiv).toHaveStyle({

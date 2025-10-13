@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
   SEGMENT_KINDS,
   SEGMENT_PREVIEW_INNER_RADIUS_RATIO,
@@ -34,7 +35,16 @@ describe('segmentUtils', () => {
 
   describe('Constants', () => {
     it('should export correct SEGMENT_KINDS array', () => {
-      expect(SEGMENT_KINDS).toEqual(['jackpot', 'nowin', 'odd', 'even', 'odd', 'even', 'odd', 'even']);
+      expect(SEGMENT_KINDS).toEqual([
+        'jackpot',
+        'nowin',
+        'odd',
+        'even',
+        'odd',
+        'even',
+        'odd',
+        'even',
+      ]);
       expect(SEGMENT_KINDS).toHaveLength(8);
     });
 
@@ -105,8 +115,8 @@ describe('segmentUtils', () => {
     });
 
     it('should remove trailing zeros', () => {
-      expect(formatNumber(1.5000)).toBe('1.5');
-      expect(formatNumber(1.100000)).toBe('1.1');
+      expect(formatNumber(1.5)).toBe('1.5');
+      expect(formatNumber(1.1)).toBe('1.1');
     });
 
     it('should normalize negative zero to zero', () => {
@@ -196,7 +206,14 @@ describe('segmentUtils', () => {
     });
 
     it('should handle negative angles', () => {
-      const path = buildSegmentRingPath(cx, cy, innerRadius, outerRadius, -Math.PI / 2, Math.PI / 2);
+      const path = buildSegmentRingPath(
+        cx,
+        cy,
+        innerRadius,
+        outerRadius,
+        -Math.PI / 2,
+        Math.PI / 2
+      );
       expect(path).toContain('M');
       expect(path).toContain('Z');
     });
@@ -376,7 +393,10 @@ describe('segmentUtils', () => {
             { color: '#FF0000', position: 0 },
             { color: '#0000FF', position: 1 },
           ],
-          transform: [[1, 0, 0], [0, 1, 0]],
+          transform: [
+            [1, 0, 0],
+            [0, 1, 0],
+          ],
         },
       };
       expect(fillToSvgPaint(fill, 'gradient-1')).toBe('url(#gradient-1)');
@@ -392,7 +412,10 @@ describe('segmentUtils', () => {
             { color: '#FF0000', position: 0 },
             { color: '#0000FF', position: 1 },
           ],
-          transform: [[1, 0, 0], [0, 1, 0]],
+          transform: [
+            [1, 0, 0],
+            [0, 1, 0],
+          ],
         },
       };
       expect(fillToSvgPaint(fill)).toBe('none');
@@ -426,7 +449,10 @@ describe('segmentUtils', () => {
           { color: '#FF0000', position: 0 },
           { color: '#0000FF', position: 1 },
         ],
-        transform: [[1, 0, 0], [0, 1, 0]],
+        transform: [
+          [1, 0, 0],
+          [0, 1, 0],
+        ],
       };
       const element = createSvgGradientDef(gradient, 'test-gradient', 0);
       expect(element).not.toBeNull();
@@ -445,7 +471,10 @@ describe('segmentUtils', () => {
           { color: '#FF0000', position: 0 },
           { color: '#0000FF', position: 1 },
         ],
-        transform: [[1, 0, 0], [0, 1, 0]],
+        transform: [
+          [1, 0, 0],
+          [0, 1, 0],
+        ],
       };
       const element = createSvgGradientDef(gradient, 'test-gradient', 0);
       const { container } = render(<svg>{element}</svg>);
@@ -464,7 +493,10 @@ describe('segmentUtils', () => {
           { color: '#FF0000', position: 0 },
           { color: '#0000FF', position: 1 },
         ],
-        transform: [[1, 0, 0], [0, 1, 0]],
+        transform: [
+          [1, 0, 0],
+          [0, 1, 0],
+        ],
       };
       const element = createSvgGradientDef(gradient, 'test-gradient', 60);
       const { container } = render(<svg>{element}</svg>);
@@ -483,7 +515,10 @@ describe('segmentUtils', () => {
           { color: '#00FF00', position: 0.5 },
           { color: '#0000FF', position: 1 },
         ],
-        transform: [[1, 0, 0], [0, 1, 0]],
+        transform: [
+          [1, 0, 0],
+          [0, 1, 0],
+        ],
       };
       const element = createSvgGradientDef(gradient, 'test-gradient', 0);
       const { container } = render(<svg>{element}</svg>);
@@ -503,14 +538,17 @@ describe('segmentUtils', () => {
         type: 'linear',
         rotation: 0,
         stops: [],
-        transform: [[1, 0, 0], [0, 1, 0]],
+        transform: [
+          [1, 0, 0],
+          [0, 1, 0],
+        ],
       };
       const element = createSvgGradientDef(gradient, 'test-gradient', 0);
       expect(element).toBeNull();
     });
 
     it('should warn and return null for non-linear gradients', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const gradient: Gradient = {
         type: 'radial',
         rotation: 0,
@@ -518,7 +556,10 @@ describe('segmentUtils', () => {
           { color: '#FF0000', position: 0 },
           { color: '#0000FF', position: 1 },
         ],
-        transform: [[1, 0, 0], [0, 1, 0]],
+        transform: [
+          [1, 0, 0],
+          [0, 1, 0],
+        ],
       };
       const element = createSvgGradientDef(gradient, 'test-gradient', 0);
 
@@ -541,7 +582,10 @@ describe('segmentUtils', () => {
           { color: '#FF0000', position: 0 },
           { color: '#0000FF', position: 1 },
         ],
-        transform: [[1, 0, 0], [0, 1, 0]],
+        transform: [
+          [1, 0, 0],
+          [0, 1, 0],
+        ],
       };
       const element = createSvgGradientDef(gradient, 'test-gradient', 0);
       const { container } = render(<svg>{element}</svg>);
@@ -640,9 +684,7 @@ describe('segmentUtils', () => {
 
   describe('createDropShadowFilter', () => {
     it('should create filter with single drop shadow', () => {
-      const shadows: DropShadow[] = [
-        { x: 2, y: 2, blur: 4, color: '#000000' },
-      ];
+      const shadows: DropShadow[] = [{ x: 2, y: 2, blur: 4, color: '#000000' }];
       const element = createDropShadowFilter('shadow-filter', shadows);
       const { container } = render(<svg>{element}</svg>);
 
@@ -678,9 +720,7 @@ describe('segmentUtils', () => {
     });
 
     it('should set correct filter region', () => {
-      const shadows: DropShadow[] = [
-        { x: 2, y: 2, blur: 4, color: '#000000' },
-      ];
+      const shadows: DropShadow[] = [{ x: 2, y: 2, blur: 4, color: '#000000' }];
       const element = createDropShadowFilter('shadow-filter', shadows);
       const { container } = render(<svg>{element}</svg>);
 
@@ -692,9 +732,7 @@ describe('segmentUtils', () => {
     });
 
     it('should create correct shadow pipeline', () => {
-      const shadows: DropShadow[] = [
-        { x: 3, y: 4, blur: 6, color: '#FF0000FF' },
-      ];
+      const shadows: DropShadow[] = [{ x: 3, y: 4, blur: 6, color: '#FF0000FF' }];
       const element = createDropShadowFilter('shadow-filter', shadows);
       const { container } = render(<svg>{element}</svg>);
 

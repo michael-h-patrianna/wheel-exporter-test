@@ -152,9 +152,9 @@ export function calculateBulbColors(onColor: string) {
   const onGradientColor = blendColors(warmOnColor, '#000000', 85);
 
   // Additional color-mix replacements for animations
-  const offBlend10On = blendColors(offColor, warmOnColor, 90);  // 90% off + 10% on
-  const onBlend5Off = blendColors(warmOnColor, offColor, 95);    // 95% on + 5% off
-  const onBlend10Off = blendColors(warmOnColor, offColor, 90);   // 90% on + 10% off
+  const offBlend10On = blendColors(offColor, warmOnColor, 90); // 90% off + 10% on
+  const onBlend5Off = blendColors(warmOnColor, offColor, 95); // 95% on + 5% off
+  const onBlend10Off = blendColors(warmOnColor, offColor, 90); // 90% on + 10% off
 
   return {
     // Base colors with temperature shifts
@@ -176,9 +176,9 @@ export function calculateBulbColors(onColor: string) {
     offTint20: blendColors(offColor, warmOnColor, 80),
 
     // Additional blends for specific animation patterns
-    offBlend10On,   // 90% off + 10% on
-    onBlend5Off,    // 95% on + 5% off
-    onBlend10Off,   // 90% on + 10% off
+    offBlend10On, // 90% off + 10% on
+    onBlend5Off, // 95% on + 5% off
+    onBlend10Off, // 90% on + 10% off
 
     // Color for simulating radial gradient effect (85% of on color blended with transparent)
     onGradient: onGradientColor,

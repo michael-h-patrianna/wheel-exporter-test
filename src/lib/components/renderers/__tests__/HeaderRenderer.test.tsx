@@ -7,6 +7,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { HeaderRenderer } from '../HeaderRenderer';
 import { HeaderComponent, HeaderState } from '../../../types';
 import { createMockHeader, createMockHeaderWithMissingFailState } from '../../../test-utils';
+import { vi } from 'vitest';
 
 describe('HeaderRenderer', () => {
   const mockHeader = createMockHeader();
@@ -16,11 +17,11 @@ describe('HeaderRenderer', () => {
     currentState: 'active' as HeaderState,
     scale: 1,
     headerImage: 'https://example.com/header-active.png',
-    onCycleState: jest.fn(),
+    onCycleState: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should render header image with correct props', () => {
@@ -33,28 +34,21 @@ describe('HeaderRenderer', () => {
 
   it('should return null when header is not provided', () => {
     const { container } = render(
-      <HeaderRenderer
-        {...defaultProps}
-        header={undefined as unknown as HeaderComponent}
-      />
+      <HeaderRenderer {...defaultProps} header={undefined as unknown as HeaderComponent} />
     );
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when headerImage is not provided', () => {
-    const { container } = render(
-      <HeaderRenderer
-        {...defaultProps}
-        headerImage={undefined}
-      />
-    );
+    const { container } = render(<HeaderRenderer {...defaultProps} headerImage={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when bounds for current state are missing', () => {
-    const headerWithoutBounds = createMockHeaderWithMissingFailState() as unknown as HeaderComponent;
+    const headerWithoutBounds =
+      createMockHeaderWithMissingFailState() as unknown as HeaderComponent;
 
     const { container } = render(
       <HeaderRenderer
@@ -84,9 +78,7 @@ describe('HeaderRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(
-      <HeaderRenderer {...defaultProps} scale={0.5} />
-    );
+    const { container } = render(<HeaderRenderer {...defaultProps} scale={0.5} />);
 
     const headerDiv = container.querySelector('.header-component');
     // width = 200 * 0.5 = 100, height = 50 * 0.5 = 25
@@ -109,9 +101,7 @@ describe('HeaderRenderer', () => {
       },
     });
 
-    const { container } = render(
-      <HeaderRenderer {...defaultProps} header={headerWithRotation} />
-    );
+    const { container } = render(<HeaderRenderer {...defaultProps} header={headerWithRotation} />);
 
     const headerDiv = container.querySelector('.header-component');
     expect(headerDiv).toHaveStyle({
@@ -120,7 +110,7 @@ describe('HeaderRenderer', () => {
   });
 
   it('should call onCycleState when clicked', () => {
-    const onCycleState = jest.fn();
+    const onCycleState = vi.fn();
     render(<HeaderRenderer {...defaultProps} onCycleState={onCycleState} />);
 
     const headerDiv = screen.getByRole('button');
@@ -130,7 +120,7 @@ describe('HeaderRenderer', () => {
   });
 
   it('should call onCycleState when Enter key is pressed', () => {
-    const onCycleState = jest.fn();
+    const onCycleState = vi.fn();
     render(<HeaderRenderer {...defaultProps} onCycleState={onCycleState} />);
 
     const headerDiv = screen.getByRole('button');
@@ -140,7 +130,7 @@ describe('HeaderRenderer', () => {
   });
 
   it('should call onCycleState when Space key is pressed', () => {
-    const onCycleState = jest.fn();
+    const onCycleState = vi.fn();
     render(<HeaderRenderer {...defaultProps} onCycleState={onCycleState} />);
 
     const headerDiv = screen.getByRole('button');
@@ -150,7 +140,7 @@ describe('HeaderRenderer', () => {
   });
 
   it('should not call onCycleState for other keys', () => {
-    const onCycleState = jest.fn();
+    const onCycleState = vi.fn();
     render(<HeaderRenderer {...defaultProps} onCycleState={onCycleState} />);
 
     const headerDiv = screen.getByRole('button');
@@ -200,7 +190,7 @@ describe('HeaderRenderer', () => {
   });
 
   it('should handle image load errors gracefully', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     render(<HeaderRenderer {...defaultProps} currentState="success" />);
     const img = screen.getByAltText('Header success');

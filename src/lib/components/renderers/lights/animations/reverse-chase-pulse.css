@@ -31,15 +31,19 @@
 /* Phase 4 (85-100%): Settle on winner */
 @keyframes reverse-chase-bulb {
   /* Phase 1: Counter-clockwise - each bulb ON for 10% of phase 1 */
-  0%, 94% {
+  0%,
+  94% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 
   /* ON period during counter-clockwise phase */
-  2%, 6% {
+  2%,
+  6% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 9px color-mix(in srgb, var(--bulb-on) 85%, transparent), 0 0 14px color-mix(in srgb, var(--bulb-on) 65%, transparent);
+    box-shadow:
+      0 0 9px color-mix(in srgb, var(--bulb-on) 85%, transparent),
+      0 0 14px color-mix(in srgb, var(--bulb-on) 65%, transparent);
   }
   8% {
     background-color: var(--bulb-blend70);
@@ -47,9 +51,12 @@
   }
 
   /* Phase 2: Clockwise chase - faster, at 40-65% timeline */
-  42%, 46% {
+  42%,
+  46% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 9px color-mix(in srgb, var(--bulb-on) 85%, transparent), 0 0 14px color-mix(in srgb, var(--bulb-on) 65%, transparent);
+    box-shadow:
+      0 0 9px color-mix(in srgb, var(--bulb-on) 85%, transparent),
+      0 0 14px color-mix(in srgb, var(--bulb-on) 65%, transparent);
   }
   47% {
     background-color: var(--bulb-blend70);
@@ -57,27 +64,36 @@
   }
 
   /* Phase 3: Synchronized pulse - all bulbs together */
-  68%, 70% {
+  68%,
+  70% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 16px var(--bulb-on-glow70);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent),
+      0 0 16px var(--bulb-on-glow70);
   }
   71% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 
-  75%, 77% {
+  75%,
+  77% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 16px var(--bulb-on-glow70);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent),
+      0 0 16px var(--bulb-on-glow70);
   }
   78% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 
-  82%, 84% {
+  82%,
+  84% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 16px var(--bulb-on-glow70);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent),
+      0 0 16px var(--bulb-on-glow70);
   }
 
   100% {
@@ -88,10 +104,12 @@
 
 @keyframes reverse-chase-glow {
   /* Phase 1: Counter-clockwise */
-  0%, 94% {
+  0%,
+  94% {
     opacity: 0;
   }
-  2%, 6% {
+  2%,
+  6% {
     opacity: 0.85;
   }
   8% {
@@ -99,7 +117,8 @@
   }
 
   /* Phase 2: Clockwise */
-  42%, 46% {
+  42%,
+  46% {
     opacity: 0.85;
   }
   47% {
@@ -107,21 +126,24 @@
   }
 
   /* Phase 3: Synchronized pulse */
-  68%, 70% {
+  68%,
+  70% {
     opacity: 0.9;
   }
   71% {
     opacity: 0;
   }
 
-  75%, 77% {
+  75%,
+  77% {
     opacity: 0.9;
   }
   78% {
     opacity: 0;
   }
 
-  82%, 84% {
+  82%,
+  84% {
     opacity: 0.9;
   }
 
@@ -132,22 +154,28 @@
 
 /* Winner celebration */
 @keyframes reverse-chase-bulb-winner {
-  0%, 86% {
+  0%,
+  86% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
   87% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 20px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 30px color-mix(in srgb, var(--bulb-on) 95%, transparent);
+    box-shadow:
+      0 0 20px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 30px color-mix(in srgb, var(--bulb-on) 95%, transparent);
   }
   100% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 20px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 30px color-mix(in srgb, var(--bulb-on) 95%, transparent);
+    box-shadow:
+      0 0 20px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 30px color-mix(in srgb, var(--bulb-on) 95%, transparent);
   }
 }
 
 @keyframes reverse-chase-glow-winner {
-  0%, 86% {
+  0%,
+  86% {
     opacity: 0;
   }
   87% {

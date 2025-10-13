@@ -77,12 +77,12 @@ interface UseWheelStateMachineConfig {
 
 ```typescript
 interface UseWheelStateMachineReturn {
-  state: WheelState;              // Current state: IDLE | SPINNING | SETTLING | COMPLETE
-  rotation: number;                // Current rotation (degrees)
-  targetRotation: number;          // Target rotation for animation (degrees)
-  isSpinning: boolean;             // True during SPINNING or SETTLING
-  startSpin: () => void;           // Start a spin (only works in IDLE state)
-  reset: () => void;               // Reset to IDLE (only works in COMPLETE state)
+  state: WheelState; // Current state: IDLE | SPINNING | SETTLING | COMPLETE
+  rotation: number; // Current rotation (degrees)
+  targetRotation: number; // Target rotation for animation (degrees)
+  isSpinning: boolean; // True during SPINNING or SETTLING
+  startSpin: () => void; // Start a spin (only works in IDLE state)
+  reset: () => void; // Reset to IDLE (only works in COMPLETE state)
 }
 ```
 

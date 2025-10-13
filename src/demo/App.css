@@ -8,7 +8,11 @@
 }
 
 .App-header {
-  background: linear-gradient(135deg, var(--pf-surface) 0%, color-mix(in srgb, var(--pf-border) 30%, var(--pf-surface)) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--pf-surface) 0%,
+    color-mix(in srgb, var(--pf-border) 30%, var(--pf-surface)) 100%
+  );
   color: var(--pf-fg-strong);
   padding: 30px;
   border-radius: 12px;
@@ -83,7 +87,7 @@
   .layout-container {
     flex-direction: column;
   }
-  
+
   .sidebar {
     width: 100%;
   }
@@ -147,8 +151,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .error-message {
@@ -197,7 +206,7 @@
   margin-bottom: 8px;
 }
 
-.control-group input[type="range"] {
+.control-group input[type='range'] {
   width: 100%;
   height: 6px;
   border-radius: 3px;
@@ -208,11 +217,11 @@
   appearance: none;
 }
 
-.control-group input[type="range"]:hover {
+.control-group input[type='range']:hover {
   background: color-mix(in srgb, var(--pf-border) 30%, var(--pf-bg));
 }
 
-.control-group input[type="range"]::-webkit-slider-thumb {
+.control-group input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
@@ -223,11 +232,11 @@
   box-shadow: var(--elev-inset);
 }
 
-.control-group input[type="range"]::-webkit-slider-thumb:hover {
+.control-group input[type='range']::-webkit-slider-thumb:hover {
   background: var(--pf-fg-strong);
 }
 
-.control-group input[type="range"]::-moz-range-thumb {
+.control-group input[type='range']::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -319,7 +328,8 @@
   border: 1px solid var(--pf-border);
 }
 
-.info-section h3, .info-section h4 {
+.info-section h3,
+.info-section h4 {
   color: var(--pf-fg-strong);
   margin: 0 0 15px 0;
 }
@@ -543,7 +553,9 @@
   background: none;
   border: none;
   padding: 0;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .button-spin-component:hover:not(:disabled) {
@@ -567,8 +579,12 @@
 
 /* Wheel segments spinning animation */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(1080deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1080deg);
+  }
 }
 
 /* Center Component */
@@ -641,7 +657,7 @@
 
 .switch-slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 18px;
   width: 18px;
   left: 3px;
@@ -693,7 +709,9 @@
   border: 1px solid var(--pf-border);
   color: var(--pf-fg);
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .app-bar__hamburger:hover {
@@ -724,7 +742,9 @@
   background: transparent;
   border: 1px solid var(--pf-border);
   margin-right: 8px;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .app-bar__github-link:hover {
@@ -853,7 +873,9 @@
   border: 1px solid var(--pf-border);
   color: var(--pf-fg);
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .app-drawer__close:hover {

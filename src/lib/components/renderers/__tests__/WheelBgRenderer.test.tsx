@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 import { WheelBgRenderer } from '../WheelBgRenderer';
 import { WheelOverlay } from '../../../types';
 import { createMockWheelBg, createMockWheelOverlayWithoutBounds } from '../../../test-utils';
+import { vi } from 'vitest';
 
 describe('WheelBgRenderer', () => {
   const mockWheelBg = createMockWheelBg();
@@ -26,23 +27,13 @@ describe('WheelBgRenderer', () => {
   });
 
   it('should return null when wheelBg is not provided', () => {
-    const { container } = render(
-      <WheelBgRenderer
-        {...defaultProps}
-        wheelBg={undefined}
-      />
-    );
+    const { container } = render(<WheelBgRenderer {...defaultProps} wheelBg={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when wheelBgImage is not provided', () => {
-    const { container } = render(
-      <WheelBgRenderer
-        {...defaultProps}
-        wheelBgImage={undefined}
-      />
-    );
+    const { container } = render(<WheelBgRenderer {...defaultProps} wheelBgImage={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -51,10 +42,7 @@ describe('WheelBgRenderer', () => {
     const wheelBgWithoutBounds = createMockWheelOverlayWithoutBounds() as unknown as WheelOverlay;
 
     const { container } = render(
-      <WheelBgRenderer
-        {...defaultProps}
-        wheelBg={wheelBgWithoutBounds}
-      />
+      <WheelBgRenderer {...defaultProps} wheelBg={wheelBgWithoutBounds} />
     );
 
     expect(container.firstChild).toBeNull();
@@ -75,9 +63,7 @@ describe('WheelBgRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(
-      <WheelBgRenderer {...defaultProps} scale={0.5} />
-    );
+    const { container } = render(<WheelBgRenderer {...defaultProps} scale={0.5} />);
 
     const wheelBgDiv = container.querySelector('.wheelbg-component');
     // width = 600 * 0.5 = 300, height = 600 * 0.5 = 300
@@ -107,7 +93,7 @@ describe('WheelBgRenderer', () => {
   });
 
   it('should handle image load errors gracefully', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     render(<WheelBgRenderer {...defaultProps} />);
     const img = screen.getByAltText('Wheel Background');

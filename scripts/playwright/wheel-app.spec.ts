@@ -202,7 +202,7 @@ test.describe('Wheel Exporter App - E2E Tests', () => {
 
   test('should handle error for invalid file upload', async ({ page }) => {
     // Create a temporary invalid file
-    const invalidFilePath = path.join(__dirname, 'invalid.txt');
+    const _invalidFilePath = path.join(__dirname, 'invalid.txt');
 
     // Upload invalid file (this will be handled by browser, but we can test the behavior)
     const fileInput = page.locator('input[type="file"]').first();
@@ -295,7 +295,7 @@ test.describe('Wheel Exporter App - E2E Tests', () => {
 
     // Get initial wheel container size
     const wheelContainer = page.locator('.wheel-viewer > .wheel-container');
-    const initialBox = await wheelContainer.boundingBox();
+    const _initialBox = await wheelContainer.boundingBox();
 
     // Resize viewport
     await page.setViewportSize({ width: 1200, height: 800 });

@@ -8,16 +8,17 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { WheelViewer } from '../WheelViewer';
 import { useWheelStateMachine } from '../../hooks/useWheelStateMachine';
 import { createMockWheelExport, createMockExtractedAssets } from '../../test-utils';
+import { vi } from 'vitest';
 
 // Mock the useWheelStateMachine hook
-jest.mock('../../hooks/useWheelStateMachine');
+vi.mock('../../hooks/useWheelStateMachine');
 
 // Mock all renderer components
-jest.mock('../renderers/BackgroundRenderer', () => ({
+vi.mock('../renderers/BackgroundRenderer', () => ({
   BackgroundRenderer: () => <div data-testid="background-renderer">Background</div>,
 }));
 
-jest.mock('../renderers/HeaderRenderer', () => ({
+vi.mock('../renderers/HeaderRenderer', () => ({
   HeaderRenderer: ({ onCycleState }: any) => (
     <div data-testid="header-renderer" onClick={onCycleState}>
       Header
@@ -25,17 +26,17 @@ jest.mock('../renderers/HeaderRenderer', () => ({
   ),
 }));
 
-jest.mock('../renderers/WheelBgRenderer', () => ({
+vi.mock('../renderers/WheelBgRenderer', () => ({
   WheelBgRenderer: () => <div data-testid="wheelbg-renderer">WheelBg</div>,
 }));
 
-jest.mock('../renderers/WheelTopRenderer', () => ({
+vi.mock('../renderers/WheelTopRenderer', () => ({
   WheelTopRenderer: ({ layerNumber }: any) => (
     <div data-testid={`wheeltop${layerNumber}-renderer`}>WheelTop{layerNumber}</div>
   ),
 }));
 
-jest.mock('../renderers/ButtonSpinRenderer', () => ({
+vi.mock('../renderers/ButtonSpinRenderer', () => ({
   ButtonSpinRenderer: ({ onSpin }: any) => (
     <button data-testid="button-spin-renderer" onClick={onSpin}>
       Spin Button
@@ -43,30 +44,28 @@ jest.mock('../renderers/ButtonSpinRenderer', () => ({
   ),
 }));
 
-jest.mock('../renderers/CenterRenderer', () => ({
+vi.mock('../renderers/CenterRenderer', () => ({
   CenterRenderer: () => <div data-testid="center-renderer">Center</div>,
 }));
 
-jest.mock('../renderers/SegmentRenderer', () => ({
+vi.mock('../renderers/SegmentRenderer', () => ({
   SegmentRenderer: () => <div data-testid="segment-renderer">Segments</div>,
 }));
 
-jest.mock('../renderers/PointerRenderer', () => ({
+vi.mock('../renderers/PointerRenderer', () => ({
   PointerRenderer: () => <div data-testid="pointer-renderer">Pointer</div>,
 }));
 
-jest.mock('../renderers/LightsRenderer', () => ({
-  LightsRenderer: () => <div data-testid="lights-renderer">Lights</div>,
+vi.mock('../renderers/lights/AnimatedLightsRenderer', () => ({
+  AnimatedLightsRenderer: () => <div data-testid="lights-renderer">Lights</div>,
 }));
 
 describe('WheelViewer', () => {
-  const mockUseWheelStateMachine = useWheelStateMachine as jest.MockedFunction<
-    typeof useWheelStateMachine
-  >;
+  const mockUseWheelStateMachine = vi.mocked(useWheelStateMachine);
 
-  let mockStartSpin: jest.Mock;
-  let mockReset: jest.Mock;
-  let mockOnSpinComplete: jest.Mock;
+  let mockStartSpin: ReturnType<typeof vi.fn>;
+  let mockReset: ReturnType<typeof vi.fn>;
+  let mockOnSpinComplete: ReturnType<typeof vi.fn>;
 
   const defaultProps = {
     wheelData: createMockWheelExport(),
@@ -86,15 +85,15 @@ describe('WheelViewer', () => {
       pointer: true,
       segments: true,
     },
-    onToggleCenter: jest.fn(),
+    onToggleCenter: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    mockStartSpin = jest.fn();
-    mockReset = jest.fn();
-    mockOnSpinComplete = jest.fn();
+    mockStartSpin = vi.fn();
+    mockReset = vi.fn();
+    mockOnSpinComplete = vi.fn();
 
     // Default mock implementation
     mockUseWheelStateMachine.mockReturnValue({
@@ -142,11 +141,7 @@ describe('WheelViewer', () => {
 
     it('should calculate correct scale for aspect ratio', () => {
       const { container } = render(
-        <WheelViewer
-          {...defaultProps}
-          wheelWidth={400}
-          wheelHeight={300}
-        />
+        <WheelViewer {...defaultProps} wheelWidth={400} wheelHeight={300} />
       );
 
       const wheelContainer = container.querySelector('.wheel-container');
@@ -534,12 +529,7 @@ describe('WheelViewer', () => {
       const wheelDataWithoutHeader = createMockWheelExport();
       delete wheelDataWithoutHeader.header;
 
-      render(
-        <WheelViewer
-          {...defaultProps}
-          wheelData={wheelDataWithoutHeader}
-        />
-      );
+      render(<WheelViewer {...defaultProps} wheelData={wheelDataWithoutHeader} />);
 
       expect(screen.queryByTestId('header-renderer')).not.toBeInTheDocument();
     });
@@ -548,12 +538,7 @@ describe('WheelViewer', () => {
       const wheelDataWithoutButton = createMockWheelExport();
       delete wheelDataWithoutButton.buttonSpin;
 
-      render(
-        <WheelViewer
-          {...defaultProps}
-          wheelData={wheelDataWithoutButton}
-        />
-      );
+      render(<WheelViewer {...defaultProps} wheelData={wheelDataWithoutButton} />);
 
       expect(screen.queryByTestId('button-spin-renderer')).not.toBeInTheDocument();
     });
@@ -562,12 +547,7 @@ describe('WheelViewer', () => {
       const assetsWithoutHeader = createMockExtractedAssets();
       delete assetsWithoutHeader.headerImages;
 
-      render(
-        <WheelViewer
-          {...defaultProps}
-          assets={assetsWithoutHeader}
-        />
-      );
+      render(<WheelViewer {...defaultProps} assets={assetsWithoutHeader} />);
 
       expect(screen.getByTestId('header-renderer')).toBeInTheDocument();
     });
@@ -576,12 +556,7 @@ describe('WheelViewer', () => {
       const assetsWithoutButton = createMockExtractedAssets();
       delete assetsWithoutButton.buttonSpinImages;
 
-      render(
-        <WheelViewer
-          {...defaultProps}
-          assets={assetsWithoutButton}
-        />
-      );
+      render(<WheelViewer {...defaultProps} assets={assetsWithoutButton} />);
 
       expect(screen.getByTestId('button-spin-renderer')).toBeInTheDocument();
     });
@@ -589,14 +564,9 @@ describe('WheelViewer', () => {
 
   describe('Center toggle functionality', () => {
     it('should call onToggleCenter when checkbox is changed', () => {
-      const onToggleCenter = jest.fn();
+      const onToggleCenter = vi.fn();
 
-      render(
-        <WheelViewer
-          {...defaultProps}
-          onToggleCenter={onToggleCenter}
-        />
-      );
+      render(<WheelViewer {...defaultProps} onToggleCenter={onToggleCenter} />);
 
       const checkbox = screen.getByRole('checkbox');
       fireEvent.click(checkbox);
@@ -638,12 +608,7 @@ describe('WheelViewer', () => {
       // Change wheelId
       const newWheelData = createMockWheelExport({ wheelId: 'new-wheel-id' });
 
-      rerender(
-        <WheelViewer
-          {...defaultProps}
-          wheelData={newWheelData}
-        />
-      );
+      rerender(<WheelViewer {...defaultProps} wheelData={newWheelData} />);
 
       expect(mockReset).toHaveBeenCalled();
     });
@@ -658,12 +623,7 @@ describe('WheelViewer', () => {
       // Change wheelId
       const newWheelData = createMockWheelExport({ wheelId: 'new-wheel-id' });
 
-      rerender(
-        <WheelViewer
-          {...defaultProps}
-          wheelData={newWheelData}
-        />
-      );
+      rerender(<WheelViewer {...defaultProps} wheelData={newWheelData} />);
 
       // State should be reset (would verify via props in real implementation)
       expect(header).toBeInTheDocument();
@@ -679,12 +639,7 @@ describe('WheelViewer', () => {
       // Change wheelId
       const newWheelData = createMockWheelExport({ wheelId: 'new-wheel-id' });
 
-      rerender(
-        <WheelViewer
-          {...defaultProps}
-          wheelData={newWheelData}
-        />
-      );
+      rerender(<WheelViewer {...defaultProps} wheelData={newWheelData} />);
 
       // Button state should be reset
       expect(spinButton).toBeInTheDocument();

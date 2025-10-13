@@ -18,7 +18,7 @@ export const MEDIUM_WAIT = 1000;
  * Upload a ZIP file to the wheel viewer
  */
 export async function uploadWheelZip(page: Page, zipPath: string = THEME_ZIP_PATH): Promise<void> {
-  const fileInput = page.locator('input[type="file"]');
+  const fileInput = page.locator('input[type="file"]').first();
   await fileInput.setInputFiles(zipPath);
 }
 
@@ -67,7 +67,7 @@ export function getComponentToggle(page: Page, componentName: string): Locator {
     throw new Error(`Unknown component: ${componentName}`);
   }
 
-  return page.getByRole('button', { name: pattern });
+  return page.getByRole('button', { name: pattern }).first();
 }
 
 /**
@@ -83,7 +83,7 @@ export async function toggleComponent(page: Page, componentName: string): Promis
  * Get the spin button element
  */
 export function getSpinButton(page: Page): Locator {
-  return page.locator('.button-spin-component');
+  return page.locator('.button-spin-component').first();
 }
 
 /**
@@ -107,7 +107,7 @@ export async function spinWheel(page: Page, waitForComplete: boolean = true): Pr
  * Get the header component element
  */
 export function getHeaderComponent(page: Page): Locator {
-  return page.locator('.header-component');
+  return page.locator('.header-component').first();
 }
 
 /**
@@ -143,8 +143,8 @@ export async function cycleHeaderState(page: Page, targetState?: 'active' | 'suc
  */
 export function getWheelDimensionInputs(page: Page) {
   return {
-    width: page.getByLabel(/wheel width/i),
-    height: page.getByLabel(/wheel height/i),
+    width: page.getByLabel(/wheel width/i).first(),
+    height: page.getByLabel(/wheel height/i).first(),
   };
 }
 
@@ -162,7 +162,7 @@ export async function setWheelDimensions(page: Page, width: number, height: numb
  * Get segment count input
  */
 export function getSegmentCountInput(page: Page): Locator {
-  return page.getByLabel(/segments/i);
+  return page.getByLabel(/segments/i).first();
 }
 
 /**
@@ -178,7 +178,7 @@ export async function setSegmentCount(page: Page, count: number): Promise<void> 
  * Assert that an error message is visible
  */
 export async function expectErrorMessage(page: Page, message?: string | RegExp): Promise<void> {
-  const errorElement = page.locator('.error-message');
+  const errorElement = page.locator('.error-message').first();
   await expect(errorElement).toBeVisible({ timeout: 5000 });
 
   if (message) {
@@ -206,7 +206,7 @@ export async function isComponentVisible(page: Page, altText: string | RegExp): 
  * Get the segments component
  */
 export function getSegmentsComponent(page: Page): Locator {
-  return page.locator('.segments-component');
+  return page.locator('.segments-component').first();
 }
 
 /**
@@ -259,7 +259,7 @@ export async function getWheelInfo(page: Page) {
  */
 export async function isResultViewerVisible(page: Page): Promise<boolean> {
   try {
-    const resultViewer = page.locator('.result-viewer');
+    const resultViewer = page.locator('.result-viewer').first();
     return await resultViewer.isVisible();
   } catch {
     return false;
@@ -271,10 +271,10 @@ export async function isResultViewerVisible(page: Page): Promise<boolean> {
  */
 export function getResultViewerElements(page: Page) {
   return {
-    container: page.locator('.result-viewer'),
-    header: page.locator('.result-header'),
+    container: page.locator('.result-viewer').first(),
+    header: page.locator('.result-header').first(),
     rewardRows: page.locator('.result-viewer .reward-row'),
-    button: page.locator('.result-button'),
+    button: page.locator('.result-button').first(),
   };
 }
 
@@ -317,9 +317,9 @@ export async function expectImageLoaded(page: Page, altText: string | RegExp): P
  */
 export function getControlSections(page: Page) {
   return {
-    wheelSettings: page.getByText('Wheel Settings'),
-    componentVisibility: page.getByText('Component Visibility'),
-    wheelInformation: page.getByText('Wheel Information'),
+    wheelSettings: page.getByText('Wheel Settings').first(),
+    componentVisibility: page.getByText('Component Visibility').first(),
+    wheelInformation: page.getByText('Wheel Information').first(),
   };
 }
 
@@ -345,8 +345,8 @@ export async function expectControlsHidden(page: Page): Promise<void> {
  * Get page title and description
  */
 export async function getPageHeader(page: Page) {
-  const title = await page.getByText('Wheel Demo').textContent();
-  const description = await page.getByText('Upload a ZIP file exported from the Figma Wheel Plugin').textContent();
+  const title = await page.getByText('Wheel Demo').first().textContent();
+  const description = await page.getByText('Upload a ZIP file exported from the Figma Wheel Plugin').first().textContent();
 
   return { title, description };
 }

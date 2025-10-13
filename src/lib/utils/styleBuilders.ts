@@ -50,6 +50,7 @@ export function buildTextStyle(
     fontWeight: 600,
     textAlign: 'center',
     display: 'block',
+    fontFamily: 'Lato, sans-serif',
   };
 
   // Handle fill (solid or gradient)
@@ -65,8 +66,10 @@ export function buildTextStyle(
   }
 
   // Handle stroke (scaled)
+  // NOTE: We do NOT round stroke width - fractional pixels are supported and provide
+  // more accurate rendering, especially for small stroke widths like 0.5px
   if (textStyle.stroke) {
-    const strokeWidth = Math.round((textStyle.stroke.width ?? 0) * scale);
+    const strokeWidth = (textStyle.stroke.width ?? 0) * scale;
     style.WebkitTextStroke = `${strokeWidth}px ${textStyle.stroke.color}`;
   }
 
@@ -121,13 +124,15 @@ export function buildBoxStyle(
   // NOTE: While box shadows are not supported in React Native, this is currently a web-only implementation
   // For future React Native compatibility, these will need platform-specific handling
   if (bgStyle.dropShadows && bgStyle.dropShadows.length > 0) {
-    const shadows = bgStyle.dropShadows.map(shadow => {
-      const x = Math.round(shadow.x * scale);
-      const y = Math.round(shadow.y * scale);
-      const blur = Math.round(shadow.blur * scale);
-      const spread = Math.round((shadow.spread || 0) * scale);
-      return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
-    }).join(', ');
+    const shadows = bgStyle.dropShadows
+      .map((shadow) => {
+        const x = Math.round(shadow.x * scale);
+        const y = Math.round(shadow.y * scale);
+        const blur = Math.round(shadow.blur * scale);
+        const spread = Math.round((shadow.spread || 0) * scale);
+        return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
+      })
+      .join(', ');
     style.boxShadow = shadows;
   }
 
@@ -176,13 +181,15 @@ export function buildButtonStyle(
   // NOTE: While box shadows are not supported in React Native, this is currently a web-only implementation
   // For future React Native compatibility, these will need platform-specific handling
   if (btnStyle.frame.dropShadows && btnStyle.frame.dropShadows.length > 0) {
-    const shadows = btnStyle.frame.dropShadows.map(shadow => {
-      const x = Math.round(shadow.x * scale);
-      const y = Math.round(shadow.y * scale);
-      const blur = Math.round(shadow.blur * scale);
-      const spread = Math.round(shadow.spread * scale);
-      return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
-    }).join(', ');
+    const shadows = btnStyle.frame.dropShadows
+      .map((shadow) => {
+        const x = Math.round(shadow.x * scale);
+        const y = Math.round(shadow.y * scale);
+        const blur = Math.round(shadow.blur * scale);
+        const spread = Math.round(shadow.spread * scale);
+        return `${x}px ${y}px ${blur}px ${spread}px ${shadow.color}`;
+      })
+      .join(', ');
     containerStyle.boxShadow = shadows;
   }
 
@@ -194,6 +201,7 @@ export function buildButtonStyle(
       ? `${Math.round(btnStyle.text.lineHeightPx * scale)}px`
       : 'normal',
     textAlign: 'center',
+    fontFamily: 'Lato, sans-serif',
   };
 
   return {

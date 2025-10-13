@@ -47,10 +47,7 @@ const ROTATION_CONFIG = {
  * @param segmentCount - Total number of segments
  * @returns Initial rotation in degrees
  */
-function calculateInitialRotation(
-  jackpotSegmentIndex: number,
-  segmentCount: number
-): number {
+function calculateInitialRotation(jackpotSegmentIndex: number, segmentCount: number): number {
   // Calculate angle for each segment
   const segmentAngle = 360 / segmentCount;
 
@@ -61,7 +58,7 @@ function calculateInitialRotation(
   // To position this segment at -90° (pointer position), we need to rotate by:
   // pointerAngle (-90°) - segmentOriginalAngle
   const pointerAngle = -90;
-  const initialRotation = ((pointerAngle - segmentOriginalAngle + 360) % 360);
+  const initialRotation = (pointerAngle - segmentOriginalAngle + 360) % 360;
 
   return initialRotation;
 }
@@ -100,12 +97,14 @@ function calculateRotation(
   // The pointer is at -90° (12 o'clock, top of wheel)
   // Calculate how much ADDITIONAL rotation needed from the segment's CURRENT position
   const pointerAngle = -90;
-  let additionalRotationNeeded = (pointerAngle - segmentCurrentAngle + 360) % 360;
+  const additionalRotationNeeded = (pointerAngle - segmentCurrentAngle + 360) % 360;
 
   // Add 4-5 full rotations for excitement (minimum 1440°, maximum 1800°)
   const fullSpins =
     ROTATION_CONFIG.MIN_FULL_SPINS +
-    Math.floor(Math.random() * (ROTATION_CONFIG.MAX_FULL_SPINS - ROTATION_CONFIG.MIN_FULL_SPINS + 1));
+    Math.floor(
+      Math.random() * (ROTATION_CONFIG.MAX_FULL_SPINS - ROTATION_CONFIG.MIN_FULL_SPINS + 1)
+    );
 
   // Calculate total rotation:
   // Current position + full spins for excitement + additional rotation to reach pointer
@@ -261,18 +260,16 @@ export function useWheelStateMachine(
   const { segmentCount, onSpinComplete, winningSegmentIndex, jackpotSegmentIndex } = config;
 
   // Calculate initial rotation to position jackpot at 12 o'clock
-  const initialRotation = jackpotSegmentIndex != null
-    ? calculateInitialRotation(jackpotSegmentIndex, segmentCount)
-    : 0;
+  const initialRotation =
+    jackpotSegmentIndex != null ? calculateInitialRotation(jackpotSegmentIndex, segmentCount) : 0;
 
   // Store initial rotation in a ref so it doesn't change during re-renders
   const initialRotationRef = useRef(initialRotation);
 
   // Update initial rotation ref when jackpot segment changes
   useEffect(() => {
-    initialRotationRef.current = jackpotSegmentIndex != null
-      ? calculateInitialRotation(jackpotSegmentIndex, segmentCount)
-      : 0;
+    initialRotationRef.current =
+      jackpotSegmentIndex != null ? calculateInitialRotation(jackpotSegmentIndex, segmentCount) : 0;
   }, [jackpotSegmentIndex, segmentCount]);
 
   // Initialize state
@@ -310,9 +307,8 @@ export function useWheelStateMachine(
 
     // Use predetermined winning segment if available, otherwise random
     // IMPORTANT: Access the latest winningSegmentIndex value from config
-    const targetSegment = winningSegmentIndex != null
-      ? winningSegmentIndex
-      : Math.floor(Math.random() * segmentCount);
+    const targetSegment =
+      winningSegmentIndex != null ? winningSegmentIndex : Math.floor(Math.random() * segmentCount);
 
     // Calculate final rotation
     const rotation = calculateRotation(machineState.rotation, targetSegment, segmentCount);
@@ -342,7 +338,13 @@ export function useWheelStateMachine(
         onSpinComplete(targetSegment);
       }
     }, TIMING.SPIN);
-  }, [machineState.state, machineState.rotation, segmentCount, onSpinComplete, winningSegmentIndex]);
+  }, [
+    machineState.state,
+    machineState.rotation,
+    segmentCount,
+    onSpinComplete,
+    winningSegmentIndex,
+  ]);
 
   /**
    * Reset to IDLE state with initial rotation (jackpot at 12 o'clock)

@@ -17,7 +17,12 @@ interface PrizeTableProps {
   onNewPrizes?: () => void;
 }
 
-export function PrizeTable({ prizes, winningIndex, showWinner = false, onNewPrizes }: PrizeTableProps) {
+export function PrizeTable({
+  prizes,
+  winningIndex,
+  showWinner = false,
+  onNewPrizes,
+}: PrizeTableProps) {
   const [expandedPrize, setExpandedPrize] = useState<string | null>(null);
 
   return (

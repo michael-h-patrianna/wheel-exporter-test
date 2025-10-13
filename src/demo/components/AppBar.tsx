@@ -33,11 +33,7 @@ export const AppBar: React.FC<AppBarProps> = ({ onMenuClick, title, githubUrl })
           <line x1="3" y1="18" x2="21" y2="18" />
         </svg>
       </button>
-      {title && (
-        <span className="app-bar__title">
-          {title}
-        </span>
-      )}
+      {title && <span className="app-bar__title">{title}</span>}
       <a
         href={githubUrl}
         target="_blank"

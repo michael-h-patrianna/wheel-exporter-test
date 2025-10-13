@@ -33,7 +33,7 @@ export const WheelTopRenderer: React.FC<WheelTopRendererProps> = ({
   wheelTop,
   wheelTopImage,
   scale,
-  layerNumber
+  layerNumber,
 }) => {
   // ============================================================================
   // EARLY RETURNS & VALIDATION
@@ -65,12 +65,12 @@ export const WheelTopRenderer: React.FC<WheelTopRendererProps> = ({
    */
   const cssVariables: Record<string, string> = {
     // Position: center to top-left conversion
-    [`--wheeltop${layerNumber}-left`]: `${(bounds.x * scale) - (width / 2)}px`,
-    [`--wheeltop${layerNumber}-top`]: `${(bounds.y * scale) - (height / 2)}px`,
+    [`--wheeltop${layerNumber}-left`]: `${bounds.x * scale - width / 2}px`,
+    [`--wheeltop${layerNumber}-top`]: `${bounds.y * scale - height / 2}px`,
 
     // Scaled dimensions
     [`--wheeltop${layerNumber}-width`]: `${width}px`,
-    [`--wheeltop${layerNumber}-height`]: `${height}px`
+    [`--wheeltop${layerNumber}-height`]: `${height}px`,
   };
 
   // ============================================================================
@@ -97,7 +97,7 @@ export const WheelTopRenderer: React.FC<WheelTopRendererProps> = ({
             layer: layerNumber,
             imageUrl: wheelTopImage,
             bounds: wheelTop?.bounds,
-            scale
+            scale,
           });
         }}
       />

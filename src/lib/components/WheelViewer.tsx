@@ -67,7 +67,7 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
 
     // Map prizes to segments to determine which has the 'jackpot' kind
     const prizeSegments = mapPrizesToSegments(prizeSession.prizes);
-    const jackpotSegment = prizeSegments.find(seg => seg.kind === 'jackpot');
+    const jackpotSegment = prizeSegments.find((seg) => seg.kind === 'jackpot');
 
     return jackpotSegment?.index ?? null;
   }, [prizeSession?.prizes]);
@@ -278,12 +278,7 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
         )}
 
         {/* Layer 9: Center Circle */}
-        {componentVisibility.center && (
-          <CenterRenderer
-            center={wheelData.center}
-            scale={scale}
-          />
-        )}
+        {componentVisibility.center && <CenterRenderer center={wheelData.center} scale={scale} />}
 
         {/* Layer 10: Pointer (top layer) */}
         {componentVisibility.pointer && (
@@ -293,7 +288,6 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
             scale={scale}
           />
         )}
-
       </div>
 
       {/* Debug Controls */}

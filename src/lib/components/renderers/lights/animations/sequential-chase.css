@@ -18,7 +18,8 @@
 
 /* Primary animation: Sequential chasing light */
 @keyframes chase-bulb {
-  0%, 85% {
+  0%,
+  85% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
@@ -32,27 +33,39 @@
   }
   3% {
     background-color: var(--bulb-blend40);
-    box-shadow: 0 0 5px var(--bulb-on-glow50), 0 0 8px var(--bulb-on-glow35);
+    box-shadow:
+      0 0 5px var(--bulb-on-glow50),
+      0 0 8px var(--bulb-on-glow35);
   }
   4% {
     background-color: var(--bulb-blend70);
-    box-shadow: 0 0 7px var(--bulb-on-glow70), 0 0 11px var(--bulb-on-glow50);
+    box-shadow:
+      0 0 7px var(--bulb-on-glow70),
+      0 0 11px var(--bulb-on-glow50);
   }
   5% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 15px var(--bulb-on-glow70);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent),
+      0 0 15px var(--bulb-on-glow70);
   }
   10% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 15px var(--bulb-on-glow70);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent),
+      0 0 15px var(--bulb-on-glow70);
   }
   11% {
     background-color: color-mix(in srgb, var(--bulb-on) 95%, var(--bulb-off) 5%);
-    box-shadow: 0 0 8px var(--bulb-on-glow80), 0 0 13px var(--bulb-on-glow60);
+    box-shadow:
+      0 0 8px var(--bulb-on-glow80),
+      0 0 13px var(--bulb-on-glow60);
   }
   12% {
     background-color: var(--bulb-blend70);
-    box-shadow: 0 0 6px color-mix(in srgb, var(--bulb-on) 65%, transparent), 0 0 10px var(--bulb-on-glow45);
+    box-shadow:
+      0 0 6px color-mix(in srgb, var(--bulb-on) 65%, transparent),
+      0 0 10px var(--bulb-on-glow45);
   }
   13% {
     background-color: var(--bulb-blend40);
@@ -66,14 +79,16 @@
     background-color: color-mix(in srgb, var(--bulb-off) 90%, var(--bulb-on) 10%);
     box-shadow: 0 0 2px var(--bulb-off-glow35);
   }
-  16%, 100% {
+  16%,
+  100% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 }
 
 @keyframes chase-glow {
-  0%, 85% {
+  0%,
+  85% {
     opacity: 0;
   }
   1% {
@@ -109,7 +124,8 @@
   15% {
     opacity: 0.08;
   }
-  16%, 100% {
+  16%,
+  100% {
     opacity: 0;
   }
 }

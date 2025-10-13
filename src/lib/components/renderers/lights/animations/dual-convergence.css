@@ -17,7 +17,8 @@
 
 /* Dual chase pattern with collision flash at meeting point */
 @keyframes dual-chase-bulb {
-  0%, 80% {
+  0%,
+  80% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
@@ -27,11 +28,15 @@
   }
   4% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 15px var(--bulb-on-glow70);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent),
+      0 0 15px var(--bulb-on-glow70);
   }
   8% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 15px var(--bulb-on-glow70);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent),
+      0 0 15px var(--bulb-on-glow70);
   }
   10% {
     background-color: color-mix(in srgb, var(--bulb-on) 95%, var(--bulb-off) 5%);
@@ -41,21 +46,25 @@
     background-color: var(--bulb-off-tint30);
     box-shadow: 0 0 4px color-mix(in srgb, var(--bulb-off) 40%, transparent);
   }
-  14%, 100% {
+  14%,
+  100% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 }
 
 /* Collision flash for meeting bulbs (when they converge at center) */
-.light-bulb__wrapper--dual-convergence.light-bulb__wrapper--first-half:nth-child(8) .light-bulb__bulb--dual-convergence,
-.light-bulb__wrapper--dual-convergence.light-bulb__wrapper--second-half:nth-child(9) .light-bulb__bulb--dual-convergence {
+.light-bulb__wrapper--dual-convergence.light-bulb__wrapper--first-half:nth-child(8)
+  .light-bulb__bulb--dual-convergence,
+.light-bulb__wrapper--dual-convergence.light-bulb__wrapper--second-half:nth-child(9)
+  .light-bulb__bulb--dual-convergence {
   animation: dual-chase-collision 4s ease-in-out infinite;
   animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
 }
 
 @keyframes dual-chase-collision {
-  0%, 80% {
+  0%,
+  80% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
@@ -65,15 +74,21 @@
   }
   4% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 22px color-mix(in srgb, var(--bulb-on) 90%, transparent);
+    box-shadow:
+      0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 22px color-mix(in srgb, var(--bulb-on) 90%, transparent);
   }
   6% {
     background-color: #fff;
-    box-shadow: 0 0 20px color-mix(in srgb, #fff 100%, transparent), 0 0 30px color-mix(in srgb, var(--bulb-on) 100%, transparent);
+    box-shadow:
+      0 0 20px color-mix(in srgb, #fff 100%, transparent),
+      0 0 30px color-mix(in srgb, var(--bulb-on) 100%, transparent);
   }
   8% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 22px color-mix(in srgb, var(--bulb-on) 90%, transparent);
+    box-shadow:
+      0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 22px color-mix(in srgb, var(--bulb-on) 90%, transparent);
   }
   10% {
     background-color: color-mix(in srgb, var(--bulb-on) 95%, var(--bulb-off) 5%);
@@ -83,14 +98,16 @@
     background-color: var(--bulb-off-tint30);
     box-shadow: 0 0 4px color-mix(in srgb, var(--bulb-off) 40%, transparent);
   }
-  14%, 100% {
+  14%,
+  100% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 }
 
 @keyframes dual-chase-glow {
-  0%, 80% {
+  0%,
+  80% {
     opacity: 0;
   }
   2% {
@@ -108,19 +125,23 @@
   12% {
     opacity: 0.2;
   }
-  14%, 100% {
+  14%,
+  100% {
     opacity: 0;
   }
 }
 
-.light-bulb__wrapper--dual-convergence.light-bulb__wrapper--first-half:nth-child(8) .light-bulb__glow-outer--dual-convergence,
-.light-bulb__wrapper--dual-convergence.light-bulb__wrapper--second-half:nth-child(9) .light-bulb__glow-outer--dual-convergence {
+.light-bulb__wrapper--dual-convergence.light-bulb__wrapper--first-half:nth-child(8)
+  .light-bulb__glow-outer--dual-convergence,
+.light-bulb__wrapper--dual-convergence.light-bulb__wrapper--second-half:nth-child(9)
+  .light-bulb__glow-outer--dual-convergence {
   animation: dual-chase-collision-glow 4s ease-in-out infinite;
   animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
 }
 
 @keyframes dual-chase-collision-glow {
-  0%, 80% {
+  0%,
+  80% {
     opacity: 0;
   }
   2% {
@@ -141,7 +162,8 @@
   12% {
     opacity: 0.3;
   }
-  14%, 100% {
+  14%,
+  100% {
     opacity: 0;
   }
 }

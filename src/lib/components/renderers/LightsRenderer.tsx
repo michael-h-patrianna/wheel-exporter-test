@@ -6,10 +6,7 @@ interface LightsRendererProps {
   scale: number;
 }
 
-export const LightsRenderer: React.FC<LightsRendererProps> = ({
-  lights,
-  scale
-}) => {
+export const LightsRenderer: React.FC<LightsRendererProps> = ({ lights, scale }) => {
   if (!lights) {
     return null;
   }
@@ -21,15 +18,20 @@ export const LightsRenderer: React.FC<LightsRendererProps> = ({
   const { color, positions } = lights;
 
   return (
-    <div className="lights-component" role="img" aria-label="Wheel lights" style={{ 
-      position: 'absolute', 
-      top: 0, 
-      left: 0, 
-      width: '100%', 
-      height: '100%', 
-      zIndex: 100,
-      pointerEvents: 'none'
-    }}>
+    <div
+      className="lights-component"
+      role="img"
+      aria-label="Wheel lights"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 100,
+        pointerEvents: 'none',
+      }}
+    >
       {positions.map((position, index) => {
         const radius = 4 * scale; // 4px radius in original frame, scaled
         const diameter = radius * 2;

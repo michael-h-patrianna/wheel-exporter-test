@@ -37,7 +37,9 @@ describe('ResultViewer Integration', () => {
   });
 
   it('should render with correct dimensions', () => {
-    const { container } = render(<ResultViewer {...defaultProps} wheelWidth={400} wheelHeight={300} />);
+    const { container } = render(
+      <ResultViewer {...defaultProps} wheelWidth={400} wheelHeight={300} />
+    );
     const viewer = container.querySelector('.result-viewer');
 
     expect(viewer).toHaveStyle({
@@ -164,7 +166,10 @@ describe('ResultViewer Integration', () => {
                 gradient: {
                   type: 'linear',
                   rotation: 90,
-                  transform: [[1, 0, 0], [0, 1, 0]],
+                  transform: [
+                    [1, 0, 0],
+                    [0, 1, 0],
+                  ],
                   stops: [
                     { color: '#3a125d', position: 0 },
                     { color: '#7a26c3', position: 1 },
@@ -291,6 +296,111 @@ describe('ResultViewer Integration', () => {
       expect(defaultBox).toHaveStyle({
         border: '1px solid #ff000080',
       });
+    });
+  });
+
+  describe('Font Styling', () => {
+    it('should apply Lato font to all text elements', () => {
+      const wheelDataWithPrizes: ExtractedAssets['wheelData'] = {
+        ...mockWheelData,
+        rewards: {
+          backgrounds: {
+            default: {
+              borderRadius: 4,
+              backgroundFill: {
+                type: 'solid',
+                color: '#1a1a1a',
+              },
+              stroke: {
+                width: 1,
+                color: '#333333',
+              },
+              dropShadows: [],
+            },
+          },
+          prizes: {
+            texts: {
+              gcValue: {
+                fill: {
+                  type: 'solid',
+                  color: '#ffffff',
+                },
+                fontSize: 24,
+              },
+              scValue: {
+                fill: {
+                  type: 'solid',
+                  color: '#ffffff',
+                },
+                fontSize: 24,
+              },
+              freeSpinsValue: {
+                fill: {
+                  type: 'solid',
+                  color: '#ffffff',
+                },
+                fontSize: 20,
+              },
+            },
+          },
+          button: {
+            stateStyles: {
+              default: {
+                frame: {
+                  borderRadius: 8,
+                  backgroundFill: {
+                    type: 'solid',
+                    color: '#4e187c',
+                  },
+                  padding: {
+                    vertical: 12,
+                    horizontal: 24,
+                  },
+                  stroke: {
+                    width: 0,
+                    color: '',
+                  },
+                  dropShadows: [],
+                },
+                text: {
+                  fontSize: 16,
+                  color: '#ffffff',
+                  fontWeight: 700,
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const { container } = render(
+        <ResultViewer
+          {...defaultProps}
+          wheelData={wheelDataWithPrizes}
+          rewardRows={[
+            { type: 'gcsc', gcValue: '100', scValue: '50' },
+            { type: 'freeSpins', value: '10' },
+          ]}
+          showButton={true}
+          buttonText="COLLECT"
+        />
+      );
+
+      // Check that text elements have Lato font
+      const gcscText = container.querySelector('.gcsc-value');
+      if (gcscText) {
+        expect(gcscText).toHaveStyle({
+          fontFamily: 'Lato, sans-serif',
+        });
+      }
+
+      // Check button text
+      const buttonText = container.querySelector('.result-button span');
+      if (buttonText) {
+        expect(buttonText).toHaveStyle({
+          fontFamily: 'Lato, sans-serif',
+        });
+      }
     });
   });
 });

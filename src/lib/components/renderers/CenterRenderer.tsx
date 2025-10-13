@@ -25,10 +25,7 @@ interface CenterRendererProps {
   scale: number;
 }
 
-export const CenterRenderer: React.FC<CenterRendererProps> = ({
-  center,
-  scale
-}) => {
+export const CenterRenderer: React.FC<CenterRendererProps> = ({ center, scale }) => {
   // ============================================================================
   // EARLY RETURNS & VALIDATION
   // ============================================================================
@@ -56,12 +53,12 @@ export const CenterRenderer: React.FC<CenterRendererProps> = ({
    */
   const cssVariables: Record<string, string> = {
     // Position: center to top-left conversion
-    '--center-left': `${(center.x * scale) - radius}px`,
-    '--center-top': `${(center.y * scale) - radius}px`,
+    '--center-left': `${center.x * scale - radius}px`,
+    '--center-top': `${center.y * scale - radius}px`,
 
     // Dimensions
     '--center-size': `${diameter}px`,
-    '--center-radius': `${radius}px`
+    '--center-radius': `${radius}px`,
   };
 
   // ============================================================================
@@ -84,13 +81,7 @@ export const CenterRenderer: React.FC<CenterRendererProps> = ({
         viewBox={`0 0 ${diameter} ${diameter}`}
       >
         {/* Filled circle with semi-transparency */}
-        <circle
-          cx={radius}
-          cy={radius}
-          r={radius}
-          fill="rgba(128, 128, 128, 0.3)"
-          stroke="none"
-        />
+        <circle cx={radius} cy={radius} r={radius} fill="rgba(128, 128, 128, 0.3)" stroke="none" />
 
         {/* Horizontal line through center */}
         <line
@@ -113,12 +104,7 @@ export const CenterRenderer: React.FC<CenterRendererProps> = ({
         />
 
         {/* Center point dot */}
-        <circle
-          cx={radius}
-          cy={radius}
-          r="2"
-          fill="rgba(255, 255, 255, 0.8)"
-        />
+        <circle cx={radius} cy={radius} r="2" fill="rgba(255, 255, 255, 0.8)" />
       </svg>
     </div>
   );

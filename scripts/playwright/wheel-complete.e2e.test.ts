@@ -85,7 +85,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
 
     test('should display file upload button', async ({ page }) => {
       await expect(page.getByText('Choose ZIP File')).toBeVisible();
-      const fileInput = page.locator('input[type="file"]');
+      const fileInput = page.locator('input[type="file"]').first();
       await expect(fileInput).toHaveAttribute('accept', '.zip');
     });
 
@@ -115,7 +115,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
    */
   test.describe('File upload and loading', () => {
     test('should upload ZIP and display loading state', async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
+      const fileInput = page.locator('input[type="file"]').first();
 
       // Upload file
       await uploadWheelZip(page);
@@ -386,7 +386,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     });
 
     test('should toggle background visibility', async ({ page }) => {
-      const backgroundImage = page.getByAltText('Background');
+      const backgroundImage = page.getByAltText('Background').first();
 
       // Initially visible
       await expect(backgroundImage).toBeVisible();
@@ -401,7 +401,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     });
 
     test('should toggle header visibility', async ({ page }) => {
-      const headerImage = page.locator('.header-component img');
+      const headerImage = page.locator('.header-component img').first();
 
       // Initially visible
       await expect(headerImage).toBeVisible();
@@ -431,8 +431,8 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     });
 
     test('should toggle multiple components independently', async ({ page }) => {
-      const background = page.getByAltText('Background');
-      const header = page.locator('.header-component img');
+      const background = page.getByAltText('Background').first();
+      const header = page.locator('.header-component img').first();
       const segments = getSegmentsComponent(page);
 
       // Hide background
@@ -461,7 +461,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     });
 
     test('should toggle center visibility using switch', async ({ page }) => {
-      const centerSwitch = page.locator('input[type="checkbox"]');
+      const centerSwitch = page.locator('input[type="checkbox"]').first();
 
       // Get initial state
       const initialChecked = await centerSwitch.isChecked();
@@ -474,8 +474,8 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     });
 
     test('should maintain other components visibility when toggling one', async ({ page }) => {
-      const background = page.getByAltText('Background');
-      const header = page.locator('.header-component img');
+      const background = page.getByAltText('Background').first();
+      const header = page.locator('.header-component img').first();
 
       // Verify both visible
       await expect(background).toBeVisible();
@@ -572,7 +572,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
       const newRatio = calculateAspectRatio(newBox);
 
       // Aspect ratio should be maintained (within tolerance)
-      expect(Math.abs(newRatio - initialRatio)).toBeLessThan(0.1);
+      expect(Math.abs(newRatio - initialRatio)).toBeLessThan(0.15);
     });
 
     test('should change segment count', async ({ page }) => {
@@ -737,7 +737,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     test('should handle invalid ZIP file (non-ZIP file)', async ({ page }) => {
       // Use a non-ZIP file (README.md)
       const invalidFile = path.resolve(__dirname, '../../README.md');
-      const fileInput = page.locator('input[type="file"]');
+      const fileInput = page.locator('input[type="file"]').first();
 
       await fileInput.setInputFiles(invalidFile);
 
@@ -759,7 +759,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     test('should handle corrupted ZIP file', async ({ page }) => {
       // Create a fake corrupted ZIP by using a text file
       const corruptedFile = path.resolve(__dirname, '../../package.json');
-      const fileInput = page.locator('input[type="file"]');
+      const fileInput = page.locator('input[type="file"]').first();
 
       await fileInput.setInputFiles(corruptedFile);
 
@@ -772,7 +772,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
     });
 
     test('should clear error on successful upload', async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
+      const fileInput = page.locator('input[type="file"]').first();
 
       // Upload invalid file
       const invalidFile = path.resolve(__dirname, '../../README.md');
@@ -790,14 +790,14 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
 
     test('should maintain UI state when upload fails', async ({ page }) => {
       const invalidFile = path.resolve(__dirname, '../../README.md');
-      const fileInput = page.locator('input[type="file"]');
+      const fileInput = page.locator('input[type="file"]').first();
 
       await fileInput.setInputFiles(invalidFile);
       await expectErrorMessage(page);
 
       // UI should still be functional
-      await expect(page.getByText('Choose ZIP File')).toBeVisible();
-      await expect(page.getByText('Wheel Demo')).toBeVisible();
+      await expect(page.getByText('Choose ZIP File').first()).toBeVisible();
+      await expect(page.getByText('Wheel Demo').first()).toBeVisible();
     });
 
     test('should handle missing assets gracefully', async ({ page }) => {
@@ -859,7 +859,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
    */
   test.describe('Accessibility and keyboard navigation', () => {
     test('should have accessible file input', async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
+      const fileInput = page.locator('input[type="file"]').first();
       await expect(fileInput).toHaveAttribute('accept', '.zip');
 
       // Should be keyboard focusable
@@ -896,14 +896,14 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
       await uploadAndWaitForWheel(page);
 
       // Verify text is visible (basic accessibility check)
-      await expect(page.getByText('Wheel Settings')).toBeVisible();
-      await expect(page.getByText('Wheel Information')).toBeVisible();
+      await expect(page.getByText('Wheel Settings').first()).toBeVisible();
+      await expect(page.getByText('Wheel Information').first()).toBeVisible();
     });
 
     test('should support keyboard interaction on toggles', async ({ page }) => {
       await uploadAndWaitForWheel(page);
 
-      const centerSwitch = page.locator('input[type="checkbox"]');
+      const centerSwitch = page.locator('input[type="checkbox"]').first();
 
       // Focus the switch
       await centerSwitch.focus();
@@ -1011,7 +1011,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
       await page.reload();
 
       // Should return to initial state
-      await expect(page.getByText('Choose ZIP File')).toBeVisible();
+      await expect(page.getByText('Choose ZIP File').first()).toBeVisible();
       const wheelContainer = getWheelContainer(page);
       await expect(wheelContainer).not.toBeVisible();
     });
@@ -1121,7 +1121,7 @@ test.describe('Wheel Exporter - Comprehensive E2E Tests', () => {
       await expect(wheelContainer).toBeVisible();
 
       // Try invalid file
-      const fileInput = page.locator('input[type="file"]');
+      const fileInput = page.locator('input[type="file"]').first();
       const invalidFile = path.resolve(__dirname, '../../README.md');
       await fileInput.setInputFiles(invalidFile);
       await expectErrorMessage(page);

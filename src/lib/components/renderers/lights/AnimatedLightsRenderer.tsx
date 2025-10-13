@@ -65,7 +65,7 @@ export const AnimatedLightsRenderer: React.FC<AnimatedLightsRendererProps> = ({
   // Reorder positions so the bulb at 12 o'clock (top, minimum y) is first
   // This ensures the animation starts at the top for sequential animations
   const positions = useMemo(() => {
-    if (rawPositions.length === 0) return rawPositions;
+    if (!rawPositions || rawPositions.length === 0) return rawPositions || [];
 
     // Find the index of the bulb with minimum y coordinate (topmost bulb)
     let topIndex = 0;
@@ -82,10 +82,7 @@ export const AnimatedLightsRenderer: React.FC<AnimatedLightsRendererProps> = ({
     if (topIndex === 0) return rawPositions;
 
     // Reorder: put topmost bulb first, then continue in circular order
-    return [
-      ...rawPositions.slice(topIndex),
-      ...rawPositions.slice(0, topIndex)
-    ];
+    return [...rawPositions.slice(topIndex), ...rawPositions.slice(0, topIndex)];
   }, [rawPositions]);
 
   const totalBulbs = positions.length;
@@ -108,7 +105,7 @@ export const AnimatedLightsRenderer: React.FC<AnimatedLightsRendererProps> = ({
 
     // Standard animations with duration and stagger multiplier
     const config: Record<LightAnimationType, { duration: number; stagger: number }> = {
-      'none': { duration: 0, stagger: 1 },
+      none: { duration: 0, stagger: 1 },
       'alternating-carnival': { duration: 1.2, stagger: 1 },
       'sequential-chase': { duration: 1.6, stagger: 1 },
       'accelerating-spin': { duration: 5.0, stagger: 0.08 }, // Small stagger for rapid chase effect

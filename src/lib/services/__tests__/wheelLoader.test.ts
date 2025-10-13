@@ -6,9 +6,10 @@
 import JSZip from 'jszip';
 import { loadWheelFromZip, WheelLoadError, WheelLoadErrorType } from '../wheelLoader';
 import { WheelExport } from '../../types';
+import { vi } from 'vitest';
 
 // Mock the logger module
-jest.mock('../logger');
+vi.mock('../logger');
 
 // Import after mock
 import { logger } from '../logger';
@@ -18,31 +19,31 @@ describe('wheelLoader', () => {
   let mockFile: File;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockZip = new JSZip();
     mockFile = new File([''], 'test-wheel.zip', { type: 'application/zip' });
 
     // Set up all mocks AFTER clearAllMocks
-    (logger.withContext as jest.Mock).mockReturnValue({
-      debug: jest.fn(),
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
+    vi.mocked(logger.withContext).mockReturnValue({
+      debug: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
     });
 
     // Also mock the direct logger methods used by loadImageAsset
-    (logger.debug as jest.Mock).mockImplementation(() => {});
-    (logger.info as jest.Mock).mockImplementation(() => {});
-    (logger.warn as jest.Mock).mockImplementation(() => {});
-    (logger.error as jest.Mock).mockImplementation(() => {});
+    vi.mocked(logger.debug).mockImplementation(() => {});
+    vi.mocked(logger.info).mockImplementation(() => {});
+    vi.mocked(logger.warn).mockImplementation(() => {});
+    vi.mocked(logger.error).mockImplementation(() => {});
 
     // Mock URL methods AFTER clearAllMocks
-    global.URL.createObjectURL = jest.fn(() => 'blob:mock-url-123');
-    global.URL.revokeObjectURL = jest.fn();
+    global.URL.createObjectURL = vi.fn(() => 'blob:mock-url-123');
+    global.URL.revokeObjectURL = vi.fn();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Successful ZIP loading with all assets', () => {
@@ -328,11 +329,9 @@ describe('wheelLoader', () => {
 
   describe('WheelLoadError types', () => {
     it('should create FILE_READ_ERROR with correct properties', () => {
-      const error = new WheelLoadError(
-        WheelLoadErrorType.FILE_READ_ERROR,
-        'Test file read error',
-        { fileName: 'test.zip' }
-      );
+      const error = new WheelLoadError(WheelLoadErrorType.FILE_READ_ERROR, 'Test file read error', {
+        fileName: 'test.zip',
+      });
 
       expect(error.type).toBe(WheelLoadErrorType.FILE_READ_ERROR);
       expect(error.message).toBe('Test file read error');
@@ -341,11 +340,9 @@ describe('wheelLoader', () => {
     });
 
     it('should create INVALID_FORMAT error with correct properties', () => {
-      const error = new WheelLoadError(
-        WheelLoadErrorType.INVALID_FORMAT,
-        'Invalid format',
-        { error: 'Parse error' }
-      );
+      const error = new WheelLoadError(WheelLoadErrorType.INVALID_FORMAT, 'Invalid format', {
+        error: 'Parse error',
+      });
 
       expect(error.type).toBe(WheelLoadErrorType.INVALID_FORMAT);
       expect(error.message).toBe('Invalid format');
@@ -353,32 +350,25 @@ describe('wheelLoader', () => {
     });
 
     it('should create MISSING_POSITIONS error with correct properties', () => {
-      const error = new WheelLoadError(
-        WheelLoadErrorType.MISSING_POSITIONS,
-        'Missing positions',
-        { availableFiles: ['file1.png'] }
-      );
+      const error = new WheelLoadError(WheelLoadErrorType.MISSING_POSITIONS, 'Missing positions', {
+        availableFiles: ['file1.png'],
+      });
 
       expect(error.type).toBe(WheelLoadErrorType.MISSING_POSITIONS);
       expect(error.message).toBe('Missing positions');
     });
 
     it('should create MISSING_ASSETS error with correct properties', () => {
-      const error = new WheelLoadError(
-        WheelLoadErrorType.MISSING_ASSETS,
-        'Missing assets',
-        { missingAssets: ['bg.png'] }
-      );
+      const error = new WheelLoadError(WheelLoadErrorType.MISSING_ASSETS, 'Missing assets', {
+        missingAssets: ['bg.png'],
+      });
 
       expect(error.type).toBe(WheelLoadErrorType.MISSING_ASSETS);
       expect(error.message).toBe('Missing assets');
     });
 
     it('should create error without details', () => {
-      const error = new WheelLoadError(
-        WheelLoadErrorType.FILE_READ_ERROR,
-        'Error without details'
-      );
+      const error = new WheelLoadError(WheelLoadErrorType.FILE_READ_ERROR, 'Error without details');
 
       expect(error.type).toBe(WheelLoadErrorType.FILE_READ_ERROR);
       expect(error.message).toBe('Error without details');
@@ -539,7 +529,7 @@ describe('wheelLoader', () => {
 
     it('should handle non-Error thrown values', async () => {
       // This test verifies the String(error) fallback
-      const mockZipLoadAsync = jest.spyOn(JSZip.prototype, 'loadAsync');
+      const mockZipLoadAsync = vi.spyOn(JSZip.prototype, 'loadAsync');
       mockZipLoadAsync.mockRejectedValue('string error');
 
       const file = new File(['content'], 'test.zip', { type: 'application/zip' });
@@ -598,7 +588,7 @@ describe('wheelLoader', () => {
 
       await loadWheelFromZip(zipFile);
 
-      const mockWithContextResult = (logger.withContext as jest.Mock).mock.results[0]?.value;
+      const mockWithContextResult = vi.mocked(logger.withContext).mock.results[0]?.value;
       expect(mockWithContextResult).toBeDefined();
       expect(mockWithContextResult.info).toHaveBeenCalledWith(
         'Wheel extraction complete',

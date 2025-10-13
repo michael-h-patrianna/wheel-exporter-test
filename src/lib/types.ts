@@ -109,7 +109,7 @@ export interface GradientHandle {
  */
 export type GradientTransform = readonly [
   readonly [number, number, number],
-  readonly [number, number, number]
+  readonly [number, number, number],
 ];
 
 /**

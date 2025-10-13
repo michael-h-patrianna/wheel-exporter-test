@@ -39,7 +39,7 @@ export const ButtonSpinRenderer: React.FC<ButtonSpinRendererProps> = ({
   buttonImage,
   scale,
   onSpin,
-  isSpinning
+  isSpinning,
 }) => {
   // ============================================================================
   // EARLY RETURNS & VALIDATION
@@ -71,15 +71,15 @@ export const ButtonSpinRenderer: React.FC<ButtonSpinRendererProps> = ({
    */
   const cssVariables: Record<string, string> = {
     // Position: center to top-left conversion
-    '--button-left': `${(bounds.x * scale) - (width / 2)}px`,
-    '--button-top': `${(bounds.y * scale) - (height / 2)}px`,
+    '--button-left': `${bounds.x * scale - width / 2}px`,
+    '--button-top': `${bounds.y * scale - height / 2}px`,
 
     // Scaled dimensions
     '--button-width': `${width}px`,
     '--button-height': `${height}px`,
 
     // Optional rotation
-    '--button-transform': bounds.rotation ? `rotate(${bounds.rotation}deg)` : 'none'
+    '--button-transform': bounds.rotation ? `rotate(${bounds.rotation}deg)` : 'none',
   };
 
   // ============================================================================

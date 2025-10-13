@@ -9,13 +9,16 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
   const zipContent = await zip.loadAsync(zipFile);
 
   // Debug: Log all files in the ZIP
-  console.log('Files in ZIP:', Object.keys(zipContent.files));
+  console.warn('Files in ZIP:', Object.keys(zipContent.files));
 
   // Extract positions.json
   const dataFile = zipContent.file('positions.json');
 
   if (!dataFile) {
-    throw new Error('No positions.json file found in ZIP. Available files: ' + Object.keys(zipContent.files).join(', '));
+    throw new Error(
+      'No positions.json file found in ZIP. Available files: ' +
+        Object.keys(zipContent.files).join(', ')
+    );
   }
 
   const dataContent = await dataFile.async('string');
@@ -28,7 +31,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     if (bgFile) {
       const bgBlob = await bgFile.async('blob');
       backgroundImage = URL.createObjectURL(bgBlob);
-      console.log('Found background image:', wheelData.background.exportUrl);
+      console.warn('Found background image:', wheelData.background.exportUrl);
     } else {
       console.warn('Background image not found:', wheelData.background.exportUrl);
     }
@@ -41,7 +44,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     const headerImageStates = [
       { state: 'active', filename: wheelData.header.activeImg },
       { state: 'success', filename: wheelData.header.successImg },
-      { state: 'fail', filename: wheelData.header.failImg }
+      { state: 'fail', filename: wheelData.header.failImg },
     ] as const;
 
     for (const { state, filename } of headerImageStates) {
@@ -50,7 +53,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
         if (file) {
           const blob = await file.async('blob');
           headerImages[state] = URL.createObjectURL(blob);
-          console.log(`Found header image: ${state} -> ${filename}`);
+          console.warn(`Found header image: ${state} -> ${filename}`);
         } else {
           console.warn(`Missing header image: ${state} -> ${filename}`);
         }
@@ -65,7 +68,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     if (file) {
       const blob = await file.async('blob');
       wheelBgImage = URL.createObjectURL(blob);
-      console.log('Found wheelBg image:', wheelData.wheelBg.img);
+      console.warn('Found wheelBg image:', wheelData.wheelBg.img);
     } else {
       console.warn('Missing wheelBg image:', wheelData.wheelBg.img);
     }
@@ -78,7 +81,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     if (file) {
       const blob = await file.async('blob');
       wheelTop1Image = URL.createObjectURL(blob);
-      console.log('Found wheelTop1 image:', wheelData.wheelTop1.img);
+      console.warn('Found wheelTop1 image:', wheelData.wheelTop1.img);
     } else {
       console.warn('Missing wheelTop1 image:', wheelData.wheelTop1.img);
     }
@@ -91,7 +94,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     if (file) {
       const blob = await file.async('blob');
       wheelTop2Image = URL.createObjectURL(blob);
-      console.log('Found wheelTop2 image:', wheelData.wheelTop2.img);
+      console.warn('Found wheelTop2 image:', wheelData.wheelTop2.img);
     } else {
       console.warn('Missing wheelTop2 image:', wheelData.wheelTop2.img);
     }
@@ -103,7 +106,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     buttonSpinImages = {};
     const buttonStates = [
       { state: 'default', filename: wheelData.buttonSpin.defaultImg },
-      { state: 'spinning', filename: wheelData.buttonSpin.spinningImg }
+      { state: 'spinning', filename: wheelData.buttonSpin.spinningImg },
     ] as const;
 
     for (const { state, filename } of buttonStates) {
@@ -112,7 +115,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
         if (file) {
           const blob = await file.async('blob');
           buttonSpinImages[state] = URL.createObjectURL(blob);
-          console.log(`Found buttonSpin image: ${state} -> ${filename}`);
+          console.warn(`Found buttonSpin image: ${state} -> ${filename}`);
         } else {
           console.warn(`Missing buttonSpin image: ${state} -> ${filename}`);
         }
@@ -127,7 +130,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     if (file) {
       const blob = await file.async('blob');
       pointerImage = URL.createObjectURL(blob);
-      console.log('Found pointer image:', wheelData.pointer.img);
+      console.warn('Found pointer image:', wheelData.pointer.img);
     } else {
       console.warn('Missing pointer image:', wheelData.pointer.img);
     }
@@ -145,7 +148,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
         if (file) {
           const blob = await file.async('blob');
           rewardsPrizeImages[key] = URL.createObjectURL(blob);
-          console.log(`Found rewards prize image: ${key} -> ${imageData.img}`);
+          console.warn(`Found rewards prize image: ${key} -> ${imageData.img}`);
         } else {
           console.warn(`Missing rewards prize image: ${key} -> ${imageData.img}`);
         }
@@ -153,7 +156,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     }
   }
 
-  console.log('Extraction complete:', {
+  console.warn('Extraction complete:', {
     wheelData,
     headerImages,
     backgroundImage: !!backgroundImage,
@@ -162,7 +165,7 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     wheelTop2Image: !!wheelTop2Image,
     buttonSpinImages,
     pointerImage: !!pointerImage,
-    rewardsPrizeImages
+    rewardsPrizeImages,
   });
 
   return {
@@ -174,6 +177,6 @@ export async function extractWheelZip(zipFile: File): Promise<ExtractedAssets> {
     wheelTop2Image,
     buttonSpinImages,
     pointerImage,
-    rewardsPrizeImages
+    rewardsPrizeImages,
   };
 }

@@ -10,7 +10,7 @@ interface PointerRendererProps {
 export const PointerRenderer: React.FC<PointerRendererProps> = ({
   pointer,
   pointerImage,
-  scale
+  scale,
 }) => {
   if (!pointer || !pointerImage) {
     return null;
@@ -40,7 +40,7 @@ export const PointerRenderer: React.FC<PointerRendererProps> = ({
         transform: bounds.rotation ? `rotate(${bounds.rotation}deg)` : undefined,
         transformOrigin: 'center center',
         zIndex: 20, // Above all other components
-        pointerEvents: 'none'
+        pointerEvents: 'none',
       }}
     >
       <img
@@ -49,7 +49,7 @@ export const PointerRenderer: React.FC<PointerRendererProps> = ({
         style={{
           width: '100%',
           height: '100%',
-          objectFit: 'contain'
+          objectFit: 'contain',
         }}
       />
     </div>

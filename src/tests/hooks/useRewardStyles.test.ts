@@ -4,7 +4,12 @@
 
 import { renderHook } from '@testing-library/react';
 import { useRewardStyles } from '../../lib/hooks/useRewardStyles';
-import { Fill, RewardsPrizeTextStyle, RewardsBackgroundStyle, RewardsButtonStyle } from '../../lib/types';
+import {
+  Fill,
+  RewardsPrizeTextStyle,
+  RewardsBackgroundStyle,
+  RewardsButtonStyle,
+} from '../../lib/types';
 
 describe('useRewardStyles', () => {
   it('returns memoized style builder functions', () => {
@@ -34,11 +39,16 @@ describe('useRewardStyles', () => {
           { color: '#ff0000', position: 0 },
           { color: '#0000ff', position: 1 },
         ],
-        transform: [[1, 0, 0], [0, 1, 0]],
+        transform: [
+          [1, 0, 0],
+          [0, 1, 0],
+        ],
       },
     };
 
-    expect(result.current.buildGradient(fill)).toBe('linear-gradient(90deg, #ff0000 0%, #0000ff 100%)');
+    expect(result.current.buildGradient(fill)).toBe(
+      'linear-gradient(90deg, #ff0000 0%, #0000ff 100%)'
+    );
   });
 
   it('buildTextStyle applies scale correctly', () => {

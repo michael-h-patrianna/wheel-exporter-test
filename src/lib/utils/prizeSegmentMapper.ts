@@ -70,8 +70,8 @@ export function mapPrizesToSegments(prizes: Prize[]): PrizeSegment[] {
     // Build chunks of regular segments between special segments
     interface Chunk {
       startIndex: number; // Inclusive
-      endIndex: number;   // Inclusive (can wrap around)
-      indices: number[];  // Actual segment indices in this chunk
+      endIndex: number; // Inclusive (can wrap around)
+      indices: number[]; // Actual segment indices in this chunk
     }
 
     const chunks: Chunk[] = [];
@@ -134,16 +134,32 @@ export function mapPrizesToSegments(prizes: Prize[]): PrizeSegment[] {
     // Check if this is a combo reward (multiple reward types)
     const freeReward = prize.freeReward;
     const rewardCount = freeReward
-      ? [freeReward.sc, freeReward.gc, freeReward.spins, freeReward.xp, freeReward.randomReward].filter(Boolean).length
+      ? [
+          freeReward.sc,
+          freeReward.gc,
+          freeReward.spins,
+          freeReward.xp,
+          freeReward.randomReward,
+        ].filter(Boolean).length
       : 0;
     const isCombo = rewardCount >= 2;
 
     // Check if this is a random-reward-only prize
-    const hasOnlyRandom = freeReward?.randomReward && !freeReward.sc && !freeReward.gc && !freeReward.spins && !freeReward.xp;
+    const hasOnlyRandom =
+      freeReward?.randomReward &&
+      !freeReward.sc &&
+      !freeReward.gc &&
+      !freeReward.spins &&
+      !freeReward.xp;
     const useRandomRewardImage = !!hasOnlyRandom;
 
     // Check if this is an XP-only prize
-    const hasOnlyXp = freeReward?.xp && !freeReward.sc && !freeReward.gc && !freeReward.spins && !freeReward.randomReward;
+    const hasOnlyXp =
+      freeReward?.xp &&
+      !freeReward.sc &&
+      !freeReward.gc &&
+      !freeReward.spins &&
+      !freeReward.randomReward;
     const useXpImage = !!hasOnlyXp;
 
     // Get display text for the segment with specific formatting rules
@@ -156,9 +172,24 @@ export function mapPrizesToSegments(prizes: Prize[]): PrizeSegment[] {
       displayText = '200%';
     } else if (freeReward) {
       // Check for single reward types and format accordingly
-      const hasOnlySC = freeReward.sc && !freeReward.gc && !freeReward.spins && !freeReward.xp && !freeReward.randomReward;
-      const hasOnlyGC = freeReward.gc && !freeReward.sc && !freeReward.spins && !freeReward.xp && !freeReward.randomReward;
-      const hasOnlySpins = freeReward.spins && !freeReward.sc && !freeReward.gc && !freeReward.xp && !freeReward.randomReward;
+      const hasOnlySC =
+        freeReward.sc &&
+        !freeReward.gc &&
+        !freeReward.spins &&
+        !freeReward.xp &&
+        !freeReward.randomReward;
+      const hasOnlyGC =
+        freeReward.gc &&
+        !freeReward.sc &&
+        !freeReward.spins &&
+        !freeReward.xp &&
+        !freeReward.randomReward;
+      const hasOnlySpins =
+        freeReward.spins &&
+        !freeReward.sc &&
+        !freeReward.gc &&
+        !freeReward.xp &&
+        !freeReward.randomReward;
 
       if (hasOnlySC) {
         displayText = `SC\n${abbreviateNumber(freeReward.sc!)}`;
@@ -185,7 +216,9 @@ export function mapPrizesToSegments(prizes: Prize[]): PrizeSegment[] {
           rewardParts.push(rewardName);
         }
         if (freeReward.xp) {
-          rewardParts.push(`${abbreviateNumber(freeReward.xp.amount)} ${freeReward.xp.config.name}`);
+          rewardParts.push(
+            `${abbreviateNumber(freeReward.xp.amount)} ${freeReward.xp.config.name}`
+          );
         }
 
         // Show top 2 rewards on separate lines for wheel segments

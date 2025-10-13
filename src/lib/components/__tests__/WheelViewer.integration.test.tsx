@@ -58,7 +58,9 @@ describe('WheelViewer Integration', () => {
   });
 
   it('should calculate container dimensions based on scale', () => {
-    const { container } = render(<WheelViewer {...defaultProps} wheelWidth={400} wheelHeight={300} />);
+    const { container } = render(
+      <WheelViewer {...defaultProps} wheelWidth={400} wheelHeight={300} />
+    );
     const wheelContainer = container.querySelector('.wheel-container');
 
     // Scale should be 0.5 (min(400/800, 300/600))

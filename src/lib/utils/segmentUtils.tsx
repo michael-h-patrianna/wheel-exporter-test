@@ -13,7 +13,15 @@ import {
 import { logger } from '../services/logger';
 
 // Re-export for backwards compatibility
-export { SEGMENT_KINDS, SEGMENT_PREVIEW_INNER_RADIUS_RATIO, TEXT_GRID_RADII_FACTORS, MIN_TEXT_FONT_SIZE, MAX_TEXT_FONT_SIZE_PER_LINE, MAX_IMAGE_ONLY_SIZE_FACTOR, TEXT_FONT_FAMILY };
+export {
+  SEGMENT_KINDS,
+  SEGMENT_PREVIEW_INNER_RADIUS_RATIO,
+  TEXT_GRID_RADII_FACTORS,
+  MIN_TEXT_FONT_SIZE,
+  MAX_TEXT_FONT_SIZE_PER_LINE,
+  MAX_IMAGE_ONLY_SIZE_FACTOR,
+  TEXT_FONT_FAMILY,
+};
 
 /**
  * Convert hex color string to CSS color
@@ -113,7 +121,7 @@ export function buildSegmentRingPath(
     `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${endOuterX} ${endOuterY}`,
     `L ${endInnerX} ${endInnerY}`,
     `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${startInnerX} ${startInnerY}`,
-    'Z'
+    'Z',
   ].join(' ');
 }
 
@@ -127,7 +135,7 @@ export function computeWedgeBounds(
   startAngle: number,
   endAngle: number
 ) {
-  let normalizedStart = startAngle;
+  const normalizedStart = startAngle;
   let normalizedEnd = endAngle;
   while (normalizedEnd <= normalizedStart) {
     normalizedEnd += TAU;
@@ -136,7 +144,7 @@ export function computeWedgeBounds(
   const points: { x: number; y: number }[] = [
     { x: cx, y: cy }, // Center point
     { x: cx + radius * Math.cos(normalizedStart), y: cy + radius * Math.sin(normalizedStart) },
-    { x: cx + radius * Math.cos(normalizedEnd), y: cy + radius * Math.sin(normalizedEnd) }
+    { x: cx + radius * Math.cos(normalizedEnd), y: cy + radius * Math.sin(normalizedEnd) },
   ];
 
   // Check if cardinal directions (0°, 90°, 180°, 270°) are within the arc
@@ -151,7 +159,7 @@ export function computeWedgeBounds(
     if (candidate <= normalizedEnd + epsilon) {
       points.push({
         x: cx + radius * Math.cos(candidate),
-        y: cy + radius * Math.sin(candidate)
+        y: cy + radius * Math.sin(candidate),
       });
     }
   });
@@ -172,7 +180,7 @@ export function computeWedgeBounds(
     minX,
     minY,
     width: maxX - minX,
-    height: maxY - minY
+    height: maxY - minY,
   };
 }
 
@@ -206,7 +214,7 @@ export function computeTemplateBounds(
     width: bounds.width,
     height: bounds.height,
     centerX: bounds.minX + bounds.width / 2,
-    centerY: bounds.minY + bounds.height / 2
+    centerY: bounds.minY + bounds.height / 2,
   };
 }
 
@@ -279,7 +287,7 @@ export function createSvgGradientDef(
       function: 'createSvgGradientDef',
       gradientType: gradient.type,
       gradientId,
-      supportedType: 'linear'
+      supportedType: 'linear',
     });
     return null;
   }
@@ -295,7 +303,10 @@ export function createSvgGradientDef(
       id={gradientId}
       gradientUnits="objectBoundingBox"
       gradientTransform={`rotate(${totalRotation} 0.5 0.5)`}
-      x1="0" y1="0" x2="1" y2="0"
+      x1="0"
+      y1="0"
+      x2="1"
+      y2="0"
     >
       {stops}
     </linearGradient>
@@ -329,11 +340,7 @@ export function describeArcPath(
 /**
  * Calculate optimal font size for text along an arc
  */
-export function computeArcFontSize(
-  text: string,
-  radius: number,
-  angleSpan: number
-): number {
+export function computeArcFontSize(text: string, radius: number, angleSpan: number): number {
   if (!text || radius <= 0 || angleSpan <= 0) {
     return MIN_TEXT_FONT_SIZE;
   }
@@ -362,10 +369,19 @@ export function createDropShadowFilter(
     <filter id={filterId} x="-50%" y="-50%" width="200%" height="200%">
       {dropShadows.map((shadow, index) => (
         <React.Fragment key={`shadow-${index}`}>
-          <feGaussianBlur in="SourceAlpha" stdDeviation={shadow.blur / 2} result={`blur-${index}`} />
+          <feGaussianBlur
+            in="SourceAlpha"
+            stdDeviation={shadow.blur / 2}
+            result={`blur-${index}`}
+          />
           <feOffset in={`blur-${index}`} dx={shadow.x} dy={shadow.y} result={`offset-${index}`} />
           <feFlood floodColor={colorToCSS(shadow.color)} result={`color-${index}`} />
-          <feComposite in={`color-${index}`} in2={`offset-${index}`} operator="in" result={`shadow-${index}`} />
+          <feComposite
+            in={`color-${index}`}
+            in2={`offset-${index}`}
+            operator="in"
+            result={`shadow-${index}`}
+          />
         </React.Fragment>
       ))}
       <feMerge>

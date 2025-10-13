@@ -169,11 +169,7 @@ export async function loadWheelFromZip(zipFile: File): Promise<ExtractedAssets> 
 
       for (const [key, imageData] of Object.entries(prizeImages)) {
         if (imageData?.img) {
-          rewardsPrizeImages[key] = await loadImageAsset(
-            zipContent,
-            imageData.img,
-            `prize-${key}`
-          );
+          rewardsPrizeImages[key] = await loadImageAsset(zipContent, imageData.img, `prize-${key}`);
         }
       }
     }

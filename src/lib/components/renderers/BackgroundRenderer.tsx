@@ -30,7 +30,7 @@ export const BackgroundRenderer: React.FC<BackgroundRendererProps> = ({
   backgroundImage,
   scale,
   frameWidth,
-  frameHeight
+  frameHeight,
 }) => {
   // ============================================================================
   // EARLY RETURNS & VALIDATION
@@ -48,7 +48,7 @@ export const BackgroundRenderer: React.FC<BackgroundRendererProps> = ({
    */
   const cssVariables: Record<string, string> = {
     '--bg-width': `${frameWidth * scale}px`,
-    '--bg-height': `${frameHeight * scale}px`
+    '--bg-height': `${frameHeight * scale}px`,
   };
 
   // ============================================================================
@@ -73,7 +73,7 @@ export const BackgroundRenderer: React.FC<BackgroundRendererProps> = ({
             imageUrl: backgroundImage,
             frameWidth,
             frameHeight,
-            scale
+            scale,
           });
         }}
       />

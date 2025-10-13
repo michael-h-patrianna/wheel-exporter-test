@@ -11,7 +11,8 @@
   animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
 }
 
-.light-bulb__wrapper--carnival-waltz.light-bulb__wrapper--beat-1 .light-bulb__glow-outer--carnival-waltz {
+.light-bulb__wrapper--carnival-waltz.light-bulb__wrapper--beat-1
+  .light-bulb__glow-outer--carnival-waltz {
   animation: waltz-strong-glow 4.8s ease-in-out infinite;
   animation-delay: calc(var(--bulb-index) * var(--delay-per-bulb));
 }
@@ -22,7 +23,8 @@
   animation-delay: calc((var(--bulb-index) * var(--delay-per-bulb)) + 0.15s);
 }
 
-.light-bulb__wrapper--carnival-waltz.light-bulb__wrapper--beat-2 .light-bulb__glow-outer--carnival-waltz {
+.light-bulb__wrapper--carnival-waltz.light-bulb__wrapper--beat-2
+  .light-bulb__glow-outer--carnival-waltz {
   animation: waltz-weak-glow 4.8s ease-in-out infinite;
   animation-delay: calc((var(--bulb-index) * var(--delay-per-bulb)) + 0.15s);
 }
@@ -33,14 +35,16 @@
   animation-delay: calc((var(--bulb-index) * var(--delay-per-bulb)) + 0.3s);
 }
 
-.light-bulb__wrapper--carnival-waltz.light-bulb__wrapper--beat-3 .light-bulb__glow-outer--carnival-waltz {
+.light-bulb__wrapper--carnival-waltz.light-bulb__wrapper--beat-3
+  .light-bulb__glow-outer--carnival-waltz {
   animation: waltz-weak-glow 4.8s ease-in-out infinite;
   animation-delay: calc((var(--bulb-index) * var(--delay-per-bulb)) + 0.3s);
 }
 
 /* Strong beat (1st in group) - Emphasized like "ONE-two-three" */
 @keyframes waltz-strong-beat {
-  0%, 80% {
+  0%,
+  80% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
@@ -50,11 +54,15 @@
   }
   3% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 18px var(--bulb-on-glow80);
+    box-shadow:
+      0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 18px var(--bulb-on-glow80);
   }
   8% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 18px var(--bulb-on-glow80);
+    box-shadow:
+      0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 18px var(--bulb-on-glow80);
   }
   10% {
     background-color: color-mix(in srgb, var(--bulb-on) 95%, var(--bulb-off) 5%);
@@ -64,14 +72,16 @@
     background-color: var(--bulb-off-tint30);
     box-shadow: 0 0 4px color-mix(in srgb, var(--bulb-off) 40%, transparent);
   }
-  14%, 100% {
+  14%,
+  100% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 }
 
 @keyframes waltz-strong-glow {
-  0%, 80% {
+  0%,
+  80% {
     opacity: 0;
   }
   1% {
@@ -89,14 +99,16 @@
   12% {
     opacity: 0.3;
   }
-  14%, 100% {
+  14%,
+  100% {
     opacity: 0;
   }
 }
 
 /* Weak beat (2nd and 3rd in group) - Softer like "one-TWO-three" or "one-two-THREE" */
 @keyframes waltz-weak-beat {
-  0%, 80% {
+  0%,
+  80% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
@@ -106,11 +118,15 @@
   }
   2% {
     background-color: var(--bulb-blend70);
-    box-shadow: 0 0 7px var(--bulb-on-glow70), 0 0 10px var(--bulb-on-glow50);
+    box-shadow:
+      0 0 7px var(--bulb-on-glow70),
+      0 0 10px var(--bulb-on-glow50);
   }
   5% {
     background-color: var(--bulb-blend70);
-    box-shadow: 0 0 7px var(--bulb-on-glow70), 0 0 10px var(--bulb-on-glow50);
+    box-shadow:
+      0 0 7px var(--bulb-on-glow70),
+      0 0 10px var(--bulb-on-glow50);
   }
   7% {
     background-color: var(--bulb-blend40);
@@ -120,14 +136,16 @@
     background-color: var(--bulb-off-tint20);
     box-shadow: 0 0 3px var(--bulb-off-glow35);
   }
-  11%, 100% {
+  11%,
+  100% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 }
 
 @keyframes waltz-weak-glow {
-  0%, 80% {
+  0%,
+  80% {
     opacity: 0;
   }
   1% {
@@ -145,7 +163,8 @@
   9% {
     opacity: 0.15;
   }
-  11%, 100% {
+  11%,
+  100% {
     opacity: 0;
   }
 }

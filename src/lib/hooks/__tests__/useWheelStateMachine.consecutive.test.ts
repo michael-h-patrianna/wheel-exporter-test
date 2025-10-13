@@ -59,7 +59,7 @@ describe('useWheelStateMachine - REAL Consecutive Spins', () => {
         segmentCount,
         onSpinComplete: (segment) => {
           actualWinningSegments.push(segment);
-        }
+        },
       })
     );
 
@@ -113,18 +113,22 @@ describe('useWheelStateMachine - REAL Consecutive Spins', () => {
     }
 
     if (failures.length > 0) {
-      const errorReport = failures.slice(0, 20).map(f =>
-        `  Spin ${f.spinNumber}: winner=${f.winningSegment}, ` +
-        `beforeRotation=${f.currentRotation.toFixed(2)}°, ` +
-        `targetRotation=${f.targetRotation.toFixed(2)}°, ` +
-        `landed at ${f.finalPosition.toFixed(2)}° instead of -90°, ` +
-        `error=${f.error.toFixed(2)}°`
-      ).join('\n');
+      const errorReport = failures
+        .slice(0, 20)
+        .map(
+          (f) =>
+            `  Spin ${f.spinNumber}: winner=${f.winningSegment}, ` +
+            `beforeRotation=${f.currentRotation.toFixed(2)}°, ` +
+            `targetRotation=${f.targetRotation.toFixed(2)}°, ` +
+            `landed at ${f.finalPosition.toFixed(2)}° instead of -90°, ` +
+            `error=${f.error.toFixed(2)}°`
+        )
+        .join('\n');
 
       throw new Error(
         `${failures.length}/${spins} consecutive spins failed!\n` +
-        `First 20 failures:\n${errorReport}\n\n` +
-        `Success rate: ${((spins - failures.length) / spins * 100).toFixed(2)}%`
+          `First 20 failures:\n${errorReport}\n\n` +
+          `Success rate: ${(((spins - failures.length) / spins) * 100).toFixed(2)}%`
       );
     }
 
@@ -191,10 +195,12 @@ describe('useWheelStateMachine - REAL Consecutive Spins', () => {
 
     // All positions should be within 1° of -90° (or 270°)
     const target = 270; // -90° normalized
-    const maxDeviation = Math.max(...positions.map(p => {
-      const diff = Math.abs(p - target);
-      return Math.min(diff, 360 - diff);
-    }));
+    const maxDeviation = Math.max(
+      ...positions.map((p) => {
+        const diff = Math.abs(p - target);
+        return Math.min(diff, 360 - diff);
+      })
+    );
 
     expect(maxDeviation).toBeLessThan(1); // Max 1° deviation
   });

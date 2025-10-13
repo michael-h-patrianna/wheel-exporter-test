@@ -33,7 +33,7 @@ describe('lightAnimations', () => {
         'dual-convergence',
       ];
 
-      const actualIds = LIGHT_ANIMATIONS.map(anim => anim.id);
+      const actualIds = LIGHT_ANIMATIONS.map((anim) => anim.id);
       expect(actualIds).toEqual(expectedIds);
     });
 
@@ -42,13 +42,13 @@ describe('lightAnimations', () => {
     });
 
     it('should have unique IDs', () => {
-      const ids = LIGHT_ANIMATIONS.map(anim => anim.id);
+      const ids = LIGHT_ANIMATIONS.map((anim) => anim.id);
       const uniqueIds = new Set(ids);
       expect(uniqueIds.size).toBe(ids.length);
     });
 
     it('should have valid metadata structure for all animations', () => {
-      LIGHT_ANIMATIONS.forEach(anim => {
+      LIGHT_ANIMATIONS.forEach((anim) => {
         expect(anim).toHaveProperty('id');
         expect(anim).toHaveProperty('title');
         expect(anim).toHaveProperty('description');
@@ -65,7 +65,7 @@ describe('lightAnimations', () => {
 
     describe('individual animation metadata', () => {
       it('should have correct metadata for "none"', () => {
-        const anim = LIGHT_ANIMATIONS.find(a => a.id === 'none');
+        const anim = LIGHT_ANIMATIONS.find((a) => a.id === 'none');
         expect(anim).toEqual({
           id: 'none',
           title: 'None (Static)',
@@ -76,18 +76,19 @@ describe('lightAnimations', () => {
       });
 
       it('should have correct metadata for "alternating-carnival"', () => {
-        const anim = LIGHT_ANIMATIONS.find(a => a.id === 'alternating-carnival');
+        const anim = LIGHT_ANIMATIONS.find((a) => a.id === 'alternating-carnival');
         expect(anim).toEqual({
           id: 'alternating-carnival',
           title: 'Alternating Carnival',
-          description: 'Classic carnival pattern with even/odd bulbs alternating on and off with realistic glow and fadeout',
+          description:
+            'Classic carnival pattern with even/odd bulbs alternating on and off with realistic glow and fadeout',
           duration: 1.2,
           cssFile: 'alternating-carnival',
         });
       });
 
       it('should have correct metadata for "sequential-chase"', () => {
-        const anim = LIGHT_ANIMATIONS.find(a => a.id === 'sequential-chase');
+        const anim = LIGHT_ANIMATIONS.find((a) => a.id === 'sequential-chase');
         expect(anim).toEqual({
           id: 'sequential-chase',
           title: 'Sequential Chase',
@@ -98,51 +99,55 @@ describe('lightAnimations', () => {
       });
 
       it('should have correct metadata for "accelerating-spin"', () => {
-        const anim = LIGHT_ANIMATIONS.find(a => a.id === 'accelerating-spin');
+        const anim = LIGHT_ANIMATIONS.find((a) => a.id === 'accelerating-spin');
         expect(anim).toEqual({
           id: 'accelerating-spin',
           title: 'Accelerating Spin',
-          description: 'Wheel of fortune spin: starts slow, accelerates to blur, decelerates, and settles on winner',
+          description:
+            'Wheel of fortune spin: starts slow, accelerates to blur, decelerates, and settles on winner',
           duration: 5.0,
           cssFile: 'accelerating-spin',
         });
       });
 
       it('should have correct metadata for "reverse-chase-pulse"', () => {
-        const anim = LIGHT_ANIMATIONS.find(a => a.id === 'reverse-chase-pulse');
+        const anim = LIGHT_ANIMATIONS.find((a) => a.id === 'reverse-chase-pulse');
         expect(anim).toEqual({
           id: 'reverse-chase-pulse',
           title: 'Reverse Chase Pulse',
-          description: 'Counter-clockwise chase followed by faster clockwise motion, then synchronized pulses before revealing winner',
+          description:
+            'Counter-clockwise chase followed by faster clockwise motion, then synchronized pulses before revealing winner',
           duration: 7.0,
           cssFile: 'reverse-chase-pulse',
         });
       });
 
       it('should have correct metadata for "random-sparkle"', () => {
-        const anim = LIGHT_ANIMATIONS.find(a => a.id === 'random-sparkle');
+        const anim = LIGHT_ANIMATIONS.find((a) => a.id === 'random-sparkle');
         expect(anim).toEqual({
           id: 'random-sparkle',
           title: 'Random Sparkle',
-          description: 'Unpredictable twinkling creates excitement and anticipation like stars in the night sky',
+          description:
+            'Unpredictable twinkling creates excitement and anticipation like stars in the night sky',
           duration: 8.0,
           cssFile: 'random-sparkle',
         });
       });
 
       it('should have correct metadata for "carnival-waltz"', () => {
-        const anim = LIGHT_ANIMATIONS.find(a => a.id === 'carnival-waltz');
+        const anim = LIGHT_ANIMATIONS.find((a) => a.id === 'carnival-waltz');
         expect(anim).toEqual({
           id: 'carnival-waltz',
           title: 'Carnival Waltz',
-          description: 'Musical waltz pattern with groups of 3 bulbs following strong-weak-weak rhythm',
+          description:
+            'Musical waltz pattern with groups of 3 bulbs following strong-weak-weak rhythm',
           duration: 4.5,
           cssFile: 'carnival-waltz',
         });
       });
 
       it('should have correct metadata for "comet-trail"', () => {
-        const anim = LIGHT_ANIMATIONS.find(a => a.id === 'comet-trail');
+        const anim = LIGHT_ANIMATIONS.find((a) => a.id === 'comet-trail');
         expect(anim).toEqual({
           id: 'comet-trail',
           title: 'Comet Trail',
@@ -153,11 +158,12 @@ describe('lightAnimations', () => {
       });
 
       it('should have correct metadata for "dual-convergence"', () => {
-        const anim = LIGHT_ANIMATIONS.find(a => a.id === 'dual-convergence');
+        const anim = LIGHT_ANIMATIONS.find((a) => a.id === 'dual-convergence');
         expect(anim).toEqual({
           id: 'dual-convergence',
           title: 'Dual Convergence',
-          description: 'Two lights chase from opposite sides, meeting with a dramatic collision flash',
+          description:
+            'Two lights chase from opposite sides, meeting with a dramatic collision flash',
           duration: 3.0,
           cssFile: 'dual-convergence',
         });
@@ -165,25 +171,25 @@ describe('lightAnimations', () => {
     });
 
     it('should have non-negative durations', () => {
-      LIGHT_ANIMATIONS.forEach(anim => {
+      LIGHT_ANIMATIONS.forEach((anim) => {
         expect(anim.duration).toBeGreaterThanOrEqual(0);
       });
     });
 
     it('should have non-empty titles', () => {
-      LIGHT_ANIMATIONS.forEach(anim => {
+      LIGHT_ANIMATIONS.forEach((anim) => {
         expect(anim.title.length).toBeGreaterThan(0);
       });
     });
 
     it('should have non-empty descriptions', () => {
-      LIGHT_ANIMATIONS.forEach(anim => {
+      LIGHT_ANIMATIONS.forEach((anim) => {
         expect(anim.description.length).toBeGreaterThan(0);
       });
     });
 
     it('should have matching cssFile names (except "none")', () => {
-      LIGHT_ANIMATIONS.forEach(anim => {
+      LIGHT_ANIMATIONS.forEach((anim) => {
         if (anim.id === 'none') {
           expect(anim.cssFile).toBe('');
         } else {
@@ -286,7 +292,7 @@ describe('lightAnimations', () => {
 
     it('should return array with all expected IDs', () => {
       const animations = getAllAnimations();
-      const ids = animations.map(a => a.id);
+      const ids = animations.map((a) => a.id);
       expect(ids).toContain('none');
       expect(ids).toContain('alternating-carnival');
       expect(ids).toContain('sequential-chase');
@@ -301,7 +307,7 @@ describe('lightAnimations', () => {
     it('should be usable for UI selection menus', () => {
       const animations = getAllAnimations();
       // Verify it has the properties needed for a UI dropdown
-      animations.forEach(anim => {
+      animations.forEach((anim) => {
         expect(anim.id).toBeTruthy();
         expect(anim.title).toBeTruthy();
         expect(anim.description).toBeTruthy();

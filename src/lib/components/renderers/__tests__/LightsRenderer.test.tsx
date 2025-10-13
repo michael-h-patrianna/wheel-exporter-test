@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 import { LightsRenderer } from '../LightsRenderer';
 import { LightsComponent } from '../../../types';
 import { createMockLights, createMockLightsWithoutPositions } from '../../../test-utils';
+import { vi } from 'vitest';
 
 describe('LightsRenderer', () => {
   const mockLights = createMockLights();
@@ -17,10 +18,10 @@ describe('LightsRenderer', () => {
   };
 
   // Suppress console.log output for cleaner test output
-  let consoleSpy: jest.SpyInstance;
+  let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -35,9 +36,7 @@ describe('LightsRenderer', () => {
   });
 
   it('should return null when lights is not provided', () => {
-    const { container } = render(
-      <LightsRenderer lights={undefined} scale={1} />
-    );
+    const { container } = render(<LightsRenderer lights={undefined} scale={1} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -45,9 +44,7 @@ describe('LightsRenderer', () => {
   it('should return null when positions array is not provided', () => {
     const lightsWithoutPositions = createMockLightsWithoutPositions() as unknown as LightsComponent;
 
-    const { container } = render(
-      <LightsRenderer lights={lightsWithoutPositions} scale={1} />
-    );
+    const { container } = render(<LightsRenderer lights={lightsWithoutPositions} scale={1} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -57,9 +54,7 @@ describe('LightsRenderer', () => {
       positions: [],
     });
 
-    const { container } = render(
-      <LightsRenderer lights={lightsWithEmptyPositions} scale={1} />
-    );
+    const { container } = render(<LightsRenderer lights={lightsWithEmptyPositions} scale={1} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -224,9 +219,7 @@ describe('LightsRenderer', () => {
     ];
 
     testCases.forEach(({ scale, expectedRadius, expectedDiameter }) => {
-      const { container } = render(
-        <LightsRenderer {...defaultProps} scale={scale} />
-      );
+      const { container } = render(<LightsRenderer {...defaultProps} scale={scale} />);
 
       const lightCircles = container.querySelectorAll('.light-circle');
       expect(lightCircles[0]).toHaveStyle({

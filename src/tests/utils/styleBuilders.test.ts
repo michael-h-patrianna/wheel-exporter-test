@@ -2,8 +2,18 @@
  * Tests for style builder utility functions
  */
 
-import { buildGradient, buildTextStyle, buildBoxStyle, buildButtonStyle } from '../../lib/utils/styleBuilders';
-import { Fill, RewardsPrizeTextStyle, RewardsBackgroundStyle, RewardsButtonStyle } from '../../lib/types';
+import {
+  buildGradient,
+  buildTextStyle,
+  buildBoxStyle,
+  buildButtonStyle,
+} from '../../lib/utils/styleBuilders';
+import {
+  Fill,
+  RewardsPrizeTextStyle,
+  RewardsBackgroundStyle,
+  RewardsButtonStyle,
+} from '../../lib/types';
 
 describe('styleBuilders', () => {
   describe('buildGradient', () => {
@@ -31,7 +41,10 @@ describe('styleBuilders', () => {
             { color: '#ff0000', position: 0 },
             { color: '#0000ff', position: 1 },
           ],
-          transform: [[1, 0, 0], [0, 1, 0]],
+          transform: [
+            [1, 0, 0],
+            [0, 1, 0],
+          ],
         },
       };
       expect(buildGradient(fill)).toBe('linear-gradient(90deg, #ff0000 0%, #0000ff 100%)');
@@ -48,10 +61,15 @@ describe('styleBuilders', () => {
             { color: '#00ff00', position: 0.5 },
             { color: '#0000ff', position: 1 },
           ],
-          transform: [[1, 0, 0], [0, 1, 0]],
+          transform: [
+            [1, 0, 0],
+            [0, 1, 0],
+          ],
         },
       };
-      expect(buildGradient(fill)).toBe('linear-gradient(45deg, #ff0000 0%, #00ff00 50%, #0000ff 100%)');
+      expect(buildGradient(fill)).toBe(
+        'linear-gradient(45deg, #ff0000 0%, #00ff00 50%, #0000ff 100%)'
+      );
     });
 
     it('handles invalid NaN colors in gradient stops', () => {
@@ -64,7 +82,10 @@ describe('styleBuilders', () => {
             { color: '#NaNNaNNaNNaN', position: 0 },
             { color: '#0000ff', position: 1 },
           ],
-          transform: [[1, 0, 0], [0, 1, 0]],
+          transform: [
+            [1, 0, 0],
+            [0, 1, 0],
+          ],
         },
       };
       expect(buildGradient(fill)).toBe('linear-gradient(180deg, transparent 0%, #0000ff 100%)');
@@ -106,7 +127,10 @@ describe('styleBuilders', () => {
               { color: '#ff0000', position: 0 },
               { color: '#0000ff', position: 1 },
             ],
-            transform: [[1, 0, 0], [0, 1, 0]],
+            transform: [
+              [1, 0, 0],
+              [0, 1, 0],
+            ],
           },
         },
       };
@@ -128,6 +152,28 @@ describe('styleBuilders', () => {
       expect(result.WebkitTextStroke).toBe('4px #000000');
     });
 
+    it('preserves fractional stroke widths without rounding', () => {
+      const textStyle: RewardsPrizeTextStyle = {
+        label: 'Test',
+        fill: { type: 'solid', color: '#ffffff' },
+        stroke: { width: 0.5, color: '#4e187c' },
+      };
+      const result = buildTextStyle(textStyle, 16, 1.5);
+      // 0.5 * 1.5 = 0.75, should NOT be rounded to 1
+      expect(result.WebkitTextStroke).toBe('0.75px #4e187c');
+    });
+
+    it('handles very small stroke widths accurately', () => {
+      const textStyle: RewardsPrizeTextStyle = {
+        label: 'Test',
+        fill: { type: 'solid', color: '#ffffff' },
+        stroke: { width: 0.7663357257843018, color: '#4e187c' },
+      };
+      const result = buildTextStyle(textStyle, 16, 1.0);
+      // Should preserve the exact scaled width
+      expect(result.WebkitTextStroke).toBe('0.7663357257843018px #4e187c');
+    });
+
     it('scales fontSize correctly', () => {
       const textStyle: RewardsPrizeTextStyle = {
         label: 'Test',
@@ -145,6 +191,15 @@ describe('styleBuilders', () => {
       };
       const result = buildTextStyle(textStyle, 16, 1);
       expect(result.textShadow).toBeUndefined();
+    });
+
+    it('applies Lato font family to text', () => {
+      const textStyle: RewardsPrizeTextStyle = {
+        label: 'Test',
+        fill: { type: 'solid', color: '#ffffff' },
+      };
+      const result = buildTextStyle(textStyle, 16, 1);
+      expect(result.fontFamily).toBe('Lato, sans-serif');
     });
   });
 
@@ -373,6 +428,23 @@ describe('styleBuilders', () => {
       };
       const result = buildButtonStyle(btnStyle, 'default', 1);
       expect(result.text.lineHeight).toBe('normal');
+    });
+
+    it('applies Lato font family to button text', () => {
+      const btnStyle: RewardsButtonStyle = {
+        frame: {
+          borderRadius: 8,
+          backgroundFill: { type: 'solid', color: '#ff0000' },
+          padding: { vertical: 12, horizontal: 24 },
+        },
+        text: {
+          fontSize: 16,
+          color: '#ffffff',
+          fontWeight: 700,
+        },
+      };
+      const result = buildButtonStyle(btnStyle, 'default', 1);
+      expect(result.text.fontFamily).toBe('Lato, sans-serif');
     });
   });
 });

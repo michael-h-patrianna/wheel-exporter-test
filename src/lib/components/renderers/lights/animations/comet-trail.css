@@ -17,27 +17,36 @@
 
 /* Comet trail: Long gradual fade creates trailing effect */
 @keyframes comet-bulb {
-  0%, 70% {
+  0%,
+  70% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
   /* Quick bright flash (comet head) */
   1% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 18px var(--bulb-on-glow80);
+    box-shadow:
+      0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 18px var(--bulb-on-glow80);
   }
   /* Long trailing fadeout (comet tail) */
   5% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent), 0 0 15px var(--bulb-on-glow70);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--bulb-on) 90%, transparent),
+      0 0 15px var(--bulb-on-glow70);
   }
   10% {
     background-color: color-mix(in srgb, var(--bulb-on) 95%, var(--bulb-off) 5%);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--bulb-on) 75%, transparent), 0 0 12px color-mix(in srgb, var(--bulb-on) 55%, transparent);
+    box-shadow:
+      0 0 8px color-mix(in srgb, var(--bulb-on) 75%, transparent),
+      0 0 12px color-mix(in srgb, var(--bulb-on) 55%, transparent);
   }
   15% {
     background-color: var(--bulb-blend70);
-    box-shadow: 0 0 6px var(--bulb-on-glow60), 0 0 9px color-mix(in srgb, var(--bulb-on) 40%, transparent);
+    box-shadow:
+      0 0 6px var(--bulb-on-glow60),
+      0 0 9px color-mix(in srgb, var(--bulb-on) 40%, transparent);
   }
   20% {
     background-color: var(--bulb-blend40);
@@ -51,14 +60,16 @@
     background-color: color-mix(in srgb, var(--bulb-off) 90%, var(--bulb-on) 10%);
     box-shadow: 0 0 2px var(--bulb-off-glow35);
   }
-  35%, 100% {
+  35%,
+  100% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 }
 
 @keyframes comet-glow {
-  0%, 70% {
+  0%,
+  70% {
     opacity: 0;
   }
   1% {
@@ -82,7 +93,8 @@
   30% {
     opacity: 0.15;
   }
-  35%, 100% {
+  35%,
+  100% {
     opacity: 0;
   }
 }

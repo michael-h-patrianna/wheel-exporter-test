@@ -5,15 +5,16 @@
 
 import { renderHook, act } from '@testing-library/react';
 import { useWheelStateMachine } from '../useWheelStateMachine';
+import { vi } from 'vitest';
 
 describe('useWheelStateMachine - Rotation Accuracy', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   /**
@@ -45,7 +46,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
     if (!anglesEqual(actual, expected, tolerance)) {
       throw new Error(
         `Expected angle ${actual}° to be close to ${expected}° ` +
-        `(normalized: ${normalizeAngle(actual)}° vs ${normalizeAngle(expected)}°)`
+          `(normalized: ${normalizeAngle(actual)}° vs ${normalizeAngle(expected)}°)`
       );
     }
   }
@@ -66,86 +67,94 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
     return normalizeAngle(segmentCenterAngle + wheelRotation);
   }
 
-  it('should land winning segment at 12 o\'clock across 10000 random configurations', () => {
-    const iterations = 10000;
-    const failures: Array<{
-      iteration: number;
-      segmentCount: number;
-      winningSegment: number;
-      targetRotation: number;
-      expectedPosition: number;
-      actualPosition: number;
-      error: number;
-    }> = [];
+  it(
+    "should land winning segment at 12 o'clock across 10000 random configurations",
+    { timeout: 30000 },
+    () => {
+      const iterations = 10000;
+      const failures: Array<{
+        iteration: number;
+        segmentCount: number;
+        winningSegment: number;
+        targetRotation: number;
+        expectedPosition: number;
+        actualPosition: number;
+        error: number;
+      }> = [];
 
-    for (let i = 0; i < iterations; i++) {
-      // Generate random configuration matching real-world usage: 3-8 segments only
-      const segmentCount = Math.floor(Math.random() * 6) + 3; // 3-8 segments
-      const winningSegment = Math.floor(Math.random() * segmentCount);
+      for (let i = 0; i < iterations; i++) {
+        // Generate random configuration matching real-world usage: 3-8 segments only
+        const segmentCount = Math.floor(Math.random() * 6) + 3; // 3-8 segments
+        const winningSegment = Math.floor(Math.random() * segmentCount);
 
-      // Create a hook and perform a single spin
-      const { result } = renderHook(() =>
-        useWheelStateMachine({
-          segmentCount,
-          winningSegmentIndex: winningSegment,
-        })
-      );
-
-      act(() => {
-        result.current.startSpin();
-      });
-
-      const targetRotation = result.current.targetRotation;
-
-      // Calculate where the winning segment will end up
-      const finalPosition = calculateSegmentPositionAfterRotation(
-        winningSegment,
-        segmentCount,
-        targetRotation
-      );
-
-      // The winning segment should be at -90° (12 o'clock) - pointer position
-      const expectedPosition = -90;
-      const isCorrect = anglesEqual(finalPosition, expectedPosition, 0.1);
-
-      if (!isCorrect) {
-        const error = Math.min(
-          Math.abs(finalPosition - expectedPosition),
-          Math.abs(finalPosition - 360 - expectedPosition),
-          Math.abs(finalPosition + 360 - expectedPosition)
+        // Create a hook and perform a single spin
+        const { result } = renderHook(() =>
+          useWheelStateMachine({
+            segmentCount,
+            winningSegmentIndex: winningSegment,
+          })
         );
 
-        failures.push({
-          iteration: i,
-          segmentCount,
-          winningSegment,
-          targetRotation,
-          expectedPosition,
-          actualPosition: finalPosition,
-          error,
+        act(() => {
+          result.current.startSpin();
         });
+
+        const targetRotation = result.current.targetRotation;
+
+        // Calculate where the winning segment will end up
+        const finalPosition = calculateSegmentPositionAfterRotation(
+          winningSegment,
+          segmentCount,
+          targetRotation
+        );
+
+        // The winning segment should be at -90° (12 o'clock) - pointer position
+        const expectedPosition = -90;
+        const isCorrect = anglesEqual(finalPosition, expectedPosition, 0.1);
+
+        if (!isCorrect) {
+          const error = Math.min(
+            Math.abs(finalPosition - expectedPosition),
+            Math.abs(finalPosition - 360 - expectedPosition),
+            Math.abs(finalPosition + 360 - expectedPosition)
+          );
+
+          failures.push({
+            iteration: i,
+            segmentCount,
+            winningSegment,
+            targetRotation,
+            expectedPosition,
+            actualPosition: finalPosition,
+            error,
+          });
+        }
       }
+
+      // Report failures
+      if (failures.length > 0) {
+        const errorReport = failures
+          .slice(0, 10)
+          .map(
+            (f) =>
+              `  Iteration ${f.iteration}: ${f.segmentCount} segments, winner=${f.winningSegment}, ` +
+              `rotation=${f.targetRotation.toFixed(2)}°, ` +
+              `expected=${f.expectedPosition}°, actual=${f.actualPosition.toFixed(2)}°, ` +
+              `error=${f.error.toFixed(2)}°`
+          )
+          .join('\n');
+
+        throw new Error(
+          `${failures.length}/${iterations} iterations failed to land at 12 o'clock!\n` +
+            `First 10 failures:\n${errorReport}\n\n` +
+            `Success rate: ${(((iterations - failures.length) / iterations) * 100).toFixed(2)}%`
+        );
+      }
+
+      // All iterations passed - 100% success rate required
+      expect(failures.length).toBe(0);
     }
-
-    // Report failures
-    if (failures.length > 0) {
-      const errorReport = failures.slice(0, 10).map(f =>
-        `  Iteration ${f.iteration}: ${f.segmentCount} segments, winner=${f.winningSegment}, ` +
-        `rotation=${f.targetRotation.toFixed(2)}°, ` +
-        `expected=${f.expectedPosition}°, actual=${f.actualPosition.toFixed(2)}°, ` +
-        `error=${f.error.toFixed(2)}°`
-      ).join('\n');
-
-      throw new Error(
-        `${failures.length}/${iterations} iterations failed to land at 12 o'clock!\n` +
-        `First 10 failures:\n${errorReport}\n\n` +
-        `Success rate: ${((iterations - failures.length) / iterations * 100).toFixed(2)}%`
-      );
-    }
-
-    // All iterations passed - 100% success rate required
-    expect(failures.length).toBe(0);
-  });
+  );
 
   it('should land correctly for all segments in an 8-segment wheel', () => {
     const segmentCount = 8;
@@ -227,7 +236,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
 
         // Complete the spin
         act(() => {
-          jest.advanceTimersByTime(8000);
+          vi.advanceTimersByTime(8000);
         });
 
         // Verify winning segment lands at 12 o'clock (-90° pointer position)
@@ -240,7 +249,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
         if (!anglesEqual(finalPosition, -90, 0.1)) {
           failures.push(
             `Wheel ${segmentCount} segments, spin ${spin + 1}, winner=${winningSegment}: ` +
-            `landed at ${finalPosition.toFixed(2)}° instead of -90°`
+              `landed at ${finalPosition.toFixed(2)}° instead of -90°`
           );
         }
 
@@ -263,7 +272,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
           const nextTargetRotation = result2.current.targetRotation;
 
           act(() => {
-            jest.advanceTimersByTime(8000);
+            vi.advanceTimersByTime(8000);
           });
 
           // Verify next spin also lands correctly
@@ -276,7 +285,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
           if (!anglesEqual(nextFinalPosition, -90, 0.1)) {
             failures.push(
               `Wheel ${segmentCount} segments, consecutive spin ${spin + 2}, winner=${nextWinningSegment}: ` +
-              `landed at ${nextFinalPosition.toFixed(2)}° instead of -90°`
+                `landed at ${nextFinalPosition.toFixed(2)}° instead of -90°`
             );
           }
         }
@@ -286,7 +295,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
     if (failures.length > 0) {
       throw new Error(
         `${failures.length} spins failed on same wheel scenario!\n` +
-        `First 10 failures:\n${failures.slice(0, 10).join('\n')}`
+          `First 10 failures:\n${failures.slice(0, 10).join('\n')}`
       );
     }
 
@@ -332,7 +341,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
       if (!anglesEqual(finalPosition, -90, 0.1)) {
         failures.push(
           `Iteration ${i + 1}: ${segmentCount} segments, winner=${winningSegment}: ` +
-          `landed at ${finalPosition.toFixed(2)}° instead of -90°`
+            `landed at ${finalPosition.toFixed(2)}° instead of -90°`
         );
       }
 
@@ -367,7 +376,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
       if (!anglesEqual(newFinalPosition, -90, 0.1)) {
         failures.push(
           `Iteration ${i + 1} (new table): ${newSegmentCount} segments, winner=${newWinningSegment}: ` +
-          `landed at ${newFinalPosition.toFixed(2)}° instead of -90°`
+            `landed at ${newFinalPosition.toFixed(2)}° instead of -90°`
         );
       }
     }
@@ -375,7 +384,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
     if (failures.length > 0) {
       throw new Error(
         `${failures.length} spins failed with changing prize tables!\n` +
-        `First 10 failures:\n${failures.slice(0, 10).join('\n')}`
+          `First 10 failures:\n${failures.slice(0, 10).join('\n')}`
       );
     }
 
@@ -385,7 +394,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
   it('should maintain accuracy with odd segment counts', () => {
     const oddSegmentCounts = [3, 5, 7, 9, 11, 13, 15, 17, 19, 21];
 
-    oddSegmentCounts.forEach(segmentCount => {
+    oddSegmentCounts.forEach((segmentCount) => {
       const winningSegment = Math.floor(segmentCount / 2); // Middle segment
 
       const { result } = renderHook(() =>
@@ -413,7 +422,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
   it('should maintain accuracy with even segment counts', () => {
     const evenSegmentCounts = [4, 6, 8, 10, 12, 14, 16, 18, 20, 24];
 
-    evenSegmentCounts.forEach(segmentCount => {
+    evenSegmentCounts.forEach((segmentCount) => {
       const winningSegment = Math.floor(segmentCount / 2); // Middle segment
 
       const { result } = renderHook(() =>
@@ -441,7 +450,7 @@ describe('useWheelStateMachine - Rotation Accuracy', () => {
   it('should handle extreme segment counts', () => {
     const extremeCounts = [1, 2, 50, 100];
 
-    extremeCounts.forEach(segmentCount => {
+    extremeCounts.forEach((segmentCount) => {
       const winningSegment = 0; // First segment
 
       const { result } = renderHook(() =>

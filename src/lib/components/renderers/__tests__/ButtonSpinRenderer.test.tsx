@@ -6,7 +6,10 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ButtonSpinRenderer } from '../ButtonSpinRenderer';
 import { ButtonSpinComponent, ButtonSpinState } from '../../../types';
-import { createMockButtonSpin, createMockButtonSpinWithMissingSpinningState } from '../../../test-utils';
+import {
+  createMockButtonSpin,
+  createMockButtonSpinWithMissingSpinningState,
+} from '../../../test-utils';
 
 describe('ButtonSpinRenderer', () => {
   const mockButtonSpin = createMockButtonSpin();
@@ -33,29 +36,20 @@ describe('ButtonSpinRenderer', () => {
   });
 
   it('should return null when buttonSpin is not provided', () => {
-    const { container } = render(
-      <ButtonSpinRenderer
-        {...defaultProps}
-        buttonSpin={undefined}
-      />
-    );
+    const { container } = render(<ButtonSpinRenderer {...defaultProps} buttonSpin={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when buttonImage is not provided', () => {
-    const { container } = render(
-      <ButtonSpinRenderer
-        {...defaultProps}
-        buttonImage={undefined}
-      />
-    );
+    const { container } = render(<ButtonSpinRenderer {...defaultProps} buttonImage={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when bounds for current state are missing', () => {
-    const buttonSpinWithoutBounds = createMockButtonSpinWithMissingSpinningState() as unknown as ButtonSpinComponent;
+    const buttonSpinWithoutBounds =
+      createMockButtonSpinWithMissingSpinningState() as unknown as ButtonSpinComponent;
 
     const { container } = render(
       <ButtonSpinRenderer
@@ -85,9 +79,7 @@ describe('ButtonSpinRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(
-      <ButtonSpinRenderer {...defaultProps} scale={0.5} />
-    );
+    const { container } = render(<ButtonSpinRenderer {...defaultProps} scale={0.5} />);
 
     const button = container.querySelector('.button-spin-component');
     // width = 100 * 0.5 = 50, height = 100 * 0.5 = 50

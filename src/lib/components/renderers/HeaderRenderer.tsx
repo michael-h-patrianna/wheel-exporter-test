@@ -37,7 +37,7 @@ export const HeaderRenderer: React.FC<HeaderRendererProps> = ({
   currentState,
   scale,
   headerImage,
-  onCycleState
+  onCycleState,
 }) => {
   // ============================================================================
   // EARLY RETURNS & VALIDATION
@@ -70,15 +70,15 @@ export const HeaderRenderer: React.FC<HeaderRendererProps> = ({
    */
   const cssVariables: Record<string, string> = {
     // Position: x,y represent center - convert to top-left
-    '--header-left': `${(bounds.x * scale) - (width / 2)}px`,
-    '--header-top': `${(bounds.y * scale) - (height / 2)}px`,
+    '--header-left': `${bounds.x * scale - width / 2}px`,
+    '--header-top': `${bounds.y * scale - height / 2}px`,
 
     // Scaled dimensions
     '--header-width': `${width}px`,
     '--header-height': `${height}px`,
 
     // Optional rotation
-    '--header-transform': bounds.rotation ? `rotate(${bounds.rotation}deg)` : 'none'
+    '--header-transform': bounds.rotation ? `rotate(${bounds.rotation}deg)` : 'none',
   };
 
   // ============================================================================
@@ -113,7 +113,7 @@ export const HeaderRenderer: React.FC<HeaderRendererProps> = ({
             state: currentState,
             imageUrl: headerImage,
             bounds,
-            scale
+            scale,
           });
         }}
       />

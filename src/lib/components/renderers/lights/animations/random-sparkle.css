@@ -17,7 +17,8 @@
 
 /* Random sparkle animation - quick flash */
 @keyframes sparkle-bulb {
-  0%, 95% {
+  0%,
+  95% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
@@ -27,7 +28,9 @@
   }
   4% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 18px var(--bulb-on-glow80);
+    box-shadow:
+      0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 18px var(--bulb-on-glow80);
   }
   6% {
     background-color: color-mix(in srgb, var(--bulb-on) 95%, var(--bulb-off) 5%);
@@ -37,14 +40,16 @@
     background-color: var(--bulb-off-tint30);
     box-shadow: 0 0 4px color-mix(in srgb, var(--bulb-off) 40%, transparent);
   }
-  10%, 100% {
+  10%,
+  100% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
 }
 
 @keyframes sparkle-glow {
-  0%, 95% {
+  0%,
+  95% {
     opacity: 0;
   }
   2% {
@@ -59,7 +64,8 @@
   8% {
     opacity: 0.2;
   }
-  10%, 100% {
+  10%,
+  100% {
     opacity: 0;
   }
 }

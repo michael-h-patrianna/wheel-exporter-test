@@ -63,10 +63,7 @@ describe('RewardRow', () => {
   describe('Type discrimination', () => {
     it('renders GCSCRow for gcsc type', () => {
       const { container } = render(
-        <RewardRow
-          {...defaultProps}
-          rowData={{ type: 'gcsc', gcValue: '100', scValue: '50' }}
-        />
+        <RewardRow {...defaultProps} rowData={{ type: 'gcsc', gcValue: '100', scValue: '50' }} />
       );
       expect(container.querySelector('.result-highlight-box')).toBeInTheDocument();
     });
@@ -171,9 +168,7 @@ describe('RewardRow', () => {
     });
 
     it('provides default value for freeSpins', () => {
-      const { getByText } = render(
-        <RewardRow {...defaultProps} rowData={{ type: 'freeSpins' }} />
-      );
+      const { getByText } = render(<RewardRow {...defaultProps} rowData={{ type: 'freeSpins' }} />);
       expect(getByText('0')).toBeInTheDocument();
     });
 

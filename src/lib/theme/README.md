@@ -34,7 +34,9 @@ interface CardProps {
 ## Available Tokens
 
 ### Spacing (`spacing`)
+
 8px baseline grid for consistent spacing:
+
 - `xs`: 4px - Minimum spacing
 - `sm`: 8px - Compact spacing
 - `md`: 16px - Default spacing
@@ -43,7 +45,9 @@ interface CardProps {
 - `xxl`: 48px - Extra large spacing
 
 ### Border Radius (`borderRadius`)
+
 Consistent rounded corners:
+
 - `sm`: 4px - Subtle
 - `md`: 8px - Standard
 - `lg`: 12px - Pronounced
@@ -51,7 +55,9 @@ Consistent rounded corners:
 - `full`: 9999px - Circular
 
 ### Colors (`colors`)
+
 Organized by purpose:
+
 - `surface`: Background colors (primary, secondary, tertiary, dark)
 - `text`: Text colors (primary, secondary, tertiary, inverse)
 - `border`: Border colors (light, medium, dark)
@@ -60,7 +66,9 @@ Organized by purpose:
 - `overlay`: Transparent overlays (light, medium, dark, heavy)
 
 ### Elevation (`elevation`)
+
 Border-based elevation system (cross-platform compatible):
+
 - `none`: No elevation
 - `low`: Subtle lift (1px border)
 - `medium`: Standard lift (2px border)
@@ -70,12 +78,16 @@ Border-based elevation system (cross-platform compatible):
 React Native doesn't support `box-shadow` consistently across platforms. The border-based approach provides visual hierarchy that works everywhere.
 
 ### Typography (`typography`)
+
 Font size and line height pairs:
+
 - `xs` to `xxl` with matching line heights
 - Example: `typography.base` → `{ fontSize: 14, lineHeight: 20 }`
 
 ### Z-Index (`zIndex`)
+
 Predefined layering to prevent conflicts:
+
 - `background`: -1
 - `base`: 0
 - `raised`: 10
@@ -85,13 +97,16 @@ Predefined layering to prevent conflicts:
 - `tooltip`: 3000
 
 ### Animation (`duration`, `easing`)
+
 Consistent timing and motion:
+
 - **Duration**: `instant`, `fast`, `normal`, `slow`, `verySlow` (in milliseconds)
 - **Easing**: `linear`, `ease`, `easeIn`, `easeOut`, `easeInOut`, plus custom cubic-bezier functions
 
 ## Cross-Platform Constraints
 
 ### ✅ Safe to Use
+
 - Transform-based animations (translate, rotate, scale)
 - Opacity animations
 - Color transitions
@@ -99,6 +114,7 @@ Consistent timing and motion:
 - Simple borders and border-radius
 
 ### ❌ Avoid (Web-Only)
+
 - `box-shadow` (use `elevation` borders instead)
 - Radial/conic gradients
 - Blur effects or CSS filters
@@ -187,6 +203,7 @@ const AnimatedButton = () => (
 ## Migration from Inline Styles
 
 Before:
+
 ```typescript
 const styles = {
   padding: '16px',
@@ -196,6 +213,7 @@ const styles = {
 ```
 
 After:
+
 ```typescript
 import { spacing, colors, borderRadius } from '@/lib/theme';
 

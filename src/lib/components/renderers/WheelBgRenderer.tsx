@@ -30,7 +30,7 @@ interface WheelBgRendererProps {
 export const WheelBgRenderer: React.FC<WheelBgRendererProps> = ({
   wheelBg,
   wheelBgImage,
-  scale
+  scale,
 }) => {
   // ============================================================================
   // EARLY RETURNS & VALIDATION
@@ -62,12 +62,12 @@ export const WheelBgRenderer: React.FC<WheelBgRendererProps> = ({
    */
   const cssVariables: Record<string, string> = {
     // Position: center to top-left conversion
-    '--wheelbg-left': `${(bounds.x * scale) - (width / 2)}px`,
-    '--wheelbg-top': `${(bounds.y * scale) - (height / 2)}px`,
+    '--wheelbg-left': `${bounds.x * scale - width / 2}px`,
+    '--wheelbg-top': `${bounds.y * scale - height / 2}px`,
 
     // Scaled dimensions
     '--wheelbg-width': `${width}px`,
-    '--wheelbg-height': `${height}px`
+    '--wheelbg-height': `${height}px`,
   };
 
   // ============================================================================
@@ -92,7 +92,7 @@ export const WheelBgRenderer: React.FC<WheelBgRendererProps> = ({
             component: 'WheelBgRenderer',
             imageUrl: wheelBgImage,
             bounds: wheelBg?.bounds,
-            scale
+            scale,
           });
         }}
       />

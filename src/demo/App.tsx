@@ -3,7 +3,10 @@ import './App.css';
 import { WheelViewer } from '../lib/components/WheelViewer';
 import { ResultViewer, ExtractedAssets, ErrorBoundary } from '../lib';
 import { loadWheelFromZip, WheelLoadError } from '../lib/services/wheelLoader';
-import { createDefaultPrizeProvider, type PrizeProviderResult } from '../lib/services/prizeProvider';
+import {
+  createDefaultPrizeProvider,
+  type PrizeProviderResult,
+} from '../lib/services/prizeProvider';
 import { type SegmentLayoutType } from '../lib/types/segmentLayoutTypes';
 import { type LightAnimationType } from '../lib/components/renderers/lights/lightAnimations';
 import { AppBar } from './components/AppBar';
@@ -37,9 +40,9 @@ function App() {
   });
 
   const toggleComponentVisibility = (component: keyof typeof componentVisibility) => {
-    setComponentVisibility(prev => ({
+    setComponentVisibility((prev) => ({
       ...prev,
-      [component]: !prev[component]
+      [component]: !prev[component],
     }));
   };
 
@@ -55,7 +58,6 @@ function App() {
         const session = await provider.load();
         setPrizeSession(session);
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error('Failed to generate prizes:', err);
       }
     };
@@ -70,7 +72,7 @@ function App() {
       wheelResetRef.current();
     }
     // Trigger new prize generation
-    setPrizeRefreshTrigger(prev => prev + 1);
+    setPrizeRefreshTrigger((prev) => prev + 1);
   };
 
   // Auto-load theme.zip if it exists in public/assets
@@ -104,8 +106,7 @@ function App() {
       } catch (err) {
         // Silently fail if theme doesn't exist or can't be loaded
         // No action needed - user can still upload their own theme
-        // eslint-disable-next-line no-console
-        console.debug('Theme auto-load failed (this is normal if no theme.zip exists):', err);
+        console.warn('Theme auto-load failed (this is normal if no theme.zip exists):', err);
       } finally {
         setIsLoading(false);
       }
@@ -209,9 +210,13 @@ function App() {
                       wheelHeight={wheelHeight}
                       segmentCount={prizeSession?.prizes.length || 6}
                       componentVisibility={componentVisibility}
-                      onToggleCenter={(show) => setComponentVisibility(prev => ({ ...prev, center: show }))}
+                      onToggleCenter={(show) =>
+                        setComponentVisibility((prev) => ({ ...prev, center: show }))
+                      }
                       prizeSession={prizeSession}
-                      onResetReady={(resetFn) => { wheelResetRef.current = resetFn; }}
+                      onResetReady={(resetFn) => {
+                        wheelResetRef.current = resetFn;
+                      }}
                       layoutType={layoutType}
                       lightAnimationType={lightAnimationType}
                     />

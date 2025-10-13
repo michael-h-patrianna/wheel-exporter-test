@@ -4,20 +4,21 @@
  */
 
 import { logger, LogLevel, LogEntry } from '../logger';
+import { vi } from 'vitest';
 
 describe('logger', () => {
   let consoleSpy: {
-    log: jest.SpyInstance;
-    warn: jest.SpyInstance;
-    error: jest.SpyInstance;
+    log: ReturnType<typeof vi.spyOn>;
+    warn: ReturnType<typeof vi.spyOn>;
+    error: ReturnType<typeof vi.spyOn>;
   };
 
   beforeEach(() => {
     // Spy on console methods
     consoleSpy = {
-      log: jest.spyOn(console, 'log').mockImplementation(),
-      warn: jest.spyOn(console, 'warn').mockImplementation(),
-      error: jest.spyOn(console, 'error').mockImplementation(),
+      log: vi.spyOn(console, 'log').mockImplementation(() => {}),
+      warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
+      error: vi.spyOn(console, 'error').mockImplementation(() => {}),
     };
 
     // Reset logger to default configuration
@@ -32,7 +33,7 @@ describe('logger', () => {
     consoleSpy.log.mockRestore();
     consoleSpy.warn.mockRestore();
     consoleSpy.error.mockRestore();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Log levels', () => {
@@ -52,12 +53,8 @@ describe('logger', () => {
         expect(consoleSpy.log).toHaveBeenCalledWith(
           expect.stringContaining('[DEBUG] Debug message')
         );
-        expect(consoleSpy.log).toHaveBeenCalledWith(
-          expect.stringContaining('"key":"value"')
-        );
-        expect(consoleSpy.log).toHaveBeenCalledWith(
-          expect.stringContaining('"count":42')
-        );
+        expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"key":"value"'));
+        expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"count":42'));
       });
 
       it('should not log debug when minLevel is info', () => {
@@ -87,20 +84,14 @@ describe('logger', () => {
         logger.info('Info message');
 
         expect(consoleSpy.log).toHaveBeenCalledTimes(1);
-        expect(consoleSpy.log).toHaveBeenCalledWith(
-          expect.stringContaining('[INFO] Info message')
-        );
+        expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('[INFO] Info message'));
       });
 
       it('should log info messages with context', () => {
         logger.info('Info message', { userId: '123', action: 'login' });
 
-        expect(consoleSpy.log).toHaveBeenCalledWith(
-          expect.stringContaining('[INFO] Info message')
-        );
-        expect(consoleSpy.log).toHaveBeenCalledWith(
-          expect.stringContaining('"userId":"123"')
-        );
+        expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('[INFO] Info message'));
+        expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"userId":"123"'));
       });
 
       it('should log info when minLevel is debug', () => {
@@ -198,16 +189,14 @@ describe('logger', () => {
         expect(consoleSpy.error).toHaveBeenCalledWith(
           expect.stringContaining('[ERROR] Error message')
         );
-        expect(consoleSpy.error).toHaveBeenCalledWith(
-          expect.stringContaining('"code":500')
-        );
+        expect(consoleSpy.error).toHaveBeenCalledWith(expect.stringContaining('"code":500'));
       });
 
       it('should always log errors regardless of minLevel', () => {
         const levels: LogLevel[] = ['debug', 'info', 'warn', 'error'];
 
         levels.forEach((level) => {
-          jest.clearAllMocks();
+          vi.clearAllMocks();
           logger.configure({ minLevel: level });
           logger.error('Always appears');
 
@@ -221,17 +210,13 @@ describe('logger', () => {
     it('should log message without context', () => {
       logger.info('No context');
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.not.stringContaining('{}')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.not.stringContaining('{}'));
     });
 
     it('should log message with simple context', () => {
       logger.info('With context', { key: 'value' });
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"key":"value"')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"key":"value"'));
     });
 
     it('should log message with complex context', () => {
@@ -245,15 +230,9 @@ describe('logger', () => {
 
       logger.info('Complex context', context);
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"string":"text"')
-      );
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"number":42')
-      );
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"boolean":true')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"string":"text"'));
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"number":42'));
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"boolean":true'));
     });
 
     it('should handle null context gracefully', () => {
@@ -322,7 +301,7 @@ describe('logger', () => {
 
     describe('onLog callback configuration', () => {
       it('should call onLog callback when provided', () => {
-        const onLog = jest.fn();
+        const onLog = vi.fn();
         logger.configure({ onLog });
 
         logger.info('Test message', { key: 'value' });
@@ -339,7 +318,7 @@ describe('logger', () => {
       });
 
       it('should call onLog for all log levels', () => {
-        const onLog = jest.fn();
+        const onLog = vi.fn();
         logger.configure({ onLog });
 
         logger.debug('Debug');
@@ -348,26 +327,14 @@ describe('logger', () => {
         logger.error('Error');
 
         expect(onLog).toHaveBeenCalledTimes(4);
-        expect(onLog).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({ level: 'debug' })
-        );
-        expect(onLog).toHaveBeenNthCalledWith(
-          2,
-          expect.objectContaining({ level: 'info' })
-        );
-        expect(onLog).toHaveBeenNthCalledWith(
-          3,
-          expect.objectContaining({ level: 'warn' })
-        );
-        expect(onLog).toHaveBeenNthCalledWith(
-          4,
-          expect.objectContaining({ level: 'error' })
-        );
+        expect(onLog).toHaveBeenNthCalledWith(1, expect.objectContaining({ level: 'debug' }));
+        expect(onLog).toHaveBeenNthCalledWith(2, expect.objectContaining({ level: 'info' }));
+        expect(onLog).toHaveBeenNthCalledWith(3, expect.objectContaining({ level: 'warn' }));
+        expect(onLog).toHaveBeenNthCalledWith(4, expect.objectContaining({ level: 'error' }));
       });
 
       it('should call onLog even when console is disabled', () => {
-        const onLog = jest.fn();
+        const onLog = vi.fn();
         logger.configure({ enableConsole: false, onLog });
 
         logger.info('Test message');
@@ -377,7 +344,7 @@ describe('logger', () => {
       });
 
       it('should not call onLog when log level is below minLevel', () => {
-        const onLog = jest.fn();
+        const onLog = vi.fn();
         logger.configure({ minLevel: 'warn', onLog });
 
         logger.debug('Debug');
@@ -387,7 +354,7 @@ describe('logger', () => {
       });
 
       it('should include correct timestamp in onLog callback', () => {
-        const onLog = jest.fn();
+        const onLog = vi.fn();
         logger.configure({ onLog });
 
         const beforeTime = Date.now();
@@ -436,9 +403,7 @@ describe('logger', () => {
       logger.configure({ minLevel: 'debug' });
       logger.debug('Debug in development');
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('[DEBUG]')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('[DEBUG]'));
     });
 
     it('should respect info level in production', () => {
@@ -447,9 +412,7 @@ describe('logger', () => {
       logger.info('Should appear');
 
       expect(consoleSpy.log).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('[INFO]')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('[INFO]'));
     });
   });
 
@@ -493,12 +456,8 @@ describe('logger', () => {
 
       childLogger.info('Child log');
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"operation":"test"')
-      );
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"userId":"123"')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"operation":"test"'));
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"userId":"123"'));
     });
 
     it('should merge child context with additional context', () => {
@@ -506,12 +465,8 @@ describe('logger', () => {
 
       childLogger.info('Child log', { requestId: 'abc123' });
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"operation":"test"')
-      );
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"requestId":"abc123"')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"operation":"test"'));
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"requestId":"abc123"'));
     });
 
     it('should allow child context to override base context', () => {
@@ -519,12 +474,8 @@ describe('logger', () => {
 
       childLogger.info('Override', { key: 'override' });
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"key":"override"')
-      );
-      expect(consoleSpy.log).not.toHaveBeenCalledWith(
-        expect.stringContaining('"key":"base"')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"key":"override"'));
+      expect(consoleSpy.log).not.toHaveBeenCalledWith(expect.stringContaining('"key":"base"'));
     });
 
     it('should support all log levels in child logger', () => {
@@ -540,15 +491,9 @@ describe('logger', () => {
       expect(consoleSpy.error).toHaveBeenCalledTimes(1);
 
       // All should include the base context
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"context":"child"')
-      );
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        expect.stringContaining('"context":"child"')
-      );
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        expect.stringContaining('"context":"child"')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"context":"child"'));
+      expect(consoleSpy.warn).toHaveBeenCalledWith(expect.stringContaining('"context":"child"'));
+      expect(consoleSpy.error).toHaveBeenCalledWith(expect.stringContaining('"context":"child"'));
     });
 
     it('should respect parent logger configuration', () => {
@@ -568,9 +513,7 @@ describe('logger', () => {
 
       childLogger.info('Test', { key: 'value' });
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('"key":"value"')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('"key":"value"'));
     });
   });
 
@@ -598,17 +541,13 @@ describe('logger', () => {
     it('should include message text', () => {
       logger.info('Custom message text');
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('Custom message text')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('Custom message text'));
     });
 
     it('should include JSON stringified context', () => {
       logger.info('Test', { key: 'value', number: 42 });
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringMatching(/"key":"value"/)
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringMatching(/"key":"value"/));
     });
 
     it('should format message without context correctly', () => {
@@ -630,9 +569,7 @@ describe('logger', () => {
       const longMessage = 'A'.repeat(10000);
       logger.info(longMessage);
 
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining(longMessage)
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining(longMessage));
     });
 
     it('should handle special characters in message', () => {

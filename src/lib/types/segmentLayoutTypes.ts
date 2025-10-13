@@ -14,8 +14,7 @@ import type { WheelSegmentTypeStyles } from '../types';
  * Infrastructure is ready to support multiple layout strategies.
  * Additional layouts can be added in the future.
  */
-export type SegmentLayoutType =
-  | 'original';     // Current implementation (mixed layouts based on prize type)
+export type SegmentLayoutType = 'original'; // Current implementation (mixed layouts based on prize type)
 
 /**
  * Common props passed to all layout strategies
@@ -62,6 +61,6 @@ export const SEGMENT_LAYOUTS: SegmentLayoutInfo[] = [
   {
     id: 'original',
     name: 'Original',
-    description: 'Mixed layout with text and images based on prize type'
-  }
+    description: 'Mixed layout with text and images based on prize type',
+  },
 ];

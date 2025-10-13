@@ -6,34 +6,33 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useWheelStateMachine } from '../useWheelStateMachine';
 import { logger } from '../../services/logger';
+import { vi } from 'vitest';
 
 // Mock logger to prevent console spam and verify telemetry
-jest.mock('../../services/logger', () => ({
+vi.mock('../../services/logger', () => ({
   logger: {
-    info: jest.fn(),
-    debug: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+    info: vi.fn(),
+    debug: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
 describe('useWheelStateMachine', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
     // Clear all timers without running them to avoid act warnings
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   describe('Initial State', () => {
     it('should start in IDLE state', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       expect(result.current.state).toBe('IDLE');
       expect(result.current.rotation).toBe(0);
@@ -42,9 +41,7 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should provide startSpin and reset functions', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       expect(typeof result.current.startSpin).toBe('function');
       expect(typeof result.current.reset).toBe('function');
@@ -53,9 +50,7 @@ describe('useWheelStateMachine', () => {
 
   describe('State Transitions - IDLE -> SPINNING', () => {
     it('should transition from IDLE to SPINNING when startSpin is called', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
@@ -66,9 +61,7 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should log state transition to SPINNING', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
@@ -85,9 +78,7 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should not transition if already spinning', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
@@ -109,16 +100,14 @@ describe('useWheelStateMachine', () => {
 
   describe('State Transitions - SPINNING -> COMPLETE', () => {
     it('should transition to COMPLETE after 8 seconds', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
       });
 
       act(() => {
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -126,7 +115,7 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should call onSpinComplete callback with target segment', () => {
-      const onSpinComplete = jest.fn();
+      const onSpinComplete = vi.fn();
       const { result } = renderHook(() =>
         useWheelStateMachine({ segmentCount: 8, onSpinComplete })
       );
@@ -136,7 +125,7 @@ describe('useWheelStateMachine', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(onSpinComplete).toHaveBeenCalledWith(expect.any(Number));
@@ -144,18 +133,16 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should log state transition to COMPLETE', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
       });
 
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       act(() => {
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(logger.info).toHaveBeenCalledWith(
@@ -171,16 +158,14 @@ describe('useWheelStateMachine', () => {
 
   describe('State Transitions - COMPLETE -> IDLE', () => {
     it('should transition back to IDLE when reset is called', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
       });
 
       act(() => {
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -194,16 +179,14 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should log state transition to IDLE', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       act(() => {
         result.current.reset();
@@ -221,13 +204,11 @@ describe('useWheelStateMachine', () => {
 
   describe('State Transitions - COMPLETE -> SPINNING', () => {
     it('should allow starting a new spin from COMPLETE state', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -241,16 +222,14 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should log auto-reset when spinning from COMPLETE', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       act(() => {
         result.current.startSpin();
@@ -269,9 +248,7 @@ describe('useWheelStateMachine', () => {
 
   describe('Rotation Calculations', () => {
     it('should calculate rotation for 8 segments', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
@@ -283,10 +260,10 @@ describe('useWheelStateMachine', () => {
       expect(result.current.targetRotation).toBeGreaterThanOrEqual(1440);
     });
 
-    it('should account for 90° offset to align with segment rendering at 12 o\'clock', () => {
+    it("should account for 90° offset to align with segment rendering at 12 o'clock", () => {
       // Mock Math.random to target segment 0
       const originalRandom = Math.random;
-      Math.random = jest.fn(() => 0.1); // Will select segment 0
+      Math.random = vi.fn(() => 0.1) as any; // Will select segment 0
 
       const { result } = renderHook(() =>
         useWheelStateMachine({ segmentCount: 8, winningSegmentIndex: 0 })
@@ -332,9 +309,7 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should calculate rotation for 12 segments', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 12 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 12 }));
 
       act(() => {
         result.current.startSpin();
@@ -345,9 +320,7 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should update rotation to final value when COMPLETE', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
@@ -356,7 +329,7 @@ describe('useWheelStateMachine', () => {
       const targetRotation = result.current.targetRotation;
 
       act(() => {
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -366,9 +339,7 @@ describe('useWheelStateMachine', () => {
 
   describe('Deterministic Behavior', () => {
     it('should always select a segment within valid range', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       // Run multiple spins to ensure randomness is within bounds
       for (let i = 0; i < 10; i++) {
@@ -377,12 +348,12 @@ describe('useWheelStateMachine', () => {
             result.current.reset();
           }
           result.current.startSpin();
-          jest.advanceTimersByTime(8000);
+          vi.advanceTimersByTime(8000);
         });
 
         // Check that debug log was called with valid segment
-        const debugCalls = (logger.debug as jest.Mock).mock.calls;
-        const spinCall = debugCalls.find(call => call[0] === 'Starting wheel spin');
+        const debugCalls = vi.mocked(logger.debug).mock.calls;
+        const spinCall = debugCalls.find((call) => call[0] === 'Starting wheel spin');
         if (spinCall) {
           const segment = spinCall[1].targetSegment;
           expect(segment).toBeGreaterThanOrEqual(0);
@@ -394,11 +365,9 @@ describe('useWheelStateMachine', () => {
     it('should produce consistent rotation for same segment and count', () => {
       // Mock Math.random to produce deterministic results
       const originalRandom = Math.random;
-      Math.random = jest.fn(() => 0.5);
+      Math.random = vi.fn(() => 0.5) as any;
 
-      const { result: result1 } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result: result1 } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result1.current.startSpin();
@@ -406,9 +375,7 @@ describe('useWheelStateMachine', () => {
 
       const rotation1 = result1.current.targetRotation;
 
-      const { result: result2 } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result: result2 } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result2.current.startSpin();
@@ -425,16 +392,14 @@ describe('useWheelStateMachine', () => {
 
   describe('Timeout Cleanup', () => {
     it('should cleanup timeouts on unmount', () => {
-      const { result, unmount } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result, unmount } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
       });
 
       // Spy on clearTimeout
-      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
 
       unmount();
 
@@ -443,15 +408,13 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should cleanup timeouts when reset is called', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
       });
 
-      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
 
       act(() => {
         result.current.reset();
@@ -462,7 +425,7 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should not trigger transitions after cleanup', () => {
-      const onSpinComplete = jest.fn();
+      const onSpinComplete = vi.fn();
       const { result, unmount } = renderHook(() =>
         useWheelStateMachine({ segmentCount: 8, onSpinComplete })
       );
@@ -474,7 +437,7 @@ describe('useWheelStateMachine', () => {
       unmount();
 
       act(() => {
-        jest.advanceTimersByTime(10000);
+        vi.advanceTimersByTime(10000);
       });
 
       // Callback should not be called after unmount
@@ -484,9 +447,7 @@ describe('useWheelStateMachine', () => {
 
   describe('Edge Cases', () => {
     it('should handle rapid start/reset cycles', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
@@ -500,9 +461,7 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should handle segmentCount of 1', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 1 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 1 }));
 
       act(() => {
         result.current.startSpin();
@@ -513,35 +472,29 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should handle large segmentCount', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 100 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 100 }));
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
     });
 
     it('should not crash with missing onSpinComplete callback', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       expect(() => {
         act(() => {
           result.current.startSpin();
-          jest.advanceTimersByTime(8000);
+          vi.advanceTimersByTime(8000);
         });
       }).not.toThrow();
     });
 
     it('should warn on invalid transitions', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       // Start a spin
       act(() => {
@@ -562,9 +515,7 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should allow reset from SPINNING state', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       // Start a spin
       act(() => {
@@ -595,14 +546,12 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should reset rotation to 0 from any state', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       // Spin to accumulate rotation
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -620,14 +569,14 @@ describe('useWheelStateMachine', () => {
 
   describe('Integration with Different Wheel Configurations', () => {
     it('should work with 6-segment wheel', async () => {
-      const onSpinComplete = jest.fn();
+      const onSpinComplete = vi.fn();
       const { result } = renderHook(() =>
         useWheelStateMachine({ segmentCount: 6, onSpinComplete })
       );
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -638,14 +587,14 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should work with 16-segment wheel', async () => {
-      const onSpinComplete = jest.fn();
+      const onSpinComplete = vi.fn();
       const { result } = renderHook(() =>
         useWheelStateMachine({ segmentCount: 16, onSpinComplete })
       );
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');
@@ -658,9 +607,7 @@ describe('useWheelStateMachine', () => {
 
   describe('isSpinning Flag', () => {
     it('should be true during SPINNING state', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
@@ -670,21 +617,17 @@ describe('useWheelStateMachine', () => {
     });
 
     it('should be false during IDLE state', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       expect(result.current.isSpinning).toBe(false);
     });
 
     it('should be false during COMPLETE state', () => {
-      const { result } = renderHook(() =>
-        useWheelStateMachine({ segmentCount: 8 })
-      );
+      const { result } = renderHook(() => useWheelStateMachine({ segmentCount: 8 }));
 
       act(() => {
         result.current.startSpin();
-        jest.advanceTimersByTime(8000);
+        vi.advanceTimersByTime(8000);
       });
 
       expect(result.current.state).toBe('COMPLETE');

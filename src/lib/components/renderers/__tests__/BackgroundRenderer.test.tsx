@@ -5,6 +5,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BackgroundRenderer } from '../BackgroundRenderer';
+import { vi } from 'vitest';
 
 describe('BackgroundRenderer', () => {
   const defaultProps = {
@@ -46,9 +47,7 @@ describe('BackgroundRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(
-      <BackgroundRenderer {...defaultProps} scale={0.5} />
-    );
+    const { container } = render(<BackgroundRenderer {...defaultProps} scale={0.5} />);
 
     const backgroundDiv = container.querySelector('.background-component');
     expect(backgroundDiv).toHaveStyle({
@@ -79,7 +78,7 @@ describe('BackgroundRenderer', () => {
   });
 
   it('should handle image load errors gracefully', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     render(<BackgroundRenderer {...defaultProps} />);
     const img = screen.getByAltText('Background');
@@ -105,9 +104,7 @@ describe('BackgroundRenderer', () => {
     ];
 
     testCases.forEach(({ scale, expectedWidth, expectedHeight }) => {
-      const { container } = render(
-        <BackgroundRenderer {...defaultProps} scale={scale} />
-      );
+      const { container } = render(<BackgroundRenderer {...defaultProps} scale={scale} />);
 
       const backgroundDiv = container.querySelector('.background-component');
       expect(backgroundDiv).toHaveStyle({

@@ -7,11 +7,12 @@ import React, { ErrorInfo } from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { logger } from '../../services/logger';
+import { vi } from 'vitest';
 
 // Mock the logger
-jest.mock('../../services/logger', () => ({
+vi.mock('../../services/logger', () => ({
   logger: {
-    error: jest.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -23,7 +24,7 @@ interface ThrowErrorProps {
 
 const ThrowError: React.FC<ThrowErrorProps> = ({
   shouldThrow = true,
-  errorMessage = 'Test error'
+  errorMessage = 'Test error',
 }) => {
   if (shouldThrow) {
     throw new Error(errorMessage);
@@ -35,7 +36,7 @@ describe('ErrorBoundary', () => {
   // Suppress console.error for cleaner test output
   const originalError = console.error;
   beforeAll(() => {
-    console.error = jest.fn();
+    console.error = vi.fn();
   });
 
   afterAll(() => {
@@ -43,7 +44,7 @@ describe('ErrorBoundary', () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Normal rendering (no errors)', () => {
@@ -100,7 +101,7 @@ describe('ErrorBoundary', () => {
     });
 
     it('should call onError callback when provided', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       render(
         <ErrorBoundary onError={onError}>
@@ -178,7 +179,9 @@ describe('ErrorBoundary', () => {
         </ErrorBoundary>
       );
 
-      expect(screen.getByText(/An error occurred while rendering the wheel component/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/An error occurred while rendering the wheel component/)
+      ).toBeInTheDocument();
     });
 
     it('should render Try Again button', () => {
@@ -312,7 +315,7 @@ describe('ErrorBoundary', () => {
     });
 
     it('should call onReset callback when reset button is clicked', () => {
-      const onReset = jest.fn();
+      const onReset = vi.fn();
 
       render(
         <ErrorBoundary onReset={onReset}>

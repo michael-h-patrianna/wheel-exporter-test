@@ -22,17 +22,22 @@
 /* Phase 4 (80-100%): Settle on first bulb */
 @keyframes spin-accelerate-bulb {
   /* Phase 1: Sequential chase - ON for 8% */
-  0%, 92% {
+  0%,
+  92% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
   1% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 8px var(--bulb-on-glow80), 0 0 12px var(--bulb-on-glow60);
+    box-shadow:
+      0 0 8px var(--bulb-on-glow80),
+      0 0 12px var(--bulb-on-glow60);
   }
   4% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 8px var(--bulb-on-glow80), 0 0 12px var(--bulb-on-glow60);
+    box-shadow:
+      0 0 8px var(--bulb-on-glow80),
+      0 0 12px var(--bulb-on-glow60);
   }
   6% {
     background-color: var(--bulb-blend70);
@@ -44,15 +49,20 @@
   }
 
   /* Phase 2: All bulbs ON (blur effect) */
-  30%, 45% {
+  30%,
+  45% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 18px var(--bulb-on-glow80);
+    box-shadow:
+      0 0 12px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 18px var(--bulb-on-glow80);
   }
 
   /* Phase 3: Back to sequential chase */
   55% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 8px var(--bulb-on-glow80), 0 0 12px var(--bulb-on-glow60);
+    box-shadow:
+      0 0 8px var(--bulb-on-glow80),
+      0 0 12px var(--bulb-on-glow60);
   }
   57% {
     background-color: var(--bulb-blend70);
@@ -75,23 +85,29 @@
 }
 
 @keyframes spin-accelerate-bulb-winner {
-  0%, 79% {
+  0%,
+  79% {
     background-color: var(--bulb-off);
     box-shadow: 0 0 2px var(--bulb-off-glow30);
   }
   80% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 25px var(--bulb-on-glow80);
+    box-shadow:
+      0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 25px var(--bulb-on-glow80);
   }
   100% {
     background-color: var(--bulb-on);
-    box-shadow: 0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent), 0 0 25px var(--bulb-on-glow80);
+    box-shadow:
+      0 0 15px color-mix(in srgb, var(--bulb-on) 100%, transparent),
+      0 0 25px var(--bulb-on-glow80);
   }
 }
 
 @keyframes spin-accelerate-glow {
   /* Phase 1: Sequential */
-  0%, 92% {
+  0%,
+  92% {
     opacity: 0;
   }
   1% {
@@ -108,7 +124,8 @@
   }
 
   /* Phase 2: All ON */
-  30%, 45% {
+  30%,
+  45% {
     opacity: 1;
   }
 
@@ -119,7 +136,8 @@
   57% {
     opacity: 0.4;
   }
-  59%, 100% {
+  59%,
+  100% {
     opacity: 0;
   }
 }
@@ -130,13 +148,15 @@
 }
 
 @keyframes spin-accelerate-glow-winner {
-  0%, 79% {
+  0%,
+  79% {
     opacity: 0;
   }
   80% {
     opacity: 1;
   }
-  86%, 100% {
+  86%,
+  100% {
     opacity: 0.95;
   }
 }

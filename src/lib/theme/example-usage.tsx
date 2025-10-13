@@ -10,23 +10,13 @@
  */
 
 import React from 'react';
-import {
-  spacing,
-  colors,
-  borderRadius,
-  elevation,
-  typography,
-  duration,
-  easing,
-} from './index';
+import { spacing, colors, borderRadius, elevation, typography, duration, easing } from './index';
 
 /**
  * Example 1: Basic Card with Elevation
  * Demonstrates border-based elevation instead of box-shadow
  */
-export const ExampleCard: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const ExampleCard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div
       style={{
@@ -93,9 +83,7 @@ export const ThemedButton: React.FC<{
       onMouseLeave={() => setIsHovered(false)}
       style={{
         padding: `${spacing.sm}px ${spacing.md}px`,
-        backgroundColor: isHovered
-          ? colors.accent.primary
-          : colors.accent.secondary,
+        backgroundColor: isHovered ? colors.accent.primary : colors.accent.secondary,
         color: colors.text.inverse,
         border: 'none',
         borderRadius: borderRadius.md,
@@ -261,10 +249,7 @@ interface SpacerProps {
   direction?: 'horizontal' | 'vertical';
 }
 
-export const Spacer: React.FC<SpacerProps> = ({
-  size = 'md',
-  direction = 'vertical',
-}) => {
+export const Spacer: React.FC<SpacerProps> = ({ size = 'md', direction = 'vertical' }) => {
   const spacingValue = spacing[size];
 
   return (

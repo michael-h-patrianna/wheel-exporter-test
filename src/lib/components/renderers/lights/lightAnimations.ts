@@ -60,7 +60,8 @@ export const LIGHT_ANIMATIONS: readonly LightAnimationMetadata[] = [
   {
     id: 'alternating-carnival',
     title: 'Alternating Carnival',
-    description: 'Classic carnival pattern with even/odd bulbs alternating on and off with realistic glow and fadeout',
+    description:
+      'Classic carnival pattern with even/odd bulbs alternating on and off with realistic glow and fadeout',
     duration: 1.2,
     cssFile: 'alternating-carnival',
   },
@@ -74,21 +75,24 @@ export const LIGHT_ANIMATIONS: readonly LightAnimationMetadata[] = [
   {
     id: 'accelerating-spin',
     title: 'Accelerating Spin',
-    description: 'Wheel of fortune spin: starts slow, accelerates to blur, decelerates, and settles on winner',
+    description:
+      'Wheel of fortune spin: starts slow, accelerates to blur, decelerates, and settles on winner',
     duration: 5.0,
     cssFile: 'accelerating-spin',
   },
   {
     id: 'reverse-chase-pulse',
     title: 'Reverse Chase Pulse',
-    description: 'Counter-clockwise chase followed by faster clockwise motion, then synchronized pulses before revealing winner',
+    description:
+      'Counter-clockwise chase followed by faster clockwise motion, then synchronized pulses before revealing winner',
     duration: 7.0,
     cssFile: 'reverse-chase-pulse',
   },
   {
     id: 'random-sparkle',
     title: 'Random Sparkle',
-    description: 'Unpredictable twinkling creates excitement and anticipation like stars in the night sky',
+    description:
+      'Unpredictable twinkling creates excitement and anticipation like stars in the night sky',
     duration: 8.0,
     cssFile: 'random-sparkle',
   },
@@ -122,7 +126,7 @@ export const LIGHT_ANIMATIONS: readonly LightAnimationMetadata[] = [
  * @returns Animation metadata or undefined if not found
  */
 export function getAnimationById(id: LightAnimationType): LightAnimationMetadata | undefined {
-  return LIGHT_ANIMATIONS.find(anim => anim.id === id);
+  return LIGHT_ANIMATIONS.find((anim) => anim.id === id);
 }
 
 /**

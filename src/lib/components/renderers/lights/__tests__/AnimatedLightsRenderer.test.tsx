@@ -34,22 +34,12 @@ describe('AnimatedLightsRenderer', () => {
 
   describe('rendering', () => {
     it('should render without crashing', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
       expect(container.firstChild).toBeTruthy();
     });
 
     it('should render correct number of bulbs', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
       expect(bulbs.length).toBe(3);
@@ -61,24 +51,14 @@ describe('AnimatedLightsRenderer', () => {
         positions: Array.from({ length: 20 }, (_, i) => ({ x: i * 10, y: i * 10 })),
       };
 
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={manyLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={manyLights} scale={1} />);
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
       expect(bulbs.length).toBe(20);
     });
 
     it('should return null when no lights provided', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={undefined}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={undefined} scale={1} />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -89,12 +69,7 @@ describe('AnimatedLightsRenderer', () => {
         positions: [],
       };
 
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={emptyLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={emptyLights} scale={1} />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -105,12 +80,7 @@ describe('AnimatedLightsRenderer', () => {
         positions: undefined,
       } as unknown as LightsComponent;
 
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={noPositions}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={noPositions} scale={1} />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -119,64 +89,47 @@ describe('AnimatedLightsRenderer', () => {
   describe('positioning and scaling', () => {
     it('should apply scale to bulb positions', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={2}
-          bulbSize={10}
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={2} bulbSize={10} />
       );
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
       const firstBulb = bulbs[0] as HTMLElement;
 
       // Original position is 100, 50
-      // With scale 2 and bulbSize 10: position.x * scale - (bulbSize * scale / 2)
-      // = 100 * 2 - (10 * 2 / 2) = 200 - 10 = 190
-      expect(firstBulb.style.left).toBe('190px');
-      expect(firstBulb.style.top).toBe('90px');
+      // With scale 2: position.x * scale = 100 * 2 = 200
+      expect(firstBulb.style.left).toBe('200px');
+      expect(firstBulb.style.top).toBe('100px');
     });
 
     it('should apply scale 1 correctly', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          bulbSize={10}
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} bulbSize={10} />
       );
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
       const firstBulb = bulbs[0] as HTMLElement;
 
-      // position.x * 1 - (10 * 1 / 2) = 100 - 5 = 95
-      expect(firstBulb.style.left).toBe('95px');
-      expect(firstBulb.style.top).toBe('45px');
+      // position.x * 1 = 100
+      expect(firstBulb.style.left).toBe('100px');
+      expect(firstBulb.style.top).toBe('50px');
     });
 
     it('should apply fractional scale', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={0.5}
-          bulbSize={10}
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={0.5} bulbSize={10} />
       );
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
       const firstBulb = bulbs[0] as HTMLElement;
 
-      // position.x * 0.5 - (10 * 0.5 / 2) = 50 - 2.5 = 47.5
-      expect(firstBulb.style.left).toBe('47.5px');
-      expect(firstBulb.style.top).toBe('22.5px');
+      // position.x * 0.5 = 50
+      expect(firstBulb.style.left).toBe('50px');
+      expect(firstBulb.style.top).toBe('25px');
     });
 
     it('should scale bulb size', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={2}
-          bulbSize={12}
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={2} bulbSize={12} />
       );
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
@@ -188,11 +141,7 @@ describe('AnimatedLightsRenderer', () => {
 
     it('should use custom bulb size', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          bulbSize={20}
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} bulbSize={20} />
       );
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
@@ -204,12 +153,7 @@ describe('AnimatedLightsRenderer', () => {
 
   describe('CSS custom properties', () => {
     it('should set color CSS properties on container', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
       const style = rendererContainer.style;
@@ -225,12 +169,7 @@ describe('AnimatedLightsRenderer', () => {
     });
 
     it('should set all blend color properties', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
       const style = rendererContainer.style;
@@ -246,12 +185,7 @@ describe('AnimatedLightsRenderer', () => {
     });
 
     it('should set all glow color properties', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
       const style = rendererContainer.style;
@@ -273,12 +207,7 @@ describe('AnimatedLightsRenderer', () => {
     });
 
     it('should set off glow properties', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
       const style = rendererContainer.style;
@@ -289,12 +218,7 @@ describe('AnimatedLightsRenderer', () => {
     });
 
     it('should set off tint properties', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
       const style = rendererContainer.style;
@@ -323,11 +247,7 @@ describe('AnimatedLightsRenderer', () => {
 
     it('should calculate delay for sequential-chase', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          animationType="sequential-chase"
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} animationType="sequential-chase" />
       );
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
@@ -339,11 +259,7 @@ describe('AnimatedLightsRenderer', () => {
 
     it('should set delay to 0 for "none" animation', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          animationType="none"
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} animationType="none" />
       );
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
@@ -359,29 +275,21 @@ describe('AnimatedLightsRenderer', () => {
       };
 
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={manyLights}
-          scale={1}
-          animationType="comet-trail"
-        />
+        <AnimatedLightsRenderer lights={manyLights} scale={1} animationType="comet-trail" />
       );
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
       const delay = rendererContainer.style.getPropertyValue('--delay-per-bulb');
 
-      // Duration is 2.5s, 100 bulbs = 0.025s per bulb
-      expect(delay).toBe('0.025s');
+      // Duration is 3s (comet-trail), 100 bulbs = 0.03s per bulb
+      expect(delay).toBe('0.03s');
     });
   });
 
   describe('animation types', () => {
     it('should apply "none" animation type', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          animationType="none"
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} animationType="none" />
       );
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
@@ -403,11 +311,7 @@ describe('AnimatedLightsRenderer', () => {
 
     it('should apply "sequential-chase" animation type', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          animationType="sequential-chase"
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} animationType="sequential-chase" />
       );
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
@@ -415,12 +319,7 @@ describe('AnimatedLightsRenderer', () => {
     });
 
     it('should default to "none" when not specified', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
       const delay = rendererContainer.style.getPropertyValue('--delay-per-bulb');
@@ -431,11 +330,7 @@ describe('AnimatedLightsRenderer', () => {
   describe('carnival waltz groups', () => {
     it('should add group classes for carnival-waltz', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          animationType="carnival-waltz"
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} animationType="carnival-waltz" />
       );
 
       const wrappers = container.querySelectorAll('[class*="light-bulb__wrapper--beat-"]');
@@ -450,11 +345,7 @@ describe('AnimatedLightsRenderer', () => {
       };
 
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={sixLights}
-          scale={1}
-          animationType="carnival-waltz"
-        />
+        <AnimatedLightsRenderer lights={sixLights} scale={1} animationType="carnival-waltz" />
       );
 
       const beat1 = container.querySelectorAll('.light-bulb__wrapper--beat-1');
@@ -469,11 +360,7 @@ describe('AnimatedLightsRenderer', () => {
 
     it('should not add group classes for other animations', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          animationType="sequential-chase"
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} animationType="sequential-chase" />
       );
 
       const wrappers = container.querySelectorAll('[class*="light-bulb__wrapper--beat-"]');
@@ -484,11 +371,7 @@ describe('AnimatedLightsRenderer', () => {
   describe('dual convergence halves', () => {
     it('should add half classes for dual-convergence', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          animationType="dual-convergence"
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} animationType="dual-convergence" />
       );
 
       const firstHalf = container.querySelectorAll('.light-bulb__wrapper--first-half');
@@ -506,11 +389,7 @@ describe('AnimatedLightsRenderer', () => {
       };
 
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={fourLights}
-          scale={1}
-          animationType="dual-convergence"
-        />
+        <AnimatedLightsRenderer lights={fourLights} scale={1} animationType="dual-convergence" />
       );
 
       const firstHalf = container.querySelectorAll('.light-bulb__wrapper--first-half');
@@ -522,11 +401,7 @@ describe('AnimatedLightsRenderer', () => {
 
     it('should not add half classes for other animations', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-          animationType="sequential-chase"
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} animationType="sequential-chase" />
       );
 
       const halves = container.querySelectorAll('[class*="light-bulb__wrapper--"][class*="-half"]');
@@ -536,12 +411,7 @@ describe('AnimatedLightsRenderer', () => {
 
   describe('accessibility', () => {
     it('should have proper ARIA attributes', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer');
       expect(rendererContainer?.getAttribute('role')).toBe('img');
@@ -549,12 +419,7 @@ describe('AnimatedLightsRenderer', () => {
     });
 
     it('should have pointer-events none', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
       expect(rendererContainer.style.pointerEvents).toBe('none');
@@ -563,12 +428,7 @@ describe('AnimatedLightsRenderer', () => {
 
   describe('container styling', () => {
     it('should have correct positioning styles', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
       expect(rendererContainer.style.position).toBe('absolute');
@@ -579,41 +439,30 @@ describe('AnimatedLightsRenderer', () => {
     });
 
     it('should have correct z-index', () => {
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={mockLights} scale={1} />);
 
       const rendererContainer = container.querySelector('.animated-lights-renderer') as HTMLElement;
-      expect(rendererContainer.style.zIndex).toBe('100');
+      expect(rendererContainer.style.zIndex).toBe('17');
     });
   });
 
   describe('color calculation', () => {
     it('should recalculate colors when theme color changes', () => {
       const { container, rerender } = render(
-        <AnimatedLightsRenderer
-          lights={mockLights}
-          scale={1}
-        />
+        <AnimatedLightsRenderer lights={mockLights} scale={1} />
       );
 
-      const firstColor = (container.querySelector('.animated-lights-renderer') as HTMLElement)
-        .style.getPropertyValue('--bulb-on');
+      const firstColor = (
+        container.querySelector('.animated-lights-renderer') as HTMLElement
+      ).style.getPropertyValue('--bulb-on');
 
       // Change color
       const newLights = { ...mockLights, color: '#ff0000' };
-      rerender(
-        <AnimatedLightsRenderer
-          lights={newLights}
-          scale={1}
-        />
-      );
+      rerender(<AnimatedLightsRenderer lights={newLights} scale={1} />);
 
-      const secondColor = (container.querySelector('.animated-lights-renderer') as HTMLElement)
-        .style.getPropertyValue('--bulb-on');
+      const secondColor = (
+        container.querySelector('.animated-lights-renderer') as HTMLElement
+      ).style.getPropertyValue('--bulb-on');
 
       expect(firstColor).not.toBe(secondColor);
     });
@@ -626,12 +475,7 @@ describe('AnimatedLightsRenderer', () => {
         positions: [{ x: 100, y: 100 }],
       };
 
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={singleLight}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={singleLight} scale={1} />);
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
       expect(bulbs.length).toBe(1);
@@ -643,12 +487,7 @@ describe('AnimatedLightsRenderer', () => {
         positions: Array.from({ length: 1000 }, (_, i) => ({ x: i, y: i })),
       };
 
-      const { container } = render(
-        <AnimatedLightsRenderer
-          lights={manyLights}
-          scale={1}
-        />
-      );
+      const { container } = render(<AnimatedLightsRenderer lights={manyLights} scale={1} />);
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
       expect(bulbs.length).toBe(1000);

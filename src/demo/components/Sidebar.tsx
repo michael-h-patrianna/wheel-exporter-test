@@ -3,7 +3,10 @@ import { ExtractedAssets } from '../../lib';
 import { PrizeTable } from '../../lib/components/prize/PrizeTable';
 import { type PrizeProviderResult } from '../../lib/services/prizeProvider';
 import { SEGMENT_LAYOUTS, type SegmentLayoutType } from '../../lib/types/segmentLayoutTypes';
-import { getAllAnimations, type LightAnimationType } from '../../lib/components/renderers/lights/lightAnimations';
+import {
+  getAllAnimations,
+  type LightAnimationType,
+} from '../../lib/components/renderers/lights/lightAnimations';
 
 type ComponentVisibilityType = {
   background: boolean;
@@ -69,9 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="file-input-hidden"
             disabled={isLoading}
           />
-          <span className="file-input-button">
-            {isLoading ? 'Loading...' : 'Choose ZIP File'}
-          </span>
+          <span className="file-input-button">{isLoading ? 'Loading...' : 'Choose ZIP File'}</span>
         </label>
         {isLoading && <div className="loading-message">Loading wheel theme...</div>}
         {error && <div className="error-message">{error}</div>}
@@ -123,15 +124,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   value={layoutType}
                   onChange={(e) => onLayoutTypeChange(e.target.value as SegmentLayoutType)}
                 >
-                  {SEGMENT_LAYOUTS.map(layout => (
+                  {SEGMENT_LAYOUTS.map((layout) => (
                     <option key={layout.id} value={layout.id}>
                       {layout.name}
                     </option>
                   ))}
                 </select>
-                <small>
-                  {SEGMENT_LAYOUTS.find(l => l.id === layoutType)?.description}
-                </small>
+                <small>{SEGMENT_LAYOUTS.find((l) => l.id === layoutType)?.description}</small>
               </label>
             </div>
             <div className="control-group">
@@ -141,14 +140,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   value={lightAnimationType}
                   onChange={(e) => onLightAnimationTypeChange(e.target.value as LightAnimationType)}
                 >
-                  {getAllAnimations().map(animation => (
+                  {getAllAnimations().map((animation) => (
                     <option key={animation.id} value={animation.id}>
                       {animation.title}
                     </option>
                   ))}
                 </select>
                 <small>
-                  {getAllAnimations().find(a => a.id === lightAnimationType)?.description}
+                  {getAllAnimations().find((a) => a.id === lightAnimationType)?.description}
                 </small>
               </label>
             </div>
@@ -162,7 +161,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <strong>ID:</strong> {extractedAssets.wheelData.wheelId}
               </div>
               <div className="info-item">
-                <strong>Frame Size:</strong> {extractedAssets.wheelData.frameSize.width} × {extractedAssets.wheelData.frameSize.height}
+                <strong>Frame Size:</strong> {extractedAssets.wheelData.frameSize.width} ×{' '}
+                {extractedAssets.wheelData.frameSize.height}
               </div>
               <div className="info-item">
                 <strong>Version:</strong> {extractedAssets.wheelData.metadata.version}
@@ -176,79 +176,132 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => onToggleComponentVisibility('background')}
                 disabled={!extractedAssets.backgroundImage}
               >
-                Background {extractedAssets.backgroundImage ? (componentVisibility.background ? '👁' : '👁‍🗨') : '✗'}
+                Background{' '}
+                {extractedAssets.backgroundImage
+                  ? componentVisibility.background
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
               <button
                 className={`component-toggle ${extractedAssets.wheelData.header ? 'component-present' : 'component-missing'} ${!componentVisibility.header ? 'component-hidden' : ''}`}
                 onClick={() => onToggleComponentVisibility('header')}
                 disabled={!extractedAssets.wheelData.header}
               >
-                Header {extractedAssets.wheelData.header ? (componentVisibility.header ? '👁' : '👁‍🗨') : '✗'}
+                Header{' '}
+                {extractedAssets.wheelData.header
+                  ? componentVisibility.header
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
               <button
                 className={`component-toggle ${extractedAssets.wheelData.wheelBg ? 'component-present' : 'component-missing'} ${!componentVisibility.wheelBg ? 'component-hidden' : ''}`}
                 onClick={() => onToggleComponentVisibility('wheelBg')}
                 disabled={!extractedAssets.wheelData.wheelBg}
               >
-                Wheel Bg {extractedAssets.wheelData.wheelBg ? (componentVisibility.wheelBg ? '👁' : '👁‍🗨') : '✗'}
+                Wheel Bg{' '}
+                {extractedAssets.wheelData.wheelBg
+                  ? componentVisibility.wheelBg
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
               <button
                 className={`component-toggle ${extractedAssets.wheelData.segments ? 'component-present' : 'component-missing'} ${!componentVisibility.segments ? 'component-hidden' : ''}`}
                 onClick={() => onToggleComponentVisibility('segments')}
                 disabled={!extractedAssets.wheelData.segments}
               >
-                Segments {extractedAssets.wheelData.segments ? (componentVisibility.segments ? '👁' : '👁‍🗨') : '✗'}
+                Segments{' '}
+                {extractedAssets.wheelData.segments
+                  ? componentVisibility.segments
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
               <button
                 className={`component-toggle ${extractedAssets.wheelData.wheelTop1 ? 'component-present' : 'component-missing'} ${!componentVisibility.wheelTop1 ? 'component-hidden' : ''}`}
                 onClick={() => onToggleComponentVisibility('wheelTop1')}
                 disabled={!extractedAssets.wheelData.wheelTop1}
               >
-                Wheel Top 1 {extractedAssets.wheelData.wheelTop1 ? (componentVisibility.wheelTop1 ? '👁' : '👁‍🗨') : '✗'}
+                Wheel Top 1{' '}
+                {extractedAssets.wheelData.wheelTop1
+                  ? componentVisibility.wheelTop1
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
               <button
                 className={`component-toggle ${extractedAssets.wheelData.wheelTop2 ? 'component-present' : 'component-missing'} ${!componentVisibility.wheelTop2 ? 'component-hidden' : ''}`}
                 onClick={() => onToggleComponentVisibility('wheelTop2')}
                 disabled={!extractedAssets.wheelData.wheelTop2}
               >
-                Wheel Top 2 {extractedAssets.wheelData.wheelTop2 ? (componentVisibility.wheelTop2 ? '👁' : '👁‍🗨') : '✗'}
+                Wheel Top 2{' '}
+                {extractedAssets.wheelData.wheelTop2
+                  ? componentVisibility.wheelTop2
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
               <button
                 className={`component-toggle ${extractedAssets.wheelData.lights ? 'component-present' : 'component-missing'} ${!componentVisibility.lights ? 'component-hidden' : ''}`}
                 onClick={() => onToggleComponentVisibility('lights')}
                 disabled={!extractedAssets.wheelData.lights}
               >
-                Lights {extractedAssets.wheelData.lights ? (componentVisibility.lights ? '👁' : '👁‍🗨') : '✗'}
+                Lights{' '}
+                {extractedAssets.wheelData.lights
+                  ? componentVisibility.lights
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
               <button
                 className={`component-toggle ${extractedAssets.wheelData.buttonSpin ? 'component-present' : 'component-missing'} ${!componentVisibility.buttonSpin ? 'component-hidden' : ''}`}
                 onClick={() => onToggleComponentVisibility('buttonSpin')}
                 disabled={!extractedAssets.wheelData.buttonSpin}
               >
-                Button Spin {extractedAssets.wheelData.buttonSpin ? (componentVisibility.buttonSpin ? '👁' : '👁‍🗨') : '✗'}
+                Button Spin{' '}
+                {extractedAssets.wheelData.buttonSpin
+                  ? componentVisibility.buttonSpin
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
               <button
                 className={`component-toggle ${extractedAssets.wheelData.center ? 'component-present' : 'component-missing'} ${!componentVisibility.center ? 'component-hidden' : ''}`}
                 onClick={() => onToggleComponentVisibility('center')}
                 disabled={!extractedAssets.wheelData.center}
               >
-                Center {extractedAssets.wheelData.center ? (componentVisibility.center ? '👁' : '👁‍🗨') : '✗'}
+                Center{' '}
+                {extractedAssets.wheelData.center
+                  ? componentVisibility.center
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
               <button
                 className={`component-toggle ${extractedAssets.wheelData.pointer ? 'component-present' : 'component-missing'} ${!componentVisibility.pointer ? 'component-hidden' : ''}`}
                 onClick={() => onToggleComponentVisibility('pointer')}
                 disabled={!extractedAssets.wheelData.pointer}
               >
-                Pointer {extractedAssets.wheelData.pointer ? (componentVisibility.pointer ? '👁' : '👁‍🗨') : '✗'}
+                Pointer{' '}
+                {extractedAssets.wheelData.pointer
+                  ? componentVisibility.pointer
+                    ? '👁'
+                    : '👁‍🗨'
+                  : '✗'}
               </button>
             </div>
 
             <p className="interaction-help">
-              <strong>Interaction Guide:</strong><br />
-              • Click header to cycle: active → success → fail<br />
-              • Click spin button to simulate wheel spinning<br />
-              • Toggle "Show Center" to show/hide center overlay<br />
-              • Adjust wheel dimensions using the sliders above
+              <strong>Interaction Guide:</strong>
+              <br />
+              • Click header to cycle: active → success → fail
+              <br />
+              • Click spin button to simulate wheel spinning
+              <br />
+              • Toggle &quot;Show Center&quot; to show/hide center overlay
+              <br />• Adjust wheel dimensions using the sliders above
             </p>
           </div>
         </>

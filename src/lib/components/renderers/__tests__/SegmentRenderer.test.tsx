@@ -7,9 +7,10 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { SegmentRenderer } from '../SegmentRenderer';
 import { WheelSegmentStyles, CenterComponent, Fill, Gradient } from '../../../types';
+import { vi } from 'vitest';
 
 // Mock the offer.png import
-jest.mock('../../../../assets/offer.png', () => 'mocked-offer.png');
+vi.mock('../../../../assets/offer.png', () => ({ default: 'mocked-offer.png' }));
 
 describe('SegmentRenderer', () => {
   const mockCenter: CenterComponent = {
@@ -30,7 +31,10 @@ describe('SegmentRenderer', () => {
       { color: '#FF0000', position: 0 },
       { color: '#0000FF', position: 1 },
     ],
-    transform: [[1, 0, 0], [0, 1, 0]],
+    transform: [
+      [1, 0, 0],
+      [0, 1, 0],
+    ],
   };
 
   const gradientFill: Fill = {
@@ -101,17 +105,13 @@ describe('SegmentRenderer', () => {
     });
 
     it('should return null when segments are not provided', () => {
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} segments={undefined} />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} segments={undefined} />);
 
       expect(container.firstChild).toBeNull();
     });
 
     it('should return null when center is not provided', () => {
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} center={undefined} />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} center={undefined} />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -170,9 +170,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should apply target rotation', () => {
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} targetRotation={45} />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} targetRotation={45} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
@@ -181,9 +179,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should apply spinning transition when wheelState is SPINNING', () => {
-      const { container} = render(
-        <SegmentRenderer {...defaultProps} wheelState="SPINNING" />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} wheelState="SPINNING" />);
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
@@ -194,9 +190,7 @@ describe('SegmentRenderer', () => {
     // Note: SETTLING state was removed - only IDLE, SPINNING, and COMPLETE are valid states
 
     it('should apply no transition when wheelState is IDLE', () => {
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} wheelState="IDLE" />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} wheelState="IDLE" />);
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
@@ -205,9 +199,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should apply no transition when wheelState is COMPLETE', () => {
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} wheelState="COMPLETE" />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} wheelState="COMPLETE" />);
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
@@ -218,9 +210,7 @@ describe('SegmentRenderer', () => {
 
   describe('Scaling', () => {
     it('should scale center position and radius', () => {
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} scale={0.5} />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} scale={0.5} />);
 
       const svg = container.querySelector('svg');
       // With scale 0.5: cx = 400 * 0.5 = 200, cy = 300 * 0.5 = 150
@@ -230,9 +220,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should scale segment dimensions', () => {
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} scale={2} />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} scale={2} />);
 
       const svg = container.querySelector('svg');
       // With scale 2: cx = 400 * 2 = 800, cy = 300 * 2 = 600
@@ -281,7 +269,9 @@ describe('SegmentRenderer', () => {
         <SegmentRenderer {...defaultProps} segments={segmentsWithGradient} />
       );
 
-      const linearGradients = container.querySelectorAll('linearGradient[id^="segment-outer-fill-"]');
+      const linearGradients = container.querySelectorAll(
+        'linearGradient[id^="segment-outer-fill-"]'
+      );
       expect(linearGradients.length).toBeGreaterThan(0);
     });
 
@@ -306,7 +296,9 @@ describe('SegmentRenderer', () => {
         <SegmentRenderer {...defaultProps} segments={segmentsWithStrokeGradient} />
       );
 
-      const linearGradients = container.querySelectorAll('linearGradient[id^="segment-outer-stroke-"]');
+      const linearGradients = container.querySelectorAll(
+        'linearGradient[id^="segment-outer-stroke-"]'
+      );
       expect(linearGradients.length).toBeGreaterThan(0);
     });
 
@@ -327,12 +319,14 @@ describe('SegmentRenderer', () => {
         <SegmentRenderer {...defaultProps} segments={segmentsWithTextGradient} />
       );
 
-      const linearGradients = container.querySelectorAll('linearGradient[id^="segment-text-fill-"]');
+      const linearGradients = container.querySelectorAll(
+        'linearGradient[id^="segment-text-fill-"]'
+      );
       expect(linearGradients.length).toBeGreaterThan(0);
     });
 
     it('should not create linear gradients for radial gradient types', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       const radialGradient: Gradient = {
         ...linearGradient,
@@ -356,7 +350,9 @@ describe('SegmentRenderer', () => {
       );
 
       // Should not create linearGradient elements for radial gradients
-      const linearGradients = container.querySelectorAll('linearGradient[id^="segment-outer-fill-"]');
+      const linearGradients = container.querySelectorAll(
+        'linearGradient[id^="segment-outer-fill-"]'
+      );
       // There are 8 segments, "odd" appears 3 times with radial gradient, others have solid fills
       // So we should have fewer linear gradients than total segments
       expect(linearGradients.length).toBeLessThan(defaultProps.segmentCount);
@@ -544,9 +540,7 @@ describe('SegmentRenderer', () => {
       const testCases = [4, 8, 12, 16];
 
       testCases.forEach((count) => {
-        const { container } = render(
-          <SegmentRenderer {...defaultProps} segmentCount={count} />
-        );
+        const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={count} />);
 
         const svg = container.querySelector('svg');
         expect(svg).toBeInTheDocument();
@@ -560,9 +554,7 @@ describe('SegmentRenderer', () => {
         radius: 10,
       };
 
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} center={smallCenter} />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} center={smallCenter} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
@@ -575,9 +567,7 @@ describe('SegmentRenderer', () => {
         radius: 1000,
       };
 
-      const { container } = render(
-        <SegmentRenderer {...defaultProps} center={largeCenter} />
-      );
+      const { container } = render(<SegmentRenderer {...defaultProps} center={largeCenter} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
@@ -632,7 +622,10 @@ describe('SegmentRenderer', () => {
                     { color: '#3a125d', position: 0 },
                     { color: '#7a26c3', position: 1 },
                   ],
-                  transform: [[1, 0, 0], [0, 1, 0]],
+                  transform: [
+                    [1, 0, 0],
+                    [0, 1, 0],
+                  ],
                 },
               },
             },

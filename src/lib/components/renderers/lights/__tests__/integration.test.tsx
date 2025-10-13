@@ -78,11 +78,7 @@ describe('Light System Integration', () => {
 
       // Render component
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={theme}
-          scale={1}
-          animationType="sequential-chase"
-        />
+        <AnimatedLightsRenderer lights={theme} scale={1} animationType="sequential-chase" />
       );
 
       // Verify colors match
@@ -94,15 +90,11 @@ describe('Light System Integration', () => {
 
     it('should render all bulb layers correctly', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={standardTheme}
-          scale={1}
-          animationType="comet-trail"
-        />
+        <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType="comet-trail" />
       );
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
-      bulbs.forEach(bulb => {
+      bulbs.forEach((bulb) => {
         // Each bulb should have all layers
         expect(bulb.querySelector('.light-bulb__glow-outer')).toBeTruthy();
         expect(bulb.querySelector('.light-bulb__glow-inner')).toBeTruthy();
@@ -129,11 +121,7 @@ describe('Light System Integration', () => {
 
       // Switch to different animation
       rerender(
-        <AnimatedLightsRenderer
-          lights={standardTheme}
-          scale={1}
-          animationType="sequential-chase"
-        />
+        <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType="sequential-chase" />
       );
 
       // Verify animation changed
@@ -145,13 +133,9 @@ describe('Light System Integration', () => {
     it('should cycle through all available animations', () => {
       const allAnimations = getAllAnimations();
 
-      allAnimations.forEach(animation => {
+      allAnimations.forEach((animation) => {
         const { container } = render(
-          <AnimatedLightsRenderer
-            lights={standardTheme}
-            scale={1}
-            animationType={animation.id}
-          />
+          <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType={animation.id} />
         );
 
         const bulbs = container.querySelectorAll('.light-bulb__wrapper');
@@ -163,11 +147,7 @@ describe('Light System Integration', () => {
 
     it('should maintain bulb count when switching animations', () => {
       const { container, rerender } = render(
-        <AnimatedLightsRenderer
-          lights={standardTheme}
-          scale={1}
-          animationType="none"
-        />
+        <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType="none" />
       );
 
       const initialBulbCount = container.querySelectorAll('.light-bulb__wrapper').length;
@@ -180,13 +160,9 @@ describe('Light System Integration', () => {
         'carnival-waltz',
       ];
 
-      animations.forEach(animationType => {
+      animations.forEach((animationType) => {
         rerender(
-          <AnimatedLightsRenderer
-            lights={standardTheme}
-            scale={1}
-            animationType={animationType}
-          />
+          <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType={animationType} />
         );
 
         const bulbCount = container.querySelectorAll('.light-bulb__wrapper').length;
@@ -199,7 +175,7 @@ describe('Light System Integration', () => {
     it('should scale all components correctly', () => {
       const scales = [0.5, 1, 2, 3];
 
-      scales.forEach(scale => {
+      scales.forEach((scale) => {
         const { container } = render(
           <AnimatedLightsRenderer
             lights={standardTheme}
@@ -212,9 +188,9 @@ describe('Light System Integration', () => {
         const bulbs = container.querySelectorAll('.light-bulb__wrapper');
         const firstBulb = bulbs[0] as HTMLElement;
 
-        // Position should be scaled with center offset: position.x * scale - (bulbSize * scale / 2)
-        const expectedX = standardTheme.positions[0].x * scale - (10 * scale / 2);
-        const expectedY = standardTheme.positions[0].y * scale - (10 * scale / 2);
+        // Position should be scaled: position.x * scale
+        const expectedX = standardTheme.positions[0].x * scale;
+        const expectedY = standardTheme.positions[0].y * scale;
         expect(firstBulb.style.left).toBe(`${expectedX}px`);
         expect(firstBulb.style.top).toBe(`${expectedY}px`);
 
@@ -240,18 +216,14 @@ describe('Light System Integration', () => {
         '#000000', // Black
       ];
 
-      colors.forEach(color => {
+      colors.forEach((color) => {
         const theme: LightsComponent = {
           color,
           positions: [{ x: 100, y: 100 }],
         };
 
         const { container } = render(
-          <AnimatedLightsRenderer
-            lights={theme}
-            scale={1}
-            animationType="random-sparkle"
-          />
+          <AnimatedLightsRenderer lights={theme} scale={1} animationType="random-sparkle" />
         );
 
         const rendererElement = container.querySelector('.animated-lights-renderer') as HTMLElement;
@@ -266,11 +238,7 @@ describe('Light System Integration', () => {
   describe('animation-specific features', () => {
     it('should handle carnival-waltz grouping correctly', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={standardTheme}
-          scale={1}
-          animationType="carnival-waltz"
-        />
+        <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType="carnival-waltz" />
       );
 
       // Check group distribution (groups of 3)
@@ -286,11 +254,7 @@ describe('Light System Integration', () => {
 
     it('should handle dual-convergence halves correctly', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={standardTheme}
-          scale={1}
-          animationType="dual-convergence"
-        />
+        <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType="dual-convergence" />
       );
 
       const firstHalf = container.querySelectorAll('.light-bulb__wrapper--first-half');
@@ -311,10 +275,10 @@ describe('Light System Integration', () => {
       );
 
       const bulbs = container.querySelectorAll('.light-bulb__wrapper');
-      const evenBulbs = Array.from(bulbs).filter(b =>
+      const evenBulbs = Array.from(bulbs).filter((b) =>
         b.classList.contains('light-bulb__wrapper--even')
       );
-      const oddBulbs = Array.from(bulbs).filter(b =>
+      const oddBulbs = Array.from(bulbs).filter((b) =>
         b.classList.contains('light-bulb__wrapper--odd')
       );
 
@@ -328,7 +292,7 @@ describe('Light System Integration', () => {
     it('should handle different numbers of lights correctly', () => {
       const counts = [1, 5, 10, 20, 50];
 
-      counts.forEach(count => {
+      counts.forEach((count) => {
         const theme: LightsComponent = {
           color: '#ffd700',
           positions: Array.from({ length: count }, (_, i) => ({
@@ -338,11 +302,7 @@ describe('Light System Integration', () => {
         };
 
         const { container } = render(
-          <AnimatedLightsRenderer
-            lights={theme}
-            scale={1}
-            animationType="sequential-chase"
-          />
+          <AnimatedLightsRenderer lights={theme} scale={1} animationType="sequential-chase" />
         );
 
         const bulbs = container.querySelectorAll('.light-bulb__wrapper');
@@ -356,11 +316,7 @@ describe('Light System Integration', () => {
   describe('performance and memory', () => {
     it('should handle rapid animation changes without memory leaks', () => {
       const { rerender } = render(
-        <AnimatedLightsRenderer
-          lights={standardTheme}
-          scale={1}
-          animationType="none"
-        />
+        <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType="none" />
       );
 
       const animations: LightAnimationType[] = [
@@ -379,11 +335,7 @@ describe('Light System Integration', () => {
       for (let i = 0; i < 20; i++) {
         const animation = animations[i % animations.length];
         rerender(
-          <AnimatedLightsRenderer
-            lights={standardTheme}
-            scale={1}
-            animationType={animation}
-          />
+          <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType={animation} />
         );
       }
 
@@ -393,23 +345,15 @@ describe('Light System Integration', () => {
 
     it('should handle theme changes without memory leaks', () => {
       const { rerender } = render(
-        <AnimatedLightsRenderer
-          lights={standardTheme}
-          scale={1}
-          animationType="comet-trail"
-        />
+        <AnimatedLightsRenderer lights={standardTheme} scale={1} animationType="comet-trail" />
       );
 
       // Change theme multiple times
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00'];
-      colors.forEach(color => {
+      colors.forEach((color) => {
         const newTheme = { ...standardTheme, color };
         rerender(
-          <AnimatedLightsRenderer
-            lights={newTheme}
-            scale={1}
-            animationType="comet-trail"
-          />
+          <AnimatedLightsRenderer lights={newTheme} scale={1} animationType="comet-trail" />
         );
       });
 
@@ -420,11 +364,7 @@ describe('Light System Integration', () => {
   describe('edge cases', () => {
     it('should handle empty state correctly', () => {
       const { container } = render(
-        <AnimatedLightsRenderer
-          lights={undefined}
-          scale={1}
-          animationType="none"
-        />
+        <AnimatedLightsRenderer lights={undefined} scale={1} animationType="none" />
       );
 
       expect(container.firstChild).toBeNull();
@@ -436,13 +376,9 @@ describe('Light System Integration', () => {
         positions: [{ x: 100, y: 100 }],
       };
 
-      getAllAnimations().forEach(animation => {
+      getAllAnimations().forEach((animation) => {
         const { container } = render(
-          <AnimatedLightsRenderer
-            lights={singleLight}
-            scale={1}
-            animationType={animation.id}
-          />
+          <AnimatedLightsRenderer lights={singleLight} scale={1} animationType={animation.id} />
         );
 
         const bulbs = container.querySelectorAll('.light-bulb__wrapper');
@@ -455,7 +391,7 @@ describe('Light System Integration', () => {
     it('should handle extreme scale values', () => {
       const scales = [0.1, 0.5, 5, 10];
 
-      scales.forEach(scale => {
+      scales.forEach((scale) => {
         const { container } = render(
           <AnimatedLightsRenderer
             lights={standardTheme}
@@ -488,12 +424,12 @@ describe('Light System Integration', () => {
       const rendererElement = container.querySelector('.animated-lights-renderer') as HTMLElement;
       const delay = rendererElement.style.getPropertyValue('--delay-per-bulb');
 
-      // Duration 5.0 / 5 bulbs = 1.0s per bulb
-      expect(delay).toBe('1s');
+      // Duration 5.0 / 5 bulbs * stagger 0.08 = 0.08s per bulb
+      expect(delay).toBe('0.08s');
     });
 
     it('should match CSS file naming convention', () => {
-      getAllAnimations().forEach(animation => {
+      getAllAnimations().forEach((animation) => {
         if (animation.id !== 'none') {
           // CSS file should match animation ID
           expect(animation.cssFile).toBe(animation.id);

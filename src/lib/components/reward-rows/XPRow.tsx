@@ -10,42 +10,36 @@ export interface XPRowProps {
   value: string;
   label?: string;
   rewards: RewardsComponent | undefined;
-  buildTextStyle: (textStyle: RewardsPrizeTextStyle | undefined, fontSize: number) => React.CSSProperties;
+  buildTextStyle: (
+    textStyle: RewardsPrizeTextStyle | undefined,
+    fontSize: number
+  ) => React.CSSProperties;
   buildBoxStyle: (bgStyle: RewardsBackgroundStyle | undefined) => React.CSSProperties;
   scale: number;
 }
 
-export const XPRow: React.FC<XPRowProps> = React.memo(({
-  value,
-  label = 'XP',
-  rewards,
-  buildTextStyle,
-  buildBoxStyle,
-  scale,
-}) => {
-  const bgStyle = rewards?.backgrounds?.default;
+export const XPRow: React.FC<XPRowProps> = React.memo(
+  ({ value, label = 'XP', rewards, buildTextStyle, buildBoxStyle, scale }) => {
+    const bgStyle = rewards?.backgrounds?.default;
 
-  if (!bgStyle) return null;
+    if (!bgStyle) return null;
 
-  return (
-    <div className="result-default-box result-xp-box" style={buildBoxStyle(bgStyle)}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-        }}
-      >
-        <span style={buildTextStyle(rewards?.prizes?.texts?.xp, 24 * scale)}>
-          {value}
-        </span>
-        <span style={buildTextStyle(rewards?.prizes?.texts?.xp, 18 * scale)}>
-          {label}
-        </span>
+    return (
+      <div className="result-default-box result-xp-box" style={buildBoxStyle(bgStyle)}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+          }}
+        >
+          <span style={buildTextStyle(rewards?.prizes?.texts?.xp, 24 * scale)}>{value}</span>
+          <span style={buildTextStyle(rewards?.prizes?.texts?.xp, 18 * scale)}>{label}</span>
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 XPRow.displayName = 'XPRow';

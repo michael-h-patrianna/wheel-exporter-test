@@ -4,12 +4,20 @@
  */
 
 import { useCallback } from 'react';
-import { buildGradient, buildTextStyle, buildBoxStyle, buildButtonStyle } from '../utils/styleBuilders';
+import {
+  buildGradient,
+  buildTextStyle,
+  buildBoxStyle,
+  buildButtonStyle,
+} from '../utils/styleBuilders';
 import { Fill, RewardsPrizeTextStyle, RewardsBackgroundStyle, RewardsButtonStyle } from '../types';
 
 export interface UseRewardStylesReturn {
   buildGradient: (fill: Fill | undefined) => string;
-  buildTextStyle: (textStyle: RewardsPrizeTextStyle | undefined, fontSize: number) => React.CSSProperties;
+  buildTextStyle: (
+    textStyle: RewardsPrizeTextStyle | undefined,
+    fontSize: number
+  ) => React.CSSProperties;
   buildBoxStyle: (bgStyle: RewardsBackgroundStyle | undefined) => React.CSSProperties;
   buildButtonStyle: (
     btnStyle: RewardsButtonStyle | undefined,

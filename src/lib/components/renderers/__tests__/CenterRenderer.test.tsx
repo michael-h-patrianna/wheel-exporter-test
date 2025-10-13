@@ -27,9 +27,7 @@ describe('CenterRenderer', () => {
   });
 
   it('should return null when center is not provided', () => {
-    const { container } = render(
-      <CenterRenderer center={undefined} scale={1} />
-    );
+    const { container } = render(<CenterRenderer center={undefined} scale={1} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -50,9 +48,7 @@ describe('CenterRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(
-      <CenterRenderer {...defaultProps} scale={0.5} />
-    );
+    const { container } = render(<CenterRenderer {...defaultProps} scale={0.5} />);
 
     const centerDiv = container.querySelector('.center-component');
     // radius = 100 * 0.5 = 50, diameter = 100
@@ -103,7 +99,7 @@ describe('CenterRenderer', () => {
   });
 
   it('should render vertical crosshair line', () => {
-    const { container} = render(<CenterRenderer {...defaultProps} />);
+    const { container } = render(<CenterRenderer {...defaultProps} />);
 
     const lines = container.querySelectorAll('line');
     const verticalLine = lines[1];
@@ -152,9 +148,7 @@ describe('CenterRenderer', () => {
 
     testCases.forEach(({ radius, expectedDiameter, expectedCx, expectedCy }) => {
       const center: CenterComponent = { x: 400, y: 300, radius };
-      const { container } = render(
-        <CenterRenderer center={center} scale={0.5} />
-      );
+      const { container } = render(<CenterRenderer center={center} scale={0.5} />);
 
       const svg = container.querySelector('svg.center-svg');
       expect(svg).toHaveAttribute('width', String(expectedDiameter));
@@ -176,9 +170,7 @@ describe('CenterRenderer', () => {
 
     testCases.forEach(({ x, y, scale, expectedLeft, expectedTop }) => {
       const center: CenterComponent = { x, y, radius: 100 };
-      const { container } = render(
-        <CenterRenderer center={center} scale={scale} />
-      );
+      const { container } = render(<CenterRenderer center={center} scale={scale} />);
 
       const centerDiv = container.querySelector('.center-component');
       expect(centerDiv).toHaveStyle({

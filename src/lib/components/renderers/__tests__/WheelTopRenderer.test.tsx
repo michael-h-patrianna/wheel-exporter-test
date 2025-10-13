@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 import { WheelTopRenderer } from '../WheelTopRenderer';
 import { WheelOverlay } from '../../../types';
 import { createMockWheelTop, createMockWheelOverlayWithoutBounds } from '../../../test-utils';
+import { vi } from 'vitest';
 
 describe('WheelTopRenderer', () => {
   const mockWheelTop = createMockWheelTop();
@@ -27,23 +28,13 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should return null when wheelTop is not provided', () => {
-    const { container } = render(
-      <WheelTopRenderer
-        {...defaultProps}
-        wheelTop={undefined}
-      />
-    );
+    const { container } = render(<WheelTopRenderer {...defaultProps} wheelTop={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when wheelTopImage is not provided', () => {
-    const { container } = render(
-      <WheelTopRenderer
-        {...defaultProps}
-        wheelTopImage={undefined}
-      />
-    );
+    const { container } = render(<WheelTopRenderer {...defaultProps} wheelTopImage={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -52,10 +43,7 @@ describe('WheelTopRenderer', () => {
     const wheelTopWithoutBounds = createMockWheelOverlayWithoutBounds() as unknown as WheelOverlay;
 
     const { container } = render(
-      <WheelTopRenderer
-        {...defaultProps}
-        wheelTop={wheelTopWithoutBounds}
-      />
+      <WheelTopRenderer {...defaultProps} wheelTop={wheelTopWithoutBounds} />
     );
 
     expect(container.firstChild).toBeNull();
@@ -88,9 +76,7 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(
-      <WheelTopRenderer {...defaultProps} scale={0.5} />
-    );
+    const { container } = render(<WheelTopRenderer {...defaultProps} scale={0.5} />);
 
     const wheelTopDiv = container.querySelector('.wheeltop-component');
     // width = 200 * 0.5 = 100, height = 200 * 0.5 = 100
@@ -146,7 +132,7 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should handle image load errors gracefully for layer 1', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     render(<WheelTopRenderer {...defaultProps} layerNumber={1} />);
     const img = screen.getByAltText('Wheel Top 1');
@@ -164,7 +150,7 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should handle image load errors gracefully for layer 2', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     render(<WheelTopRenderer {...defaultProps} layerNumber={2} />);
     const img = screen.getByAltText('Wheel Top 2');
