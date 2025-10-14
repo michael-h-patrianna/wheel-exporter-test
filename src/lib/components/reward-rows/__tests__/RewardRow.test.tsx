@@ -2,10 +2,9 @@
  * Tests for RewardRow wrapper component
  */
 
-import React from 'react';
-import { render } from '@testing-library/react';
 import { RewardRow } from '@components/reward-rows/RewardRow';
 import { RewardsComponent } from '@lib-types';
+import { render } from '@testing-library/react';
 
 describe('RewardRow', () => {
   const mockRewards: RewardsComponent = {
@@ -130,18 +129,21 @@ describe('RewardRow', () => {
       expect(getByText('BONUS')).toBeInTheDocument();
     });
 
-    it('passes custom label to XPRow', () => {
-      const { getByText } = render(
-        <RewardRow {...defaultProps} rowData={{ type: 'xp', value: '200', label: 'EXP' }} />
+    it('passes xpIcon prop to XPRow', () => {
+      const customXpIcon = 'https://example.com/xp-icon.png';
+      const { getByTestId } = render(
+        <RewardRow {...defaultProps} xpIcon={customXpIcon} rowData={{ type: 'xp', value: '200' }} />
       );
-      expect(getByText('EXP')).toBeInTheDocument();
+      const icon = getByTestId('xp-icon');
+      expect(icon).toHaveAttribute('src', customXpIcon);
     });
 
-    it('passes custom label to RRRow', () => {
-      const { getByText } = render(
-        <RewardRow {...defaultProps} rowData={{ type: 'rr', label: 'MYSTERY' }} />
+    it('passes rrIcon prop to RRRow', () => {
+      const { getByTestId } = render(
+        <RewardRow {...defaultProps} rowData={{ type: 'rr', value: '3' }} rrIcon="custom-rr-icon.png" />
       );
-      expect(getByText('MYSTERY')).toBeInTheDocument();
+      const icon = getByTestId('rr-icon');
+      expect(icon).toHaveAttribute('src', 'custom-rr-icon.png');
     });
 
     it('passes custom message to FailRow', () => {

@@ -1,14 +1,18 @@
 /**
  * RRRow - Random Reward row
- * Displays random reward label
+ * Displays random reward value with random reward icon image
  */
 
+import randomRewardPng from '@assets/random_reward.png';
 import { RewardsBackgroundStyle, RewardsComponent, RewardsPrizeTextStyle } from '@lib-types';
 import React from 'react';
 
 export interface RRRowProps {
+  value?: string;
   label?: string;
   rewards: RewardsComponent | undefined;
+  rrIcon?: string;
+  scaledIconSize: number;
   buildTextStyle: (
     textStyle: RewardsPrizeTextStyle | undefined,
     fontSize: number
@@ -18,10 +22,13 @@ export interface RRRowProps {
 }
 
 export const RRRow: React.FC<RRRowProps> = React.memo(
-  ({ label = 'RANDOM REWARD', rewards, buildTextStyle, buildBoxStyle, scale }) => {
+  ({ value = '1', rewards, rrIcon, scaledIconSize, buildTextStyle, buildBoxStyle, scale }) => {
     const bgStyle = rewards?.backgrounds?.default;
 
     if (!bgStyle) return null;
+
+    // Use provided rrIcon from theme, or fallback to local asset
+    const rrImageSrc = rrIcon || randomRewardPng;
 
     return (
       <div className="result-default-box result-rr-box" data-testid="result-default-box" style={buildBoxStyle(bgStyle)}>
@@ -29,11 +36,27 @@ export const RRRow: React.FC<RRRowProps> = React.memo(
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
             gap: '8px',
+            width: '100%',
           }}
         >
-          <span style={buildTextStyle(rewards?.prizes?.texts?.rr, 20 * scale)}>{label}</span>
+          <span
+            style={{
+              ...buildTextStyle(rewards?.prizes?.texts?.rr, 24 * scale),
+              width: '50%',
+              textAlign: 'right',
+            }}
+          >
+            {value}
+          </span>
+          <span style={{ width: '50%', textAlign: 'left' }}>
+          <img
+            src={rrImageSrc}
+            alt="Random Reward"
+            data-testid="rr-icon"
+            style={{ width: 'auto', height: `${scaledIconSize}px` }}
+          />
+          </span>
         </div>
       </div>
     );

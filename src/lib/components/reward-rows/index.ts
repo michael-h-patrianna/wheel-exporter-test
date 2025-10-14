@@ -17,7 +17,10 @@ export type { RRRowProps } from './RRRow';
 export { FailRow } from './FailRow';
 export type { FailRowProps } from './FailRow';
 
+export { PurchaseRow } from './PurchaseRow';
+export type { PurchaseRowProps } from './PurchaseRow';
+
 export { RewardRow } from './RewardRow';
 export type { RewardRowProps } from './RewardRow';
 
-export type { RewardRowType, RewardRowData } from './types';
+export type { RewardRowData, RewardRowType } from './types';

@@ -54,24 +54,24 @@ export const GCSCRow: React.FC<GCSCRowProps> = React.memo(
               src={gcIcon}
               alt="GC"
               data-testid="gc-icon"
-              style={{ width: `${scaledIconSize}px`, height: `${scaledIconSize}px`, flexShrink: 0 }}
+              style={{ width: `auto`, height: `${scaledIconSize}px`, flexShrink: 0 }}
             />
           )}
 
           {/* GC Text */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span data-testid="gc-label" style={buildTextStyle(rewards?.prizes?.texts?.gcTitle, 14 * scale)}>GC</span>
+            <span data-testid="gc-label" style={buildTextStyle(rewards?.prizes?.texts?.gcTitle, 18 * scale)}>GC</span>
             <span
               className="gcsc-value"
               data-testid="gc-value"
-              style={buildTextStyle(rewards?.prizes?.texts?.gcValue, 18 * scale)}
+              style={buildTextStyle(rewards?.prizes?.texts?.gcValue, 24 * scale)}
             >
               {gcValue}
             </span>
           </div>
 
           {/* Plus */}
-          <span data-testid="plus-sign" style={buildTextStyle(rewards?.prizes?.texts?.plus, 19 * scale)}>+</span>
+          <span data-testid="plus-sign" style={buildTextStyle(rewards?.prizes?.texts?.plus, 18 * scale)}>+</span>
 
           {/* SC Icon */}
           {scIcon && (
@@ -79,17 +79,17 @@ export const GCSCRow: React.FC<GCSCRowProps> = React.memo(
               src={scIcon}
               alt="SC"
               data-testid="sc-icon"
-              style={{ width: `${scaledIconSize}px`, height: `${scaledIconSize}px`, flexShrink: 0 }}
+              style={{ width: `auto`, height: `${scaledIconSize}px`, flexShrink: 0 }}
             />
           )}
 
           {/* SC Text */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span data-testid="sc-label" style={buildTextStyle(rewards?.prizes?.texts?.scTitle, 14 * scale)}>SC</span>
+            <span data-testid="sc-label" style={buildTextStyle(rewards?.prizes?.texts?.scTitle, 18 * scale)}>SC</span>
             <span
               className="gcsc-value"
               data-testid="sc-value"
-              style={buildTextStyle(rewards?.prizes?.texts?.scValue, 18 * scale)}
+              style={buildTextStyle(rewards?.prizes?.texts?.scValue, 24 * scale)}
             >
               {scValue}
             </span>

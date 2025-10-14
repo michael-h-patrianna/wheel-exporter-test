@@ -2,10 +2,9 @@
  * Tests for XPRow component
  */
 
-import React from 'react';
-import { render } from '@testing-library/react';
 import { XPRow } from '@components/reward-rows/XPRow';
 import { RewardsComponent } from '@lib-types';
+import { render } from '@testing-library/react';
 
 describe('XPRow', () => {
   const mockRewards: RewardsComponent = {
@@ -43,6 +42,8 @@ describe('XPRow', () => {
   const defaultProps = {
     value: '100',
     rewards: mockRewards,
+    xpIcon: undefined, // Will fallback to local xp.png asset
+    scaledIconSize: 36,
     buildTextStyle: mockBuildTextStyle,
     buildBoxStyle: mockBuildBoxStyle,
     scale: 1,
@@ -62,14 +63,25 @@ describe('XPRow', () => {
     expect(getByText('100')).toBeInTheDocument();
   });
 
-  it('displays default label when not provided', () => {
-    const { getByText } = render(<XPRow {...defaultProps} />);
-    expect(getByText('XP')).toBeInTheDocument();
+  it('displays XP icon image', () => {
+    const { getByTestId } = render(<XPRow {...defaultProps} />);
+    const icon = getByTestId('xp-icon');
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute('alt', 'XP');
   });
 
-  it('displays custom label when provided', () => {
-    const { getByText } = render(<XPRow {...defaultProps} label="EXPERIENCE" />);
-    expect(getByText('EXPERIENCE')).toBeInTheDocument();
+  it('uses custom xpIcon when provided', () => {
+    const customIcon = 'https://example.com/custom-xp.png';
+    const { getByTestId } = render(<XPRow {...defaultProps} xpIcon={customIcon} />);
+    const icon = getByTestId('xp-icon');
+    expect(icon).toHaveAttribute('src', customIcon);
+  });
+
+  it('falls back to local xp asset when xpIcon not provided', () => {
+    const { getByTestId } = render(<XPRow {...defaultProps} />);
+    const icon = getByTestId('xp-icon');
+    expect(icon).toHaveAttribute('src');
+    expect(icon.getAttribute('src')).toContain('xp.png');
   });
 
   it('calls buildBoxStyle with default background', () => {
@@ -77,14 +89,20 @@ describe('XPRow', () => {
     expect(mockBuildBoxStyle).toHaveBeenCalledWith(mockRewards.backgrounds?.default);
   });
 
-  it('calls buildTextStyle for value and label', () => {
+  it('calls buildTextStyle for value only', () => {
     render(<XPRow {...defaultProps} />);
-    // Called twice - once for value, once for label
-    expect(mockBuildTextStyle).toHaveBeenCalledTimes(2);
+    // Called once - only for value (label is now an image)
+    expect(mockBuildTextStyle).toHaveBeenCalledTimes(1);
     expect(mockBuildTextStyle).toHaveBeenCalledWith(
       mockRewards.prizes?.texts?.xp,
       expect.any(Number)
     );
+  });
+
+  it('applies scaled icon size', () => {
+    const { getByTestId } = render(<XPRow {...defaultProps} scaledIconSize={48} />);
+    const icon = getByTestId('xp-icon');
+    expect(icon).toHaveStyle({ width: 'auto', height: '48px' });
   });
 
   it('returns null when background style is missing', () => {
@@ -110,7 +128,6 @@ describe('XPRow', () => {
     expect(content).toHaveStyle({
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
       gap: '8px',
     });
   });

@@ -56,7 +56,7 @@ describe('ResultViewer Integration', () => {
   it('should render Win Purchase mode when viewMode prop is set', () => {
     const { getByTestId } = render(<ResultViewer {...defaultProps} viewMode="Win Purchase" />);
     expect(getByTestId('win-purchase-view')).toBeInTheDocument();
-    expect(getByTestId('view-text')).toHaveTextContent('win purchase');
+    // The component now shows purchase offer instead of placeholder text
   });
 
   it('should render No Win mode when viewMode prop is set', () => {

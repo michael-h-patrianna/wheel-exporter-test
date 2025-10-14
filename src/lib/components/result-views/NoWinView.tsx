@@ -83,7 +83,7 @@ export const NoWinView: React.FC<NoWinViewProps> = ({
       {showButton && rewards?.button?.stateStyles && (
         <div
           className="result-button-container"
-          style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}
+          style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}
         >
           <ButtonRenderer
             buttonStyles={rewards.button.stateStyles}

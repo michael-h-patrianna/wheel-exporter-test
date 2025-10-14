@@ -2,10 +2,9 @@
  * Tests for RRRow component
  */
 
-import React from 'react';
-import { render } from '@testing-library/react';
 import { RRRow } from '@components/reward-rows/RRRow';
 import { RewardsComponent } from '@lib-types';
+import { render } from '@testing-library/react';
 
 describe('RRRow', () => {
   const mockRewards: RewardsComponent = {
@@ -42,6 +41,7 @@ describe('RRRow', () => {
 
   const defaultProps = {
     rewards: mockRewards,
+    scaledIconSize: 48,
     buildTextStyle: mockBuildTextStyle,
     buildBoxStyle: mockBuildBoxStyle,
     scale: 1,
@@ -56,14 +56,28 @@ describe('RRRow', () => {
     expect(container.querySelector('.result-rr-box')).toBeInTheDocument();
   });
 
-  it('displays default label when not provided', () => {
+  it('displays default value when not provided', () => {
     const { getByText } = render(<RRRow {...defaultProps} />);
-    expect(getByText('RANDOM REWARD')).toBeInTheDocument();
+    expect(getByText('1')).toBeInTheDocument();
   });
 
-  it('displays custom label when provided', () => {
-    const { getByText } = render(<RRRow {...defaultProps} label="MYSTERY PRIZE" />);
-    expect(getByText('MYSTERY PRIZE')).toBeInTheDocument();
+  it('displays custom value when provided', () => {
+    const { getByText } = render(<RRRow {...defaultProps} value="5" />);
+    expect(getByText('5')).toBeInTheDocument();
+  });
+
+  it('displays random reward icon by default', () => {
+    const { getByTestId } = render(<RRRow {...defaultProps} />);
+    const icon = getByTestId('rr-icon');
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute('src', expect.stringContaining('random_reward.png'));
+    expect(icon).toHaveAttribute('alt', 'Random Reward');
+  });
+
+  it('displays custom icon when rrIcon prop is provided', () => {
+    const { getByTestId } = render(<RRRow {...defaultProps} rrIcon="custom-icon.png" />);
+    const icon = getByTestId('rr-icon');
+    expect(icon).toHaveAttribute('src', 'custom-icon.png');
   });
 
   it('calls buildBoxStyle with default background', () => {
@@ -71,12 +85,18 @@ describe('RRRow', () => {
     expect(mockBuildBoxStyle).toHaveBeenCalledWith(mockRewards.backgrounds?.default);
   });
 
-  it('calls buildTextStyle for label', () => {
+  it('calls buildTextStyle for value', () => {
     render(<RRRow {...defaultProps} />);
     expect(mockBuildTextStyle).toHaveBeenCalledWith(
       mockRewards.prizes?.texts?.rr,
-      expect.any(Number)
+      24 // 24 * scale (1)
     );
+  });
+
+  it('applies scaled icon size', () => {
+    const { getByTestId } = render(<RRRow {...defaultProps} />);
+    const icon = getByTestId('rr-icon');
+    expect(icon).toHaveStyle({ width: 'auto', height: '48px' });
   });
 
   it('returns null when background style is missing', () => {
@@ -102,7 +122,6 @@ describe('RRRow', () => {
     expect(content).toHaveStyle({
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
     });
   });
 });

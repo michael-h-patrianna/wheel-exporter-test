@@ -298,7 +298,23 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
           />
         );
       case 'Win Purchase':
-        return <WinPurchaseView />;
+        return (
+          <WinPurchaseView
+            wheelData={wheelData}
+            assets={assets}
+            scale={scale}
+            buildTextStyle={buildTextStyle}
+            buildBoxStyle={buildBoxStyle}
+            headerImage={headerSuccessImage}
+            headerBounds={headerSuccessBounds}
+            showButton={showButton}
+            buttonText={finalButtonText}
+            buttonState={buttonState}
+            onButtonMouseEnter={() => !buttonDisabled && setButtonState('hover')}
+            onButtonMouseLeave={() => !buttonDisabled && setButtonState('default')}
+            onButtonClick={onButtonClick}
+          />
+        );
       case 'No Win':
         return (
           <NoWinView

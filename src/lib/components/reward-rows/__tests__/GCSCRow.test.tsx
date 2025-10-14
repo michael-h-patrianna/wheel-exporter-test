@@ -119,7 +119,7 @@ describe('GCSCRow', () => {
       <GCSCRow {...defaultProps} gcIcon="test.png" scaledIconSize={48} />
     );
     const icon = getByTestId('gc-icon');
-    expect(icon).toHaveStyle({ width: '48px', height: '48px' });
+    expect(icon).toHaveStyle({ width: 'auto', height: '48px' });
   });
 
   it('calls buildBoxStyle with highlight background', () => {

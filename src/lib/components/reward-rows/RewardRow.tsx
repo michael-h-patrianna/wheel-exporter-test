@@ -3,14 +3,14 @@
  * Routes to the appropriate reward row component based on type
  */
 
+import { RewardsBackgroundStyle, RewardsComponent, RewardsPrizeTextStyle } from '@lib-types';
 import React from 'react';
-import { RewardRowData } from './types';
-import { GCSCRow } from './GCSCRow';
-import { FreeSpinsRow } from './FreeSpinsRow';
-import { XPRow } from './XPRow';
-import { RRRow } from './RRRow';
 import { FailRow } from './FailRow';
-import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '@lib-types';
+import { FreeSpinsRow } from './FreeSpinsRow';
+import { GCSCRow } from './GCSCRow';
+import { RRRow } from './RRRow';
+import { RewardRowData } from './types';
+import { XPRow } from './XPRow';
 
 export interface RewardRowProps {
   rowData: RewardRowData;
@@ -18,6 +18,8 @@ export interface RewardRowProps {
   rewards: RewardsComponent | undefined;
   gcIcon?: string;
   scIcon?: string;
+  xpIcon?: string;
+  rrIcon?: string;
   scaledIconSize: number;
   buildTextStyle: (
     textStyle: RewardsPrizeTextStyle | undefined,
@@ -34,6 +36,8 @@ export const RewardRow: React.FC<RewardRowProps> = React.memo(
     rewards,
     gcIcon,
     scIcon,
+    xpIcon,
+    rrIcon,
     scaledIconSize,
     buildTextStyle,
     buildBoxStyle,
@@ -79,6 +83,8 @@ export const RewardRow: React.FC<RewardRowProps> = React.memo(
             value={rowData.value || '0'}
             label={rowData.label}
             rewards={rewards}
+            xpIcon={xpIcon}
+            scaledIconSize={scaledIconSize}
             buildTextStyle={buildTextStyle}
             buildBoxStyle={buildBoxStyle}
             scale={scale}
@@ -89,8 +95,11 @@ export const RewardRow: React.FC<RewardRowProps> = React.memo(
         return (
           <RRRow
             key={`reward-row-${index}`}
+            value={rowData.value}
             label={rowData.label}
             rewards={rewards}
+            rrIcon={rrIcon}
+            scaledIconSize={scaledIconSize}
             buildTextStyle={buildTextStyle}
             buildBoxStyle={buildBoxStyle}
             scale={scale}
