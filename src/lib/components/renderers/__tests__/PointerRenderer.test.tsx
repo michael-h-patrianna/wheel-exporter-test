@@ -33,19 +33,19 @@ describe('PointerRenderer', () => {
   });
 
   it('should return null when pointer is not provided', () => {
-    const { container } = render(<PointerRenderer {...defaultProps} pointer={undefined} />);
+    const { container, getByTestId } = render(<PointerRenderer {...defaultProps} pointer={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when pointerImage is not provided', () => {
-    const { container } = render(<PointerRenderer {...defaultProps} pointerImage={undefined} />);
+    const { container, getByTestId } = render(<PointerRenderer {...defaultProps} pointerImage={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should calculate correct positioning and dimensions', () => {
-    const { container } = render(<PointerRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<PointerRenderer {...defaultProps} />);
 
     const pointerDiv = container.querySelector('.pointer-component');
     // left = (x * scale) - (width / 2) = 400 - 40 = 360
@@ -62,7 +62,7 @@ describe('PointerRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(<PointerRenderer {...defaultProps} scale={0.5} />);
+    const { container, getByTestId } = render(<PointerRenderer {...defaultProps} scale={0.5} />);
 
     const pointerDiv = container.querySelector('.pointer-component');
     // width = 80 * 0.5 = 40, height = 120 * 0.5 = 60
@@ -85,7 +85,7 @@ describe('PointerRenderer', () => {
       },
     };
 
-    const { container } = render(
+    const { container, getByTestId } = render(
       <PointerRenderer {...defaultProps} pointer={pointerWithRotation} />
     );
 
@@ -97,7 +97,7 @@ describe('PointerRenderer', () => {
   });
 
   it('should not apply rotation when not provided', () => {
-    const { container } = render(<PointerRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<PointerRenderer {...defaultProps} />);
 
     const pointerDiv = container.querySelector('.pointer-component');
     expect(pointerDiv).toHaveStyle({
@@ -117,21 +117,21 @@ describe('PointerRenderer', () => {
   });
 
   it('should have pointer-events none to allow clicking through', () => {
-    const { container } = render(<PointerRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<PointerRenderer {...defaultProps} />);
 
     const pointerDiv = container.querySelector('.pointer-component');
     expect(pointerDiv).toHaveStyle({ pointerEvents: 'none' });
   });
 
   it('should have correct z-index for layering', () => {
-    const { container } = render(<PointerRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<PointerRenderer {...defaultProps} />);
 
     const pointerDiv = container.querySelector('.pointer-component');
     expect(pointerDiv).toHaveStyle({ zIndex: 20 });
   });
 
   it('should apply correct CSS class name', () => {
-    const { container } = render(<PointerRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<PointerRenderer {...defaultProps} />);
 
     expect(container.querySelector('.pointer-component')).toBeInTheDocument();
   });
@@ -162,7 +162,7 @@ describe('PointerRenderer', () => {
     ];
 
     testCases.forEach(({ scale, expectedLeft, expectedTop, expectedWidth, expectedHeight }) => {
-      const { container } = render(<PointerRenderer {...defaultProps} scale={scale} />);
+      const { container, getByTestId } = render(<PointerRenderer {...defaultProps} scale={scale} />);
 
       const pointerDiv = container.querySelector('.pointer-component');
       expect(pointerDiv).toHaveStyle({

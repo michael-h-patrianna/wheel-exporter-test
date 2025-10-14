@@ -1,6 +1,7 @@
-import React from 'react';
 import { WheelOverlay } from '@lib-types';
 import { logger } from '@services/logger';
+import React from 'react';
+import styles from '../WheelViewer.module.css';
 
 /**
  * WheelTopRenderer Component
@@ -79,7 +80,8 @@ export const WheelTopRenderer: React.FC<WheelTopRendererProps> = ({
 
   return (
     <div
-      className={`wheeltop-component wheeltop-${layerNumber}`}
+      className={`${styles.wheeltopComponent} ${layerNumber === 1 ? styles.wheeltop1 : styles.wheeltop2}`}
+      data-testid="wheeltop-component"
       data-layer={layerNumber}
       style={cssVariables}
       title={`Wheel Top Layer ${layerNumber}`}
@@ -89,7 +91,8 @@ export const WheelTopRenderer: React.FC<WheelTopRendererProps> = ({
       <img
         src={wheelTopImage}
         alt={`Wheel Top ${layerNumber}`}
-        className="wheeltop-image"
+        className={styles.wheeltopImage}
+        data-testid="wheeltop-image"
         draggable={false}
         onError={(_e) => {
           logger.warn('WheelTop image failed to load', {

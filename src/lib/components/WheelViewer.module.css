@@ -1,0 +1,163 @@
+/* =============================================================================
+   WHEEL VIEWER COMPONENTS
+   Library component styles - NOT demo-specific
+   ============================================================================= */
+
+.wheelViewer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Background Component */
+.backgroundComponent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--bg-width);
+  height: var(--bg-height);
+  z-index: 1;
+}
+
+.backgroundImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Header Component */
+.headerComponent {
+  position: absolute;
+  left: var(--header-left);
+  top: var(--header-top);
+  width: var(--header-width);
+  height: var(--header-height);
+  transform: var(--header-transform);
+  cursor: pointer;
+  z-index: 10;
+  transition: opacity 0.2s ease;
+}
+
+.headerComponent:hover {
+  opacity: 0.9;
+}
+
+.headerComponent:active {
+  transform: var(--header-transform) scale(0.98);
+}
+
+.headerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Wheel Background Overlay */
+.wheelbgComponent {
+  position: absolute;
+  left: var(--wheelbg-left);
+  top: var(--wheelbg-top);
+  width: var(--wheelbg-width);
+  height: var(--wheelbg-height);
+  z-index: 2;
+}
+
+.wheelbgImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Wheel Top Overlays */
+.wheeltopComponent {
+  position: absolute;
+  z-index: 15;
+}
+
+.wheeltop1 {
+  left: var(--wheeltop1-left);
+  top: var(--wheeltop1-top);
+  width: var(--wheeltop1-width);
+  height: var(--wheeltop1-height);
+}
+
+.wheeltop2 {
+  left: var(--wheeltop2-left);
+  top: var(--wheeltop2-top);
+  width: var(--wheeltop2-width);
+  height: var(--wheeltop2-height);
+  z-index: 16;
+}
+
+.wheeltopImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Button Spin Component */
+.buttonSpinComponent {
+  position: absolute;
+  left: var(--button-left);
+  top: var(--button-top);
+  width: var(--button-width);
+  height: var(--button-height);
+  transform: var(--button-transform);
+  z-index: 20;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.buttonSpinComponent:hover:not(:disabled) {
+  transform: var(--button-transform) scale(1.05);
+}
+
+.buttonSpinComponent:active:not(:disabled) {
+  transform: var(--button-transform) scale(0.95);
+}
+
+.buttonSpinComponent:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.buttonSpinImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Wheel segments spinning animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1080deg);
+  }
+}
+
+/* Center Component */
+.centerComponent {
+  position: absolute;
+  left: var(--center-left);
+  top: var(--center-top);
+  width: var(--center-size);
+  height: var(--center-size);
+  z-index: 100; /* Above all other elements */
+  pointer-events: none; /* Allow clicks to pass through */
+}
+
+.centerSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none; /* Ensure SVG also doesn't block clicks */
+}

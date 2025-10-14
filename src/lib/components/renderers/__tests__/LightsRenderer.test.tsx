@@ -29,14 +29,14 @@ describe('LightsRenderer', () => {
   });
 
   it('should render lights container with correct props', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} />);
 
     const lightsDiv = container.querySelector('.lights-component');
     expect(lightsDiv).toBeInTheDocument();
   });
 
   it('should return null when lights is not provided', () => {
-    const { container } = render(<LightsRenderer lights={undefined} scale={1} />);
+    const { container, getByTestId } = render(<LightsRenderer lights={undefined} scale={1} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -44,7 +44,7 @@ describe('LightsRenderer', () => {
   it('should return null when positions array is not provided', () => {
     const lightsWithoutPositions = createMockLightsWithoutPositions() as unknown as LightsComponent;
 
-    const { container } = render(<LightsRenderer lights={lightsWithoutPositions} scale={1} />);
+    const { container, getByTestId } = render(<LightsRenderer lights={lightsWithoutPositions} scale={1} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -54,20 +54,20 @@ describe('LightsRenderer', () => {
       positions: [],
     });
 
-    const { container } = render(<LightsRenderer lights={lightsWithEmptyPositions} scale={1} />);
+    const { container, getByTestId } = render(<LightsRenderer lights={lightsWithEmptyPositions} scale={1} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should render correct number of light circles', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} />);
 
     const lightCircles = container.querySelectorAll('.light-circle');
     expect(lightCircles).toHaveLength(3);
   });
 
   it('should apply correct color to all lights', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} />);
 
     const lightCircles = container.querySelectorAll('.light-circle');
     lightCircles.forEach((circle) => {
@@ -76,7 +76,7 @@ describe('LightsRenderer', () => {
   });
 
   it('should calculate correct positions for lights', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} />);
 
     const lightCircles = container.querySelectorAll('.light-circle');
 
@@ -107,7 +107,7 @@ describe('LightsRenderer', () => {
   });
 
   it('should scale light positions and sizes correctly', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} scale={0.5} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} scale={0.5} />);
 
     const lightCircles = container.querySelectorAll('.light-circle');
 
@@ -122,7 +122,7 @@ describe('LightsRenderer', () => {
   });
 
   it('should apply circular border radius to lights', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} />);
 
     const lightCircles = container.querySelectorAll('.light-circle');
     lightCircles.forEach((circle) => {
@@ -131,7 +131,7 @@ describe('LightsRenderer', () => {
   });
 
   it('should set pointer-events to none for all lights', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} />);
 
     const lightsDiv = container.querySelector('.lights-component');
     expect(lightsDiv).toHaveStyle({ pointerEvents: 'none' });
@@ -143,7 +143,7 @@ describe('LightsRenderer', () => {
   });
 
   it('should have correct z-index for layering', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} />);
 
     const lightsDiv = container.querySelector('.lights-component');
     expect(lightsDiv).toHaveStyle({ zIndex: 100 });
@@ -162,7 +162,7 @@ describe('LightsRenderer', () => {
   });
 
   it('should apply correct title to each light', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} />);
 
     const lightCircles = container.querySelectorAll('.light-circle');
     expect(lightCircles[0]).toHaveAttribute('title', 'Light 1');
@@ -171,7 +171,7 @@ describe('LightsRenderer', () => {
   });
 
   it('should apply absolute positioning to container', () => {
-    const { container } = render(<LightsRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<LightsRenderer {...defaultProps} />);
 
     const lightsDiv = container.querySelector('.lights-component');
     expect(lightsDiv).toHaveStyle({
@@ -189,7 +189,7 @@ describe('LightsRenderer', () => {
       positions: [{ x: 50, y: 50 }],
     });
 
-    const { container } = render(<LightsRenderer lights={singleLight} scale={1} />);
+    const { container, getByTestId } = render(<LightsRenderer lights={singleLight} scale={1} />);
 
     const lightCircles = container.querySelectorAll('.light-circle');
     expect(lightCircles).toHaveLength(1);
@@ -202,7 +202,7 @@ describe('LightsRenderer', () => {
       positions: Array.from({ length: 20 }, (_, i) => ({ x: i * 10, y: i * 10 })),
     });
 
-    const { container } = render(<LightsRenderer lights={manyLights} scale={1} />);
+    const { container, getByTestId } = render(<LightsRenderer lights={manyLights} scale={1} />);
 
     const lightCircles = container.querySelectorAll('.light-circle');
     expect(lightCircles).toHaveLength(20);
@@ -219,7 +219,7 @@ describe('LightsRenderer', () => {
     ];
 
     testCases.forEach(({ scale, expectedRadius, expectedDiameter }) => {
-      const { container } = render(<LightsRenderer {...defaultProps} scale={scale} />);
+      const { container, getByTestId } = render(<LightsRenderer {...defaultProps} scale={scale} />);
 
       const lightCircles = container.querySelectorAll('.light-circle');
       expect(lightCircles[0]).toHaveStyle({

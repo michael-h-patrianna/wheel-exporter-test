@@ -93,7 +93,7 @@ describe('SegmentRenderer', () => {
 
   describe('Basic Rendering', () => {
     it('should render segments container with correct structure', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const segmentsDiv = container.querySelector('.segments-component');
       expect(segmentsDiv).toBeInTheDocument();
@@ -105,19 +105,19 @@ describe('SegmentRenderer', () => {
     });
 
     it('should return null when segments are not provided', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} segments={undefined} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} segments={undefined} />);
 
       expect(container.firstChild).toBeNull();
     });
 
     it('should return null when center is not provided', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} center={undefined} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} center={undefined} />);
 
       expect(container.firstChild).toBeNull();
     });
 
     it('should render SVG element', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
@@ -126,7 +126,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should render correct number of segments', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       // Segments are rendered as <g> elements (not with id attribute)
       const segments = container.querySelectorAll('g');
@@ -136,7 +136,7 @@ describe('SegmentRenderer', () => {
 
   describe('Segment Data Generation', () => {
     it('should generate segments with correct kinds', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={8} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} segmentCount={8} />);
 
       // Check that segments are rendered with data attributes
       const paths = container.querySelectorAll('path[d]');
@@ -144,14 +144,14 @@ describe('SegmentRenderer', () => {
     });
 
     it('should calculate correct segment angles', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={4} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} segmentCount={4} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
     });
 
     it('should cycle through SEGMENT_KINDS correctly', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={16} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} segmentCount={16} />);
 
       // With 16 segments and 8 kinds, pattern should repeat twice
       const svg = container.querySelector('svg');
@@ -161,7 +161,7 @@ describe('SegmentRenderer', () => {
 
   describe('Rotation and Animation', () => {
     it('should apply correct transform origin', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
@@ -170,7 +170,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should apply target rotation', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} targetRotation={45} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} targetRotation={45} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
@@ -179,7 +179,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should apply spinning transition when wheelState is SPINNING', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} wheelState="SPINNING" />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} wheelState="SPINNING" />);
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
@@ -190,7 +190,7 @@ describe('SegmentRenderer', () => {
     // Note: SETTLING state was removed - only IDLE, SPINNING, and COMPLETE are valid states
 
     it('should apply no transition when wheelState is IDLE', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} wheelState="IDLE" />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} wheelState="IDLE" />);
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
@@ -199,7 +199,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should apply no transition when wheelState is COMPLETE', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} wheelState="COMPLETE" />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} wheelState="COMPLETE" />);
 
       const svg = container.querySelector('svg');
       expect(svg).toHaveStyle({
@@ -210,7 +210,7 @@ describe('SegmentRenderer', () => {
 
   describe('Scaling', () => {
     it('should scale center position and radius', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} scale={0.5} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} scale={0.5} />);
 
       const svg = container.querySelector('svg');
       // With scale 0.5: cx = 400 * 0.5 = 200, cy = 300 * 0.5 = 150
@@ -220,7 +220,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should scale segment dimensions', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} scale={2} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} scale={2} />);
 
       const svg = container.querySelector('svg');
       // With scale 2: cx = 400 * 2 = 800, cy = 300 * 2 = 600
@@ -244,7 +244,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithGradient} />
       );
 
@@ -265,7 +265,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithGradient} />
       );
 
@@ -292,7 +292,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithStrokeGradient} />
       );
 
@@ -315,7 +315,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithTextGradient} />
       );
 
@@ -345,7 +345,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithRadialGradient} />
       );
 
@@ -363,7 +363,7 @@ describe('SegmentRenderer', () => {
 
   describe('Text Rendering', () => {
     it('should create arc paths for text', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const defs = container.querySelector('defs');
       if (defs) {
@@ -373,14 +373,14 @@ describe('SegmentRenderer', () => {
     });
 
     it('should render text for non-jackpot segments', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const textElements = container.querySelectorAll('text');
       expect(textElements.length).toBeGreaterThan(0);
     });
 
     it('should render "NO" and "WIN" for nowin segments', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const textElements = container.querySelectorAll('text[data-segment-kind="nowin"]');
       expect(textElements.length).toBeGreaterThan(0);
@@ -391,7 +391,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should render "Lorem" and "Ipsum" for odd/even segments', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const oddTexts = container.querySelectorAll('text[data-segment-kind="odd"]');
       const evenTexts = container.querySelectorAll('text[data-segment-kind="even"]');
@@ -413,7 +413,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithDropShadow} />
       );
 
@@ -422,14 +422,14 @@ describe('SegmentRenderer', () => {
     });
 
     it('should use textPath for curved text', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const textPaths = container.querySelectorAll('textPath');
       expect(textPaths.length).toBeGreaterThan(0);
     });
 
     it('should apply correct text attributes', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const textElements = container.querySelectorAll('text');
       textElements.forEach((text) => {
@@ -443,14 +443,14 @@ describe('SegmentRenderer', () => {
 
   describe('Layout Variants', () => {
     it('should render compact layout specific markers', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} layoutType="compact" />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} layoutType="compact" />);
 
       const compactPrimary = container.querySelector('text[data-layout-variant="compact-primary"]');
       expect(compactPrimary).toBeInTheDocument();
     });
 
     it('should render icon badge layout with badge elements', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} layoutType="icon-badge" />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} layoutType="icon-badge" />);
 
       const badgeCircle = container.querySelector('[data-layout-variant="icon-badge"]');
       expect(badgeCircle).toBeInTheDocument();
@@ -462,7 +462,7 @@ describe('SegmentRenderer', () => {
 
   describe('Jackpot Segment Rendering', () => {
     it('should render jackpot segment with text by default', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       // Jackpot segments now render based on their prize content (text by default)
       const jackpotTexts = container.querySelectorAll('text[data-segment-kind="jackpot"]');
@@ -470,7 +470,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should render jackpot segment with jackpot kind', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       // Check that at least one segment has jackpot kind
       const svg = container.querySelector('svg');
@@ -482,7 +482,7 @@ describe('SegmentRenderer', () => {
     });
 
     it('should apply jackpot styles from segment styles', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       // Jackpot segments should render with the provided jackpot styles
       const svg = container.querySelector('svg');
@@ -492,14 +492,14 @@ describe('SegmentRenderer', () => {
 
   describe('Segment Path Rendering', () => {
     it('should render path elements for each segment', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const paths = container.querySelectorAll('g > path');
       expect(paths.length).toBeGreaterThanOrEqual(defaultProps.segmentCount);
     });
 
     it('should apply fill to segment paths', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const paths = container.querySelectorAll('g > path');
       paths.forEach((path) => {
@@ -508,14 +508,14 @@ describe('SegmentRenderer', () => {
     });
 
     it('should apply stroke when provided', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
     });
 
     it('should scale stroke width correctly', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} scale={2} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} scale={2} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
@@ -529,7 +529,7 @@ describe('SegmentRenderer', () => {
         even: mockSegments.even,
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={incompleteSegments as WheelSegmentStyles} />
       );
 
@@ -547,7 +547,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithoutText} />
       );
 
@@ -559,7 +559,7 @@ describe('SegmentRenderer', () => {
       const testCases = [4, 8, 12, 16];
 
       testCases.forEach((count) => {
-        const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={count} />);
+        const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} segmentCount={count} />);
 
         const svg = container.querySelector('svg');
         expect(svg).toBeInTheDocument();
@@ -573,7 +573,7 @@ describe('SegmentRenderer', () => {
         radius: 10,
       };
 
-      const { container } = render(<SegmentRenderer {...defaultProps} center={smallCenter} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} center={smallCenter} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
@@ -586,7 +586,7 @@ describe('SegmentRenderer', () => {
         radius: 1000,
       };
 
-      const { container } = render(<SegmentRenderer {...defaultProps} center={largeCenter} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} center={largeCenter} />);
 
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
@@ -652,7 +652,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithGradientStroke} />
       );
 
@@ -684,7 +684,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithSolidStroke} />
       );
 
@@ -714,7 +714,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithLegacyStroke} />
       );
 
@@ -745,7 +745,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithBothFormats} />
       );
 
@@ -772,7 +772,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithoutStroke} />
       );
 
@@ -802,7 +802,7 @@ describe('SegmentRenderer', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithThickStroke} />
       );
 

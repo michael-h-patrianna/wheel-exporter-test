@@ -1,5 +1,6 @@
-import React from 'react';
 import { ButtonSpinComponent, ButtonSpinState } from '@lib-types';
+import React from 'react';
+import styles from '../WheelViewer.module.css';
 
 /**
  * ButtonSpinRenderer Component
@@ -88,7 +89,8 @@ export const ButtonSpinRenderer: React.FC<ButtonSpinRendererProps> = ({
 
   return (
     <button
-      className="button-spin-component"
+      className={styles.buttonSpinComponent}
+      data-testid="button-spin-component"
       data-button-state={currentState}
       data-spinning={isSpinning}
       style={cssVariables}
@@ -100,7 +102,8 @@ export const ButtonSpinRenderer: React.FC<ButtonSpinRendererProps> = ({
       <img
         src={buttonImage}
         alt={`Spin button ${currentState}`}
-        className="button-spin-image"
+        className={styles.buttonSpinImage}
+        data-testid="button-spin-image"
         draggable={false}
       />
     </button>

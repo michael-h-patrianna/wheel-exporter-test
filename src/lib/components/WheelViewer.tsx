@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useMemo, useCallback, CSSProperties } from 'react';
-import { WheelExport, ExtractedAssets, HeaderState, ButtonSpinState } from '@lib-types';
 import { useWheelStateMachine } from '@hooks/useWheelStateMachine';
-import type { PrizeProviderResult } from '@services/prizeProvider';
+import { ButtonSpinState, ExtractedAssets, HeaderState, WheelExport } from '@lib-types';
 import type { SegmentLayoutType } from '@lib-types/segmentLayoutTypes';
+import type { PrizeProviderResult } from '@services/prizeProvider';
 import { mapPrizesToSegments } from '@utils/prizeSegmentMapper';
+import React, { CSSProperties, useCallback, useEffect, useMemo, useState } from 'react';
 
 // Import all renderer components
 import { BackgroundRenderer } from './renderers/BackgroundRenderer';
-import { HeaderRenderer } from './renderers/HeaderRenderer';
-import { WheelBgRenderer } from './renderers/WheelBgRenderer';
-import { WheelTopRenderer } from './renderers/WheelTopRenderer';
 import { ButtonSpinRenderer } from './renderers/ButtonSpinRenderer';
 import { CenterRenderer } from './renderers/CenterRenderer';
-import { SegmentRenderer } from './renderers/SegmentRenderer';
-import { PointerRenderer } from './renderers/PointerRenderer';
+import { HeaderRenderer } from './renderers/HeaderRenderer';
 import { AnimatedLightsRenderer } from './renderers/lights/AnimatedLightsRenderer';
 import type { LightAnimationType } from './renderers/lights/lightAnimations';
+import { PointerRenderer } from './renderers/PointerRenderer';
+import { SegmentRenderer } from './renderers/SegmentRenderer';
+import { WheelBgRenderer } from './renderers/WheelBgRenderer';
+import { WheelTopRenderer } from './renderers/WheelTopRenderer';
+import styles from './WheelViewer.module.css';
 
 interface ComponentVisibility {
   background: boolean;
@@ -188,8 +189,8 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
   }, [prizeSession?.seed]); // Reset when prize session seed changes
 
   return (
-    <div className="wheel-viewer">
-      <div style={containerStyle} className="wheel-container">
+    <div className={styles.wheelViewer} data-testid="wheel-viewer">
+      <div style={containerStyle} className="wheel-container" data-testid="wheel-container">
         {/* Layer 1: Main Background */}
         {componentVisibility.background && (
           <BackgroundRenderer
@@ -291,12 +292,13 @@ export const WheelViewer: React.FC<WheelViewerProps> = ({
       </div>
 
       {/* Debug Controls */}
-      <div className="debug-controls">
+      <div className="debug-controls" data-testid="debug-controls">
         <label className="switch-label">
-          <span>Show Center</span>
+          <span data-testid="center-label">Show Center</span>
           <div className="switch">
             <input
               type="checkbox"
+              data-testid="center-toggle"
               checked={componentVisibility.center}
               onChange={(e) => onToggleCenter(e.target.checked)}
             />

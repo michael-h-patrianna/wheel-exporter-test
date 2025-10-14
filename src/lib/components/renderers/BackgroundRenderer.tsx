@@ -1,5 +1,6 @@
-import React from 'react';
 import { logger } from '@services/logger';
+import React from 'react';
+import styles from '../WheelViewer.module.css';
 
 /**
  * BackgroundRenderer Component
@@ -57,7 +58,8 @@ export const BackgroundRenderer: React.FC<BackgroundRendererProps> = ({
 
   return (
     <div
-      className="background-component"
+      className={styles.backgroundComponent}
+      data-testid="background-component"
       style={cssVariables}
       role="img"
       aria-label="Wheel theme background"
@@ -65,7 +67,8 @@ export const BackgroundRenderer: React.FC<BackgroundRendererProps> = ({
       <img
         src={backgroundImage}
         alt="Background"
-        className="background-image"
+        className={styles.backgroundImage}
+        data-testid="background-image"
         draggable={false}
         onError={(_e) => {
           logger.warn('Background image failed to load', {

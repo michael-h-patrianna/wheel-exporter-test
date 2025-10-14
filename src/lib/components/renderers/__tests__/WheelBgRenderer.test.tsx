@@ -27,13 +27,13 @@ describe('WheelBgRenderer', () => {
   });
 
   it('should return null when wheelBg is not provided', () => {
-    const { container } = render(<WheelBgRenderer {...defaultProps} wheelBg={undefined} />);
+    const { container, getByTestId } = render(<WheelBgRenderer {...defaultProps} wheelBg={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when wheelBgImage is not provided', () => {
-    const { container } = render(<WheelBgRenderer {...defaultProps} wheelBgImage={undefined} />);
+    const { container, getByTestId } = render(<WheelBgRenderer {...defaultProps} wheelBgImage={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -41,7 +41,7 @@ describe('WheelBgRenderer', () => {
   it('should return null when bounds are missing', () => {
     const wheelBgWithoutBounds = createMockWheelOverlayWithoutBounds() as unknown as WheelOverlay;
 
-    const { container } = render(
+    const { container, getByTestId } = render(
       <WheelBgRenderer {...defaultProps} wheelBg={wheelBgWithoutBounds} />
     );
 
@@ -49,9 +49,9 @@ describe('WheelBgRenderer', () => {
   });
 
   it('should calculate correct CSS variables for positioning and dimensions', () => {
-    const { container } = render(<WheelBgRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<WheelBgRenderer {...defaultProps} />);
 
-    const wheelBgDiv = container.querySelector('.wheelbg-component');
+    const wheelBgDiv = getByTestId('wheelbg-component');
     // left = (x * scale) - (width / 2) = 400 - 300 = 100
     // top = (y * scale) - (height / 2) = 300 - 300 = 0
     expect(wheelBgDiv).toHaveStyle({
@@ -63,9 +63,9 @@ describe('WheelBgRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(<WheelBgRenderer {...defaultProps} scale={0.5} />);
+    const { container, getByTestId } = render(<WheelBgRenderer {...defaultProps} scale={0.5} />);
 
-    const wheelBgDiv = container.querySelector('.wheelbg-component');
+    const wheelBgDiv = getByTestId('wheelbg-component');
     // width = 600 * 0.5 = 300, height = 600 * 0.5 = 300
     // left = (400 * 0.5) - (300 / 2) = 200 - 150 = 50
     // top = (300 * 0.5) - (300 / 2) = 150 - 150 = 0
@@ -111,9 +111,9 @@ describe('WheelBgRenderer', () => {
   });
 
   it('should apply correct CSS class names', () => {
-    const { container } = render(<WheelBgRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<WheelBgRenderer {...defaultProps} />);
 
-    expect(container.querySelector('.wheelbg-component')).toBeInTheDocument();
-    expect(container.querySelector('.wheelbg-image')).toBeInTheDocument();
+    expect(getByTestId('wheelbg-component')).toBeInTheDocument();
+    expect(getByTestId('wheelbg-image')).toBeInTheDocument();
   });
 });

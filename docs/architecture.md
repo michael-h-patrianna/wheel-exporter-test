@@ -153,7 +153,8 @@ ResultViewer
 │   ├── XPRow
 │   ├── RRRow (Random reward)
 │   └── FailRow
-└── Button (collect/continue)
+└── ButtonRenderer (collect/continue button)
+    └── State managed by ResultViewer (default/hover/active/disabled)
 ```
 
 ### Key Component Files
@@ -190,14 +191,34 @@ ResultViewer
 - **Responsibilities**:
   - Renders reward rows based on prize type
   - Applies background styles (highlight vs default)
-  - Generates button with state styles
+  - Manages button state and renders ButtonRenderer
 - **Key Features**:
   - Automatic background selection based on prize type
   - Text gradients with stroke support
   - Scaled rendering based on container size
+  - Parent-managed button state with hover/active/disabled handling
 - **Location**: `src/lib/components/ResultViewer.tsx:1`
 
-#### 4. **Renderer Components** (`src/lib/components/renderers/`)
+#### 4. **ButtonRenderer** (`src/lib/components/renderers/ButtonRenderer.tsx`)
+- **Role**: Renders themed button with parent-managed state
+- **Responsibilities**:
+  - Applies inline styles from theme data based on current state
+  - Renders button with proper disabled attribute when state is 'disabled'
+  - Calls parent event handlers for mouse interactions
+- **State Management**: Parent-controlled via `currentState` prop
+  - `'default'`: Normal button appearance
+  - `'hover'`: Mouse over button
+  - `'active'`: Button being clicked
+  - `'disabled'`: Button not interactive
+- **Key Features**:
+  - Inline style application (no CSS injection)
+  - Box-shadow support via buildDropShadows() helper
+  - Gradient backgrounds with border radius
+  - Scaled rendering for responsive sizing
+  - Event handlers: onMouseEnter, onMouseLeave, onClick
+- **Location**: `src/lib/components/renderers/ButtonRenderer.tsx:1`
+
+#### 5. **Renderer Components** (`src/lib/components/renderers/`)
 Each renderer is responsible for a single visual layer:
 - **BackgroundRenderer**: Full-screen background image
 - **HeaderRenderer**: State-based header (active/success/fail)
@@ -263,6 +284,28 @@ This creates natural anticipation as the wheel visibly slows past several segmen
 const [headerState, setHeaderState] = useState<HeaderState>('active');
 const [buttonSpinState, setButtonSpinState] = useState<ButtonSpinState>('default');
 ```
+
+#### ResultViewer State
+```typescript
+const [buttonState, setButtonState] = useState<ButtonState>(
+  buttonDisabled ? 'disabled' : 'default'
+);
+
+// Automatic sync with buttonDisabled prop
+useEffect(() => {
+  setButtonState(buttonDisabled ? 'disabled' : 'default');
+}, [buttonDisabled]);
+```
+
+**Button State Types**:
+```typescript
+type ButtonState = 'default' | 'hover' | 'active' | 'disabled';
+```
+
+- `'default'`: Normal button appearance (idle)
+- `'hover'`: Mouse over button (triggered by onMouseEnter)
+- `'active'`: Button being clicked (can be set by parent for click feedback)
+- `'disabled'`: Button not interactive (HTML disabled attribute set)
 
 #### State Hook Interface
 ```typescript
@@ -486,6 +529,118 @@ Scaled properties:
 - Stroke widths
 - Shadow offsets/blur/spread
 - Font sizes
+
+### Button Rendering System
+
+#### Parent-Managed State Pattern
+
+The `ButtonRenderer` implements a parent-controlled state pattern where the parent component (typically `ResultViewer`) manages the button's visual state through the `currentState` prop.
+
+```typescript
+type ButtonState = 'default' | 'hover' | 'active' | 'disabled';
+
+interface ButtonRendererProps {
+  buttonStyles: {
+    default: RewardsButtonStyle;
+    hover?: RewardsButtonStyle;
+    active?: RewardsButtonStyle;
+    disabled?: RewardsButtonStyle;
+  };
+  currentState: ButtonState;  // Required - parent controls state
+  text: string;
+  scale: number;
+  onMouseEnter?: () => void;  // Parent handles hover
+  onMouseLeave?: () => void;  // Parent handles unhover
+  onClick?: () => void;       // Parent handles click
+  className?: string;
+}
+```
+
+**State Management in ResultViewer**:
+```typescript
+const [buttonState, setButtonState] = useState<ButtonState>(
+  buttonDisabled ? 'disabled' : 'default'
+);
+
+// Sync with disabled prop
+useEffect(() => {
+  setButtonState(buttonDisabled ? 'disabled' : 'default');
+}, [buttonDisabled]);
+
+// Event handlers
+<ButtonRenderer
+  currentState={buttonState}
+  onMouseEnter={() => !buttonDisabled && setButtonState('hover')}
+  onMouseLeave={() => !buttonDisabled && setButtonState('default')}
+  onClick={handleButtonClick}
+/>
+```
+
+#### Inline Style Application
+
+Unlike earlier implementations, `ButtonRenderer` applies styles directly via inline CSS rather than injecting `<style>` tags. This approach:
+
+- **Simplifies rendering**: No DOM manipulation for style injection
+- **Improves performance**: No CSS parsing overhead
+- **Enhances testability**: Styles directly inspectable on elements
+- **Maintains consistency**: All styling from theme data
+
+**Style Generation**:
+```typescript
+const stateStyle = buttonStyles[currentState];
+if (!stateStyle) return null;
+
+const cssVariables: React.CSSProperties = {
+  background: buildGradient(stateStyle.fill, scale),
+  borderRadius: `${stateStyle.borderRadius * scale}px`,
+  boxShadow: buildDropShadows(stateStyle.dropShadows, scale),
+  border: stateStyle.border ? `${stateStyle.border.thickness * scale}px solid ${color}` : 'none',
+  fontSize: `${stateStyle.text.fontSize * scale}px`,
+  color: textColor,
+  padding: `${stateStyle.verticalPadding * scale}px ${stateStyle.horizontalPadding * scale}px`,
+  width: `${stateStyle.width * scale}px`,
+  height: `${stateStyle.height * scale}px`,
+};
+```
+
+#### Box Shadow Helper
+
+The `buildDropShadows()` helper converts theme drop shadow arrays into CSS box-shadow strings:
+
+```typescript
+function buildDropShadows(shadows: DropShadow[], scale: number): string {
+  if (!shadows || shadows.length === 0) return 'none';
+
+  return shadows
+    .map((shadow) => {
+      const inset = shadow.inset ? 'inset ' : '';
+      const x = shadow.xOffset * scale;
+      const y = shadow.yOffset * scale;
+      const blur = shadow.blur * scale;
+      const spread = shadow.spread * scale;
+      const color = `rgba(${shadow.color.r * 255}, ${shadow.color.g * 255}, ${shadow.color.b * 255}, ${shadow.color.a})`;
+      return `${inset}${x}px ${y}px ${blur}px ${spread}px ${color}`;
+    })
+    .join(', ');
+}
+```
+
+**Location**: `src/lib/components/renderers/ButtonRenderer.tsx:8`
+
+#### State Data Attribute
+
+For debugging and testing, the button includes a `data-button-state` attribute that reflects the current state:
+
+```typescript
+<button data-button-state={currentState}>
+  {text}
+</button>
+```
+
+This enables:
+- Visual debugging in browser DevTools
+- State verification in tests: `expect(button).toHaveAttribute('data-button-state', 'hover')`
+- CSS targeting if needed: `[data-button-state="disabled"]`
 
 ---
 

@@ -199,7 +199,7 @@ describe('SegmentRenderer Performance Tests', () => {
 
   describe('Component Structure Optimization', () => {
     it('should render individual Segment components', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       // Each segment should be in its own <g> element
       const segments = container.querySelectorAll('svg > g');
@@ -207,7 +207,7 @@ describe('SegmentRenderer Performance Tests', () => {
     });
 
     it('should separate defs rendering from segment rendering', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       const defs = container.querySelector('defs');
       expect(defs).toBeInTheDocument();
@@ -236,7 +236,7 @@ describe('SegmentRenderer Performance Tests', () => {
     it('should handle 16 segments efficiently', () => {
       const startTime = performance.now();
 
-      const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={16} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} segmentCount={16} />);
 
       const renderTime = performance.now() - startTime;
 
@@ -250,7 +250,7 @@ describe('SegmentRenderer Performance Tests', () => {
     it('should handle 32 segments efficiently', () => {
       const startTime = performance.now();
 
-      const { container } = render(<SegmentRenderer {...defaultProps} segmentCount={32} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} segmentCount={32} />);
 
       const renderTime = performance.now() - startTime;
 
@@ -365,7 +365,7 @@ describe('SegmentRenderer Performance Tests', () => {
 
       const startTime = performance.now();
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={complexSegments} />
       );
 
@@ -406,7 +406,7 @@ describe('SegmentRenderer Performance Tests', () => {
 
       const startTime = performance.now();
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <SegmentRenderer {...defaultProps} segments={segmentsWithShadows} />
       );
 
@@ -437,7 +437,7 @@ describe('SegmentRenderer Performance Tests', () => {
     });
 
     it('should memoize individual segment calculations', () => {
-      const { container } = render(<SegmentRenderer {...defaultProps} />);
+      const { container, getByTestId } = render(<SegmentRenderer {...defaultProps} />);
 
       // Get computed paths from SVG
       const paths = container.querySelectorAll('path[d]');

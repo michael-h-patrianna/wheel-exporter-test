@@ -133,7 +133,7 @@ describe('ErrorBoundary', () => {
 
   describe('getDerivedStateFromError', () => {
     it('should set hasError state when error is caught', () => {
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ErrorBoundary>
           <ThrowError />
         </ErrorBoundary>
@@ -344,7 +344,7 @@ describe('ErrorBoundary', () => {
     });
 
     it('should clear error state after reset', () => {
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ErrorBoundary>
           <ThrowError />
         </ErrorBoundary>

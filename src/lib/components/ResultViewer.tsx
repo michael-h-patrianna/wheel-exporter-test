@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { ExtractedAssets } from '@lib-types';
 import { useRewardStyles } from '@hooks/useRewardStyles';
-import { RewardRow } from './reward-rows';
+import { ExtractedAssets } from '@lib-types';
+import React, { useState } from 'react';
+import { ButtonState } from './renderers/ButtonRenderer';
+import { NoWinView, WinFreeView, WinPurchaseView } from './result-views';
+import styles from './ResultViewer.module.css';
 import type { RewardRowData } from './reward-rows';
-import { ButtonRenderer, ButtonState } from './renderers/ButtonRenderer';
 
 /**
  * ResultViewer Component - Renders the reward/result view using theme data from Figma plugin export
@@ -199,7 +200,12 @@ import { ButtonRenderer, ButtonState } from './renderers/ButtonRenderer';
  */
 
 // Export types for external use
-export type { RewardRowType, RewardRowData } from './reward-rows';
+export type { RewardRowData, RewardRowType } from './reward-rows';
+
+/**
+ * Result view mode types
+ */
+export type ResultViewMode = 'Win Free' | 'Win Purchase' | 'No Win';
 
 interface ResultViewerProps {
   wheelData: ExtractedAssets['wheelData'];
@@ -215,6 +221,8 @@ interface ResultViewerProps {
   // Display options
   iconSize?: number; // Size in pixels (will be scaled)
   showButton?: boolean;
+  // Result view mode (controlled by parent)
+  viewMode?: ResultViewMode;
 }
 
 export const ResultViewer: React.FC<ResultViewerProps> = ({
@@ -233,6 +241,7 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
   onButtonClick,
   iconSize = 36,
   showButton = true,
+  viewMode = 'Win Free',
 }) => {
   // Button state management (follows questline-exporter-test pattern)
   const [buttonState, setButtonState] = useState<ButtonState>(
@@ -242,15 +251,11 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
   const frameSize = wheelData.frameSize;
   const scale = Math.min(wheelWidth / frameSize.width, wheelHeight / frameSize.height);
 
-  const rewards = wheelData.rewards;
   const header = wheelData.header;
 
   // Get header success image and bounds
   const headerBounds = header?.stateBounds.success;
   const headerImage = assets.headerImages?.success;
-
-  // Scale icon size
-  const scaledIconSize = Math.round(iconSize * scale);
 
   // Use memoized style builders from hook
   const { buildTextStyle, buildBoxStyle } = useRewardStyles(scale);
@@ -264,73 +269,50 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
     }
   }, [buttonDisabled, buttonState]);
 
+  // Render the appropriate view based on mode
+  const renderView = () => {
+    switch (viewMode) {
+      case 'Win Free':
+        return (
+          <WinFreeView
+            wheelData={wheelData}
+            assets={assets}
+            scale={scale}
+            rewardRows={rewardRows}
+            iconSize={iconSize}
+            buildTextStyle={buildTextStyle}
+            buildBoxStyle={buildBoxStyle}
+            headerImage={headerImage}
+            headerBounds={headerBounds}
+            showButton={showButton}
+            buttonText={buttonText}
+            buttonState={buttonState}
+            onButtonMouseEnter={() => !buttonDisabled && setButtonState('hover')}
+            onButtonMouseLeave={() => !buttonDisabled && setButtonState('default')}
+            onButtonClick={onButtonClick}
+          />
+        );
+      case 'Win Purchase':
+        return <WinPurchaseView />;
+      case 'No Win':
+        return <NoWinView />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div
-      className="result-viewer"
+      className={styles.resultViewer}
+      data-testid="result-viewer"
       style={{
         width: `${wheelWidth}px`,
-        height: `${wheelHeight}px`,
+        minHeight: `${wheelHeight}px`,
         position: 'relative',
         margin: '0 auto',
       }}
     >
-      <div
-        className="result-content"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        {/* Header - Success State */}
-        {headerImage && headerBounds && (
-          <div className="result-header" style={{ display: 'flex', justifyContent: 'center' }}>
-            <img
-              src={headerImage}
-              alt="Result header"
-              style={{
-                width: `${Math.round(headerBounds.w * scale)}px`,
-                height: `${Math.round(headerBounds.h * scale)}px`,
-                maxWidth: '100%',
-              }}
-            />
-          </div>
-        )}
-
-        {/* Reward Rows */}
-        {rewardRows.map((rowData, index) => (
-          <RewardRow
-            key={`reward-row-${index}`}
-            rowData={rowData}
-            index={index}
-            rewards={rewards}
-            gcIcon={assets.rewardsPrizeImages?.gc}
-            scIcon={assets.rewardsPrizeImages?.sc}
-            scaledIconSize={scaledIconSize}
-            buildTextStyle={buildTextStyle}
-            buildBoxStyle={buildBoxStyle}
-            scale={scale}
-          />
-        ))}
-
-        {/* Collect Button */}
-        {showButton && rewards?.button?.stateStyles && (
-          <div
-            className="result-button-container"
-            style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}
-          >
-            <ButtonRenderer
-              buttonStyles={rewards.button.stateStyles}
-              currentState={buttonState}
-              text={buttonText}
-              onMouseEnter={() => !buttonDisabled && setButtonState('hover')}
-              onMouseLeave={() => !buttonDisabled && setButtonState('default')}
-              onClick={onButtonClick}
-              scale={scale}
-            />
-          </div>
-        )}
-      </div>
+      {renderView()}
     </div>
   );
 };

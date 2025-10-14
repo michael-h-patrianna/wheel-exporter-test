@@ -36,13 +36,13 @@ describe('ButtonSpinRenderer', () => {
   });
 
   it('should return null when buttonSpin is not provided', () => {
-    const { container } = render(<ButtonSpinRenderer {...defaultProps} buttonSpin={undefined} />);
+    const { container, getByTestId } = render(<ButtonSpinRenderer {...defaultProps} buttonSpin={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when buttonImage is not provided', () => {
-    const { container } = render(<ButtonSpinRenderer {...defaultProps} buttonImage={undefined} />);
+    const { container, getByTestId } = render(<ButtonSpinRenderer {...defaultProps} buttonImage={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -51,7 +51,7 @@ describe('ButtonSpinRenderer', () => {
     const buttonSpinWithoutBounds =
       createMockButtonSpinWithMissingSpinningState() as unknown as ButtonSpinComponent;
 
-    const { container } = render(
+    const { container, getByTestId } = render(
       <ButtonSpinRenderer
         {...defaultProps}
         buttonSpin={buttonSpinWithoutBounds}
@@ -63,9 +63,9 @@ describe('ButtonSpinRenderer', () => {
   });
 
   it('should calculate correct CSS variables for positioning and dimensions', () => {
-    const { container } = render(<ButtonSpinRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<ButtonSpinRenderer {...defaultProps} />);
 
-    const button = container.querySelector('.button-spin-component');
+    const button = getByTestId('button-spin-component');
     // Position: center to top-left conversion
     // left = (x * scale) - (width / 2) = 400 - 50 = 350
     // top = (y * scale) - (height / 2) = 500 - 50 = 450
@@ -79,9 +79,9 @@ describe('ButtonSpinRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(<ButtonSpinRenderer {...defaultProps} scale={0.5} />);
+    const { container, getByTestId } = render(<ButtonSpinRenderer {...defaultProps} scale={0.5} />);
 
-    const button = container.querySelector('.button-spin-component');
+    const button = getByTestId('button-spin-component');
     // width = 100 * 0.5 = 50, height = 100 * 0.5 = 50
     // left = (400 * 0.5) - (50 / 2) = 200 - 25 = 175
     // top = (500 * 0.5) - (50 / 2) = 250 - 25 = 225
@@ -101,11 +101,11 @@ describe('ButtonSpinRenderer', () => {
       },
     });
 
-    const { container } = render(
+    const { container, getByTestId } = render(
       <ButtonSpinRenderer {...defaultProps} buttonSpin={buttonSpinWithRotation} />
     );
 
-    const button = container.querySelector('.button-spin-component');
+    const button = getByTestId('button-spin-component');
     expect(button).toHaveStyle({
       '--button-transform': 'rotate(90deg)',
     });
@@ -146,34 +146,34 @@ describe('ButtonSpinRenderer', () => {
   });
 
   it('should display correct state in data attributes', () => {
-    const { container } = render(<ButtonSpinRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<ButtonSpinRenderer {...defaultProps} />);
 
-    const button = container.querySelector('.button-spin-component');
+    const button = getByTestId('button-spin-component');
     expect(button).toHaveAttribute('data-button-state', 'default');
     expect(button).toHaveAttribute('data-spinning', 'false');
   });
 
   it('should update data-spinning attribute when spinning', () => {
-    const { container } = render(
+    const { container, getByTestId } = render(
       <ButtonSpinRenderer {...defaultProps} isSpinning={true} currentState="spinning" />
     );
 
-    const button = container.querySelector('.button-spin-component');
+    const button = getByTestId('button-spin-component');
     expect(button).toHaveAttribute('data-button-state', 'spinning');
     expect(button).toHaveAttribute('data-spinning', 'true');
   });
 
   it('should have correct title when not spinning', () => {
-    const { container } = render(<ButtonSpinRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<ButtonSpinRenderer {...defaultProps} />);
 
-    const button = container.querySelector('.button-spin-component');
+    const button = getByTestId('button-spin-component');
     expect(button).toHaveAttribute('title', 'Click to spin the wheel!');
   });
 
   it('should have correct title when spinning', () => {
-    const { container } = render(<ButtonSpinRenderer {...defaultProps} isSpinning={true} />);
+    const { container, getByTestId } = render(<ButtonSpinRenderer {...defaultProps} isSpinning={true} />);
 
-    const button = container.querySelector('.button-spin-component');
+    const button = getByTestId('button-spin-component');
     expect(button).toHaveAttribute('title', 'Wheel is spinning...');
   });
 
@@ -202,9 +202,9 @@ describe('ButtonSpinRenderer', () => {
   // for production readiness. Image loading is tested via visual rendering tests.
 
   it('should apply correct CSS class names', () => {
-    const { container } = render(<ButtonSpinRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<ButtonSpinRenderer {...defaultProps} />);
 
-    expect(container.querySelector('.button-spin-component')).toBeInTheDocument();
-    expect(container.querySelector('.button-spin-image')).toBeInTheDocument();
+    expect(getByTestId('button-spin-component')).toBeInTheDocument();
+    expect(getByTestId('button-spin-image')).toBeInTheDocument();
   });
 });

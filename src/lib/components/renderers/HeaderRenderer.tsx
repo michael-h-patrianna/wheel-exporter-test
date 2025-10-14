@@ -1,6 +1,7 @@
-import React from 'react';
-import { HeaderState, HeaderComponent } from '@lib-types';
+import { HeaderComponent, HeaderState } from '@lib-types';
 import { logger } from '@services/logger';
+import React from 'react';
+import styles from '../WheelViewer.module.css';
 
 /**
  * HeaderRenderer Component
@@ -87,7 +88,8 @@ export const HeaderRenderer: React.FC<HeaderRendererProps> = ({
 
   return (
     <div
-      className="header-component"
+      className={styles.headerComponent}
+      data-testid="header-component"
       data-header-state={currentState}
       style={cssVariables}
       onClick={onCycleState}
@@ -105,7 +107,8 @@ export const HeaderRenderer: React.FC<HeaderRendererProps> = ({
       <img
         src={headerImage}
         alt={`Header ${currentState}`}
-        className="header-image"
+        className={styles.headerImage}
+        data-testid="header-image"
         draggable={false}
         onError={(_e) => {
           logger.warn('Header image failed to load', {

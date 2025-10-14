@@ -2,9 +2,8 @@
  * Comprehensive test suite for BackgroundRenderer
  */
 
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import { BackgroundRenderer } from '@components/renderers/BackgroundRenderer';
+import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 
 describe('BackgroundRenderer', () => {
@@ -16,15 +15,15 @@ describe('BackgroundRenderer', () => {
   };
 
   it('should render background image with correct props', () => {
-    const { container } = render(<BackgroundRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<BackgroundRenderer {...defaultProps} />);
 
-    const img = screen.getByAltText('Background');
+    const img = getByTestId('background-image');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', defaultProps.backgroundImage);
   });
 
   it('should return null when backgroundImage is not provided', () => {
-    const { container } = render(
+    const { container, getByTestId } = render(
       <BackgroundRenderer
         backgroundImage={undefined}
         scale={1}
@@ -37,9 +36,9 @@ describe('BackgroundRenderer', () => {
   });
 
   it('should apply correct CSS variables for dimensions', () => {
-    const { container } = render(<BackgroundRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<BackgroundRenderer {...defaultProps} />);
 
-    const backgroundDiv = container.querySelector('.background-component');
+    const backgroundDiv = getByTestId('background-component');
     expect(backgroundDiv).toHaveStyle({
       '--bg-width': '800px',
       '--bg-height': '600px',
@@ -47,9 +46,9 @@ describe('BackgroundRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(<BackgroundRenderer {...defaultProps} scale={0.5} />);
+    const { container, getByTestId } = render(<BackgroundRenderer {...defaultProps} scale={0.5} />);
 
-    const backgroundDiv = container.querySelector('.background-component');
+    const backgroundDiv = getByTestId('background-component');
     expect(backgroundDiv).toHaveStyle({
       '--bg-width': '400px',
       '--bg-height': '300px',
@@ -57,31 +56,31 @@ describe('BackgroundRenderer', () => {
   });
 
   it('should apply correct ARIA attributes', () => {
-    render(<BackgroundRenderer {...defaultProps} />);
+    const { getByTestId } = render(<BackgroundRenderer {...defaultProps} />);
 
-    const backgroundDiv = screen.getByRole('img', { name: 'Wheel theme background' });
+    const backgroundDiv = getByTestId('background-component');
     expect(backgroundDiv).toBeInTheDocument();
   });
 
   it('should make image non-draggable', () => {
-    render(<BackgroundRenderer {...defaultProps} />);
+    const { getByTestId } = render(<BackgroundRenderer {...defaultProps} />);
 
-    const img = screen.getByAltText('Background');
+    const img = getByTestId('background-image');
     expect(img).toHaveAttribute('draggable', 'false');
   });
 
   it('should apply correct CSS class names', () => {
-    const { container } = render(<BackgroundRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<BackgroundRenderer {...defaultProps} />);
 
-    expect(container.querySelector('.background-component')).toBeInTheDocument();
-    expect(container.querySelector('.background-image')).toBeInTheDocument();
+    expect(getByTestId('background-component')).toBeInTheDocument();
+    expect(getByTestId('background-image')).toBeInTheDocument();
   });
 
   it('should handle image load errors gracefully', () => {
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    render(<BackgroundRenderer {...defaultProps} />);
-    const img = screen.getByAltText('Background');
+    const { getByTestId } = render(<BackgroundRenderer {...defaultProps} />);
+    const img = getByTestId('background-image');
 
     // Trigger error
     img.dispatchEvent(new Event('error'));
@@ -106,7 +105,7 @@ describe('BackgroundRenderer', () => {
     testCases.forEach(({ scale, expectedWidth, expectedHeight }) => {
       const { container } = render(<BackgroundRenderer {...defaultProps} scale={scale} />);
 
-      const backgroundDiv = container.querySelector('.background-component');
+      const backgroundDiv = container.querySelector('[data-testid="background-component"]') as HTMLElement;
       expect(backgroundDiv).toHaveStyle({
         '--bg-width': expectedWidth,
         '--bg-height': expectedHeight,

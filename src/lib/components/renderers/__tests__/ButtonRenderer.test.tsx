@@ -2,11 +2,10 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { ButtonRenderer } from '../ButtonRenderer';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import type { RewardsButtonStyle } from '../../../types';
+import { ButtonRenderer } from '../ButtonRenderer';
 
 describe('ButtonRenderer', () => {
   // Helper to create mock button styles
@@ -147,7 +146,7 @@ describe('ButtonRenderer', () => {
     });
 
     it('should return null when buttonStyles is undefined', () => {
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ButtonRenderer
           buttonStyles={undefined}
           currentState="default"
@@ -164,7 +163,7 @@ describe('ButtonRenderer', () => {
         default: createMockButtonStyles(),
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ButtonRenderer
           buttonStyles={buttonStyles}
           currentState="hover" // hover state doesn't exist in buttonStyles
@@ -425,10 +424,10 @@ describe('ButtonRenderer', () => {
       );
 
       const button = screen.getByRole('button');
-      
+
       fireEvent.mouseEnter(button);
       expect(handleMouseEnter).toHaveBeenCalledTimes(1);
-      
+
       fireEvent.mouseLeave(button);
       expect(handleMouseLeave).toHaveBeenCalledTimes(1);
     });
@@ -452,11 +451,11 @@ describe('ButtonRenderer', () => {
       );
 
       const button = screen.getByRole('button');
-      
+
       // Check that inline styles are applied
       expect(button.style.backgroundColor).toBeTruthy();
       expect(button.style.borderRadius).toBeTruthy();
-      
+
       // Rerender with hover state
       rerender(
         <ButtonRenderer
@@ -466,7 +465,7 @@ describe('ButtonRenderer', () => {
           scale={1.0}
         />
       );
-      
+
       // Styles should still be present (different values based on state)
       expect(button.style.backgroundColor).toBeTruthy();
     });
@@ -516,7 +515,7 @@ describe('ButtonRenderer', () => {
       );
 
       const button = screen.getByRole('button');
-      
+
       // Check that styles are applied (values will be scaled)
       expect(button.style.borderRadius).toBeTruthy();
       expect(button.style.fontSize).toBeTruthy();
@@ -565,7 +564,7 @@ describe('ButtonRenderer', () => {
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('data-button-state', 'default');
-      
+
       // Change to hover state
       rerender(
         <ButtonRenderer
@@ -576,7 +575,7 @@ describe('ButtonRenderer', () => {
         />
       );
       expect(button).toHaveAttribute('data-button-state', 'hover');
-      
+
       // Change to active state
       rerender(
         <ButtonRenderer
@@ -676,12 +675,11 @@ describe('ButtonRenderer', () => {
 
       const button = screen.getByRole('button');
       expect(button).toHaveTextContent('COLLECT REWARD');
-      
-      // Text renders directly in button, not in a span with .btn-text class
-      const textNodes = Array.from(button.childNodes).filter(
-        (node) => node.nodeType === Node.TEXT_NODE
-      );
-      expect(textNodes.length).toBeGreaterThan(0);
+
+      // Text renders in a span with data-testid="button-text"
+      const textSpan = button.querySelector('[data-testid="button-text"]');
+      expect(textSpan).toBeInTheDocument();
+      expect(textSpan).toHaveTextContent('COLLECT REWARD');
     });
   });
 });

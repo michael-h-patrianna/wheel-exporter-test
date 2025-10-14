@@ -4,10 +4,9 @@
  * Full E2E integration testing is done via Playwright tests
  */
 
-import React from 'react';
-import { render } from '@testing-library/react';
 import { WheelViewer } from '@components/WheelViewer';
-import { WheelExport, ExtractedAssets } from '@lib-types';
+import { ExtractedAssets, WheelExport } from '@lib-types';
+import { render } from '@testing-library/react';
 
 describe('WheelViewer Integration', () => {
   const mockWheelData: WheelExport = {
@@ -48,20 +47,20 @@ describe('WheelViewer Integration', () => {
   };
 
   it('should render without crashing', () => {
-    const { container } = render(<WheelViewer {...defaultProps} />);
-    expect(container.querySelector('.wheel-viewer')).toBeInTheDocument();
+    const { getByTestId } = render(<WheelViewer {...defaultProps} />);
+    expect(getByTestId('wheel-viewer')).toBeInTheDocument();
   });
 
   it('should render debug controls', () => {
-    const { container } = render(<WheelViewer {...defaultProps} />);
-    expect(container.querySelector('.debug-controls')).toBeInTheDocument();
+    const { getByTestId } = render(<WheelViewer {...defaultProps} />);
+    expect(getByTestId('debug-controls')).toBeInTheDocument();
   });
 
   it('should calculate container dimensions based on scale', () => {
-    const { container } = render(
+    const { container, getByTestId } = render(
       <WheelViewer {...defaultProps} wheelWidth={400} wheelHeight={300} />
     );
-    const wheelContainer = container.querySelector('.wheel-container');
+    const wheelContainer = getByTestId('wheel-container');
 
     // Scale should be 0.5 (min(400/800, 300/600))
     expect(wheelContainer).toHaveStyle({

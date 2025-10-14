@@ -4,10 +4,9 @@
  * Full E2E integration testing is done via Playwright tests
  */
 
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import { ResultViewer } from '@components/ResultViewer';
 import { ExtractedAssets } from '@lib-types';
+import { render } from '@testing-library/react';
 
 describe('ResultViewer Integration', () => {
   const mockWheelData: ExtractedAssets['wheelData'] = {
@@ -32,25 +31,43 @@ describe('ResultViewer Integration', () => {
   };
 
   it('should render without crashing', () => {
-    const { container } = render(<ResultViewer {...defaultProps} rewardRows={[]} />);
-    expect(container.querySelector('.result-viewer')).toBeInTheDocument();
+    const { container, getByTestId } = render(<ResultViewer {...defaultProps} rewardRows={[]} />);
+    expect(getByTestId('result-viewer')).toBeInTheDocument();
   });
 
   it('should render with correct dimensions', () => {
-    const { container } = render(
+    const { container, getByTestId } = render(
       <ResultViewer {...defaultProps} wheelWidth={400} wheelHeight={300} />
     );
-    const viewer = container.querySelector('.result-viewer');
+    const viewer = getByTestId('result-viewer');
 
     expect(viewer).toHaveStyle({
       width: '400px',
-      height: '300px',
+      minHeight: '300px',
     });
   });
 
+  it('should render Win Free mode by default', () => {
+    const { container, getByTestId } = render(<ResultViewer {...defaultProps} rewardRows={[]} />);
+    const viewer = getByTestId('result-viewer');
+    expect(viewer).toBeInTheDocument();
+  });
+
+  it('should render Win Purchase mode when viewMode prop is set', () => {
+    const { getByTestId } = render(<ResultViewer {...defaultProps} viewMode="Win Purchase" />);
+    expect(getByTestId('win-purchase-view')).toBeInTheDocument();
+    expect(getByTestId('view-text')).toHaveTextContent('win purchase');
+  });
+
+  it('should render No Win mode when viewMode prop is set', () => {
+    const { getByTestId } = render(<ResultViewer {...defaultProps} viewMode="No Win" />);
+    expect(getByTestId('no-win-view')).toBeInTheDocument();
+    expect(getByTestId('view-text')).toHaveTextContent('no win');
+  });
+
   it('should not crash when rewards data is missing', () => {
-    const { container } = render(<ResultViewer {...defaultProps} />);
-    expect(container.querySelector('.result-viewer')).toBeInTheDocument();
+    const { container, getByTestId } = render(<ResultViewer {...defaultProps} />);
+    expect(getByTestId('result-viewer')).toBeInTheDocument();
   });
 
   describe('Background Styling', () => {
@@ -87,7 +104,7 @@ describe('ResultViewer Integration', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ResultViewer
           {...defaultProps}
           wheelData={wheelDataWithRewards}
@@ -95,7 +112,7 @@ describe('ResultViewer Integration', () => {
         />
       );
 
-      const highlightBox = container.querySelector('.result-highlight-box');
+      const highlightBox = getByTestId('result-highlight-box');
       expect(highlightBox).toBeInTheDocument();
       expect(highlightBox).toHaveStyle({
         background: '#4e187c',
@@ -137,7 +154,7 @@ describe('ResultViewer Integration', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ResultViewer
           {...defaultProps}
           wheelData={wheelDataWithRewards}
@@ -145,7 +162,7 @@ describe('ResultViewer Integration', () => {
         />
       );
 
-      const defaultBox = container.querySelector('.result-default-box');
+      const defaultBox = getByTestId('result-default-box');
       expect(defaultBox).toBeInTheDocument();
       expect(defaultBox).toHaveStyle({
         background: '#1a1a1a',
@@ -186,7 +203,7 @@ describe('ResultViewer Integration', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ResultViewer
           {...defaultProps}
           wheelData={wheelDataWithGradient}
@@ -194,7 +211,7 @@ describe('ResultViewer Integration', () => {
         />
       );
 
-      const defaultBox = container.querySelector('.result-default-box');
+      const defaultBox = getByTestId('result-default-box');
       expect(defaultBox).toBeInTheDocument();
       expect(defaultBox).toHaveStyle({
         background: 'linear-gradient(90deg, #3a125d 0%, #7a26c3 100%)',
@@ -230,7 +247,7 @@ describe('ResultViewer Integration', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ResultViewer
           {...defaultProps}
           wheelData={wheelDataWithShadows}
@@ -238,7 +255,7 @@ describe('ResultViewer Integration', () => {
         />
       );
 
-      const defaultBox = container.querySelector('.result-default-box');
+      const defaultBox = getByTestId('result-default-box');
       expect(defaultBox).toBeInTheDocument();
       // Shadows are converted to borders for React Native compatibility (CIB-001.5)
       expect(defaultBox).toHaveStyle({
@@ -282,7 +299,7 @@ describe('ResultViewer Integration', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ResultViewer
           {...defaultProps}
           wheelData={wheelDataWithMultipleShadows}
@@ -290,7 +307,7 @@ describe('ResultViewer Integration', () => {
         />
       );
 
-      const defaultBox = container.querySelector('.result-default-box');
+      const defaultBox = getByTestId('result-default-box');
       expect(defaultBox).toBeInTheDocument();
       // Multiple shadows: only first shadow color is used for border (CIB-001.5)
       expect(defaultBox).toHaveStyle({
@@ -314,6 +331,18 @@ describe('ResultViewer Integration', () => {
               stroke: {
                 width: 1,
                 color: '#333333',
+              },
+              dropShadows: [],
+            },
+            highlight: {
+              borderRadius: 4,
+              backgroundFill: {
+                type: 'solid',
+                color: '#2a2a2a',
+              },
+              stroke: {
+                width: 1,
+                color: '#444444',
               },
               dropShadows: [],
             },
@@ -373,7 +402,7 @@ describe('ResultViewer Integration', () => {
         },
       };
 
-      const { container } = render(
+      const { container, getByTestId } = render(
         <ResultViewer
           {...defaultProps}
           wheelData={wheelDataWithPrizes}
@@ -386,21 +415,16 @@ describe('ResultViewer Integration', () => {
         />
       );
 
-      // Check that text elements have Lato font
-      const gcscText = container.querySelector('.gcsc-value');
-      if (gcscText) {
-        expect(gcscText).toHaveStyle({
-          fontFamily: 'Lato, sans-serif',
-        });
-      }
+      // Check that GC/SC text elements have Lato font
+      const gcscText = getByTestId('gc-value');
+      expect(gcscText).toHaveStyle({
+        fontFamily: 'Lato, sans-serif',
+      });
 
-      // Check button text
-      const buttonText = container.querySelector('.result-button span');
-      if (buttonText) {
-        expect(buttonText).toHaveStyle({
-          fontFamily: 'Lato, sans-serif',
-        });
-      }
+      // Verify button is rendered with correct testid
+      const buttonText = getByTestId('button-text');
+      expect(buttonText).toBeInTheDocument();
+      expect(buttonText).toHaveTextContent('COLLECT');
     });
   });
 });

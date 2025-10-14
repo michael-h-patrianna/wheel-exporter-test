@@ -3,11 +3,10 @@
  * Tests rendering, user interactions, state management, and integration with useWheelStateMachine
  */
 
-import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { WheelViewer } from '@components/WheelViewer';
 import { useWheelStateMachine } from '@hooks/useWheelStateMachine';
-import { createMockWheelExport, createMockExtractedAssets } from '@test-utils';
+import { createMockExtractedAssets, createMockWheelExport } from '@test-utils';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 
 // Mock the useWheelStateMachine hook
@@ -108,10 +107,10 @@ describe('WheelViewer', () => {
 
   describe('Component rendering with all props', () => {
     it('should render wheel viewer container', () => {
-      const { container } = render(<WheelViewer {...defaultProps} />);
+      const { getByTestId, container } = render(<WheelViewer {...defaultProps} />);
 
-      expect(container.querySelector('.wheel-viewer')).toBeInTheDocument();
-      expect(container.querySelector('.wheel-container')).toBeInTheDocument();
+      expect(getByTestId('wheel-viewer')).toBeInTheDocument();
+      expect(getByTestId('wheel-container')).toBeInTheDocument();
     });
 
     it('should render all components when visibility is true', () => {
@@ -130,21 +129,21 @@ describe('WheelViewer', () => {
     });
 
     it('should render debug controls with center toggle', () => {
-      render(<WheelViewer {...defaultProps} />);
+      const { getByTestId } = render(<WheelViewer {...defaultProps} />);
 
-      const checkbox = screen.getByRole('checkbox');
+      const checkbox = getByTestId('center-toggle');
       expect(checkbox).toBeInTheDocument();
       expect(checkbox).toBeChecked();
 
-      expect(screen.getByText('Show Center')).toBeInTheDocument();
+      expect(getByTestId('center-label')).toBeInTheDocument();
     });
 
     it('should calculate correct scale for aspect ratio', () => {
-      const { container } = render(
+      const { container, getByTestId } = render(
         <WheelViewer {...defaultProps} wheelWidth={400} wheelHeight={300} />
       );
 
-      const wheelContainer = container.querySelector('.wheel-container');
+      const wheelContainer = getByTestId('wheel-container');
       expect(wheelContainer).toHaveStyle({
         width: '400px',
         height: '300px',
@@ -152,7 +151,7 @@ describe('WheelViewer', () => {
     });
 
     it('should maintain aspect ratio with different dimensions', () => {
-      const { container } = render(
+      const { container, getByTestId } = render(
         <WheelViewer
           {...defaultProps}
           wheelWidth={1600}
@@ -163,7 +162,7 @@ describe('WheelViewer', () => {
         />
       );
 
-      const wheelContainer = container.querySelector('.wheel-container');
+      const wheelContainer = getByTestId('wheel-container');
       expect(wheelContainer).toHaveStyle({
         width: '1600px',
         height: '1200px',
@@ -313,7 +312,7 @@ describe('WheelViewer', () => {
     });
 
     it('should render with all components hidden', () => {
-      const { container } = render(
+      const { container, getByTestId } = render(
         <WheelViewer
           {...defaultProps}
           componentVisibility={{
@@ -331,7 +330,7 @@ describe('WheelViewer', () => {
         />
       );
 
-      expect(container.querySelector('.wheel-container')).toBeInTheDocument();
+      expect(getByTestId('wheel-container')).toBeInTheDocument();
       expect(screen.queryByTestId('background-renderer')).not.toBeInTheDocument();
       expect(screen.queryByTestId('header-renderer')).not.toBeInTheDocument();
     });
@@ -566,16 +565,16 @@ describe('WheelViewer', () => {
     it('should call onToggleCenter when checkbox is changed', () => {
       const onToggleCenter = vi.fn();
 
-      render(<WheelViewer {...defaultProps} onToggleCenter={onToggleCenter} />);
+      const { getByTestId } = render(<WheelViewer {...defaultProps} onToggleCenter={onToggleCenter} />);
 
-      const checkbox = screen.getByRole('checkbox');
+      const checkbox = getByTestId('center-toggle');
       fireEvent.click(checkbox);
 
       expect(onToggleCenter).toHaveBeenCalledWith(false);
     });
 
     it('should reflect checked state based on componentVisibility.center', () => {
-      const { rerender } = render(
+      const { rerender, getByTestId } = render(
         <WheelViewer
           {...defaultProps}
           componentVisibility={{
@@ -585,7 +584,7 @@ describe('WheelViewer', () => {
         />
       );
 
-      expect(screen.getByRole('checkbox')).toBeChecked();
+      expect(getByTestId('center-toggle')).toBeChecked();
 
       rerender(
         <WheelViewer
@@ -597,7 +596,7 @@ describe('WheelViewer', () => {
         />
       );
 
-      expect(screen.getByRole('checkbox')).not.toBeChecked();
+      expect(getByTestId('center-toggle')).not.toBeChecked();
     });
   });
 
@@ -648,7 +647,7 @@ describe('WheelViewer', () => {
 
   describe('Scale calculations', () => {
     it('should calculate scale based on width constraint', () => {
-      const { container } = render(
+      const { container, getByTestId } = render(
         <WheelViewer
           {...defaultProps}
           wheelWidth={400}
@@ -659,7 +658,7 @@ describe('WheelViewer', () => {
         />
       );
 
-      const wheelContainer = container.querySelector('.wheel-container');
+      const wheelContainer = getByTestId('wheel-container');
       // Scale should be 400/800 = 0.5, so dimensions should be 400x300
       expect(wheelContainer).toHaveStyle({
         width: '400px',
@@ -668,7 +667,7 @@ describe('WheelViewer', () => {
     });
 
     it('should calculate scale based on height constraint', () => {
-      const { container } = render(
+      const { container, getByTestId } = render(
         <WheelViewer
           {...defaultProps}
           wheelWidth={1600}
@@ -679,7 +678,7 @@ describe('WheelViewer', () => {
         />
       );
 
-      const wheelContainer = container.querySelector('.wheel-container');
+      const wheelContainer = getByTestId('wheel-container');
       // Scale should be 300/600 = 0.5, so dimensions should be 400x300
       expect(wheelContainer).toHaveStyle({
         width: '400px',
@@ -688,7 +687,7 @@ describe('WheelViewer', () => {
     });
 
     it('should handle equal width and height', () => {
-      const { container } = render(
+      const { container, getByTestId } = render(
         <WheelViewer
           {...defaultProps}
           wheelWidth={800}
@@ -699,7 +698,7 @@ describe('WheelViewer', () => {
         />
       );
 
-      const wheelContainer = container.querySelector('.wheel-container');
+      const wheelContainer = getByTestId('wheel-container');
       expect(wheelContainer).toHaveStyle({
         width: '800px',
         height: '800px',
@@ -709,9 +708,9 @@ describe('WheelViewer', () => {
 
   describe('Rendering layers in correct order', () => {
     it('should render layers in correct z-index order', () => {
-      const { container } = render(<WheelViewer {...defaultProps} />);
+      const { container, getByTestId } = render(<WheelViewer {...defaultProps} />);
 
-      const wheelContainer = container.querySelector('.wheel-container');
+      const wheelContainer = getByTestId('wheel-container');
       const children = wheelContainer?.children;
 
       // Verify that renderers are in correct order

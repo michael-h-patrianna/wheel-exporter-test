@@ -3,8 +3,8 @@
  * Displays random reward label
  */
 
+import { RewardsBackgroundStyle, RewardsComponent, RewardsPrizeTextStyle } from '@lib-types';
 import React from 'react';
-import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '@lib-types';
 
 export interface RRRowProps {
   label?: string;
@@ -24,7 +24,7 @@ export const RRRow: React.FC<RRRowProps> = React.memo(
     if (!bgStyle) return null;
 
     return (
-      <div className="result-default-box result-rr-box" style={buildBoxStyle(bgStyle)}>
+      <div className="result-default-box result-rr-box" data-testid="result-default-box" style={buildBoxStyle(bgStyle)}>
         <div
           style={{
             display: 'flex',

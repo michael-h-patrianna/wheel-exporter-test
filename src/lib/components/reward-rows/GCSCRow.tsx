@@ -3,8 +3,8 @@
  * Displays both GC and SC values with icons and styled text
  */
 
+import { RewardsBackgroundStyle, RewardsComponent, RewardsPrizeTextStyle } from '@lib-types';
 import React from 'react';
-import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '@lib-types';
 
 export interface GCSCRowProps {
   gcValue: string;
@@ -38,7 +38,7 @@ export const GCSCRow: React.FC<GCSCRowProps> = React.memo(
     if (!bgStyle) return null;
 
     return (
-      <div className="result-highlight-box" style={buildBoxStyle(bgStyle)}>
+      <div className="result-highlight-box" data-testid="result-highlight-box" style={buildBoxStyle(bgStyle)}>
         <div
           className="result-highlight-content"
           style={{
@@ -60,7 +60,11 @@ export const GCSCRow: React.FC<GCSCRowProps> = React.memo(
           {/* GC Text */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span style={buildTextStyle(rewards?.prizes?.texts?.gcTitle, 14 * scale)}>GC</span>
-            <span style={buildTextStyle(rewards?.prizes?.texts?.gcValue, 18 * scale)}>
+            <span
+              className="gcsc-value"
+              data-testid="gc-value"
+              style={buildTextStyle(rewards?.prizes?.texts?.gcValue, 18 * scale)}
+            >
               {gcValue}
             </span>
           </div>
@@ -80,7 +84,11 @@ export const GCSCRow: React.FC<GCSCRowProps> = React.memo(
           {/* SC Text */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span style={buildTextStyle(rewards?.prizes?.texts?.scTitle, 14 * scale)}>SC</span>
-            <span style={buildTextStyle(rewards?.prizes?.texts?.scValue, 18 * scale)}>
+            <span
+              className="gcsc-value"
+              data-testid="sc-value"
+              style={buildTextStyle(rewards?.prizes?.texts?.scValue, 18 * scale)}
+            >
               {scValue}
             </span>
           </div>

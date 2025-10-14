@@ -3,8 +3,8 @@
  * Displays failure message
  */
 
+import { RewardsBackgroundStyle, RewardsComponent, RewardsPrizeTextStyle } from '@lib-types';
 import React from 'react';
-import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '@lib-types';
 
 export interface FailRowProps {
   message?: string;
@@ -24,7 +24,7 @@ export const FailRow: React.FC<FailRowProps> = React.memo(
     if (!bgStyle) return null;
 
     return (
-      <div className="result-default-box result-fail-box" style={buildBoxStyle(bgStyle)}>
+      <div className="result-default-box result-fail-box" data-testid="result-default-box" style={buildBoxStyle(bgStyle)}>
         <div
           style={{
             display: 'flex',

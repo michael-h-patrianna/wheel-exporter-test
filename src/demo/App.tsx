@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './App.css';
-import { WheelViewer } from '@components/WheelViewer';
-import { ResultViewer, ExtractedAssets, ErrorBoundary } from '@lib';
-import { loadWheelFromZip, WheelLoadError } from '@services/wheelLoader';
-import {
-  createDefaultPrizeProvider,
-  type PrizeProviderResult,
-} from '@services/prizeProvider';
-import { type SegmentLayoutType } from '@lib-types/segmentLayoutTypes';
 import { type LightAnimationType } from '@components/renderers/lights/lightAnimations';
+import { WheelViewer } from '@components/WheelViewer';
+import { ErrorBoundary, ExtractedAssets, ResultViewer, ResultViewMode } from '@lib';
+import { type SegmentLayoutType } from '@lib-types/segmentLayoutTypes';
+import {
+    createDefaultPrizeProvider,
+    type PrizeProviderResult,
+} from '@services/prizeProvider';
+import { loadWheelFromZip, WheelLoadError } from '@services/wheelLoader';
+import React, { useEffect, useRef, useState } from 'react';
+import './App.css';
 import { AppBar } from './components/AppBar';
 import { Sidebar } from './components/Sidebar';
+import { ResultModeSelector } from './ResultModeSelector';
 
 function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -24,6 +25,7 @@ function App() {
   const wheelResetRef = useRef<(() => void) | null>(null);
   const [layoutType, setLayoutType] = useState<SegmentLayoutType>('original');
   const [lightAnimationType, setLightAnimationType] = useState<LightAnimationType>('none');
+  const [resultViewMode, setResultViewMode] = useState<ResultViewMode>('Win Free');
 
   // Component visibility state
   const [componentVisibility, setComponentVisibility] = useState({
@@ -230,6 +232,11 @@ function App() {
                         assets={extractedAssets}
                         wheelWidth={wheelWidth}
                         wheelHeight={wheelHeight}
+                        viewMode={resultViewMode}
+                      />
+                      <ResultModeSelector
+                        value={resultViewMode}
+                        onChange={setResultViewMode}
                       />
                     </div>
                   )}

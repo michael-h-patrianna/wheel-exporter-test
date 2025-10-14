@@ -73,6 +73,7 @@
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 30px;
   align-items: start;
+  background: #280d41;
 }
 
 .main-content h3 {
@@ -246,7 +247,7 @@
   box-shadow: var(--elev-inset);
 }
 
-/* Wheel Container */
+/* Demo-specific Wheel & Result Container Wrappers */
 .wheel-container {
   background: transparent;
   border-radius: 12px;
@@ -261,14 +262,6 @@
   justify-self: center;
 }
 
-.wheel-viewer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-/* Result Container */
 .result-container {
   background: transparent;
   border-radius: 12px;
@@ -290,30 +283,6 @@
   color: var(--pf-fg-strong);
   font-size: 1.2rem;
   text-align: center;
-}
-
-.result-viewer {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.result-content {
-  width: 100%;
-  height: 100%;
-}
-
-.result-header {
-  flex-shrink: 0;
-}
-
-.result-highlight-box,
-.result-default-box {
-  flex-shrink: 0;
-}
-
-.result-highlight-content {
-  width: 100%;
 }
 
 /* Information Section */
@@ -445,165 +414,8 @@
 /* Desktop layout optimization - removed conflicting grid */
 
 /* =============================================================================
-   WHEEL VIEWER COMPONENTS
+   DEMO-SPECIFIC DEBUG CONTROLS
    ============================================================================= */
-
-.wheel-viewer {
-  position: relative;
-}
-
-/* Removed duplicate .wheel-container */
-
-/* Background Component */
-.background-component {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--bg-width);
-  height: var(--bg-height);
-  z-index: 1;
-}
-
-.background-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Header Component */
-.header-component {
-  position: absolute;
-  left: var(--header-left);
-  top: var(--header-top);
-  width: var(--header-width);
-  height: var(--header-height);
-  transform: var(--header-transform);
-  cursor: pointer;
-  z-index: 10;
-  transition: opacity 0.2s ease;
-}
-
-.header-component:hover {
-  opacity: 0.9;
-}
-
-.header-component:active {
-  transform: var(--header-transform) scale(0.98);
-}
-
-.header-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* Wheel Background Overlay */
-.wheelbg-component {
-  position: absolute;
-  left: var(--wheelbg-left);
-  top: var(--wheelbg-top);
-  width: var(--wheelbg-width);
-  height: var(--wheelbg-height);
-  z-index: 2;
-}
-
-.wheelbg-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* Wheel Top Overlays */
-.wheeltop-component {
-  position: absolute;
-  z-index: 15;
-}
-
-.wheeltop-1 {
-  left: var(--wheeltop1-left);
-  top: var(--wheeltop1-top);
-  width: var(--wheeltop1-width);
-  height: var(--wheeltop1-height);
-}
-
-.wheeltop-2 {
-  left: var(--wheeltop2-left);
-  top: var(--wheeltop2-top);
-  width: var(--wheeltop2-width);
-  height: var(--wheeltop2-height);
-  z-index: 16;
-}
-
-.wheeltop-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* Button Spin Component */
-.button-spin-component {
-  position: absolute;
-  left: var(--button-left);
-  top: var(--button-top);
-  width: var(--button-width);
-  height: var(--button-height);
-  transform: var(--button-transform);
-  z-index: 20;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-  transition:
-    transform 0.2s ease,
-    opacity 0.2s ease;
-}
-
-.button-spin-component:hover:not(:disabled) {
-  transform: var(--button-transform) scale(1.05);
-}
-
-.button-spin-component:active:not(:disabled) {
-  transform: var(--button-transform) scale(0.95);
-}
-
-.button-spin-component:disabled {
-  cursor: not-allowed;
-  opacity: 0.8;
-}
-
-.button-spin-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* Wheel segments spinning animation */
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(1080deg);
-  }
-}
-
-/* Center Component */
-.center-component {
-  position: absolute;
-  left: var(--center-left);
-  top: var(--center-top);
-  width: var(--center-size);
-  height: var(--center-size);
-  z-index: 100; /* Above all other elements */
-  pointer-events: none; /* Allow clicks to pass through */
-}
-
-.center-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  pointer-events: none; /* Ensure SVG also doesn't block clicks */
-}
 
 /* Debug Controls */
 .debug-controls {

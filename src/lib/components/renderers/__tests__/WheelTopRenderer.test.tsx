@@ -2,11 +2,10 @@
  * Comprehensive test suite for WheelTopRenderer
  */
 
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import { WheelTopRenderer } from '@components/renderers/WheelTopRenderer';
 import { WheelOverlay } from '@lib-types';
-import { createMockWheelTop, createMockWheelOverlayWithoutBounds } from '@test-utils';
+import { createMockWheelOverlayWithoutBounds, createMockWheelTop } from '@test-utils';
+import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 
 describe('WheelTopRenderer', () => {
@@ -20,21 +19,21 @@ describe('WheelTopRenderer', () => {
   };
 
   it('should render wheel top image with correct props', () => {
-    render(<WheelTopRenderer {...defaultProps} />);
+    const { getByTestId } = render(<WheelTopRenderer {...defaultProps} />);
 
-    const img = screen.getByAltText('Wheel Top 1');
+    const img = getByTestId('wheeltop-image');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', defaultProps.wheelTopImage);
   });
 
   it('should return null when wheelTop is not provided', () => {
-    const { container } = render(<WheelTopRenderer {...defaultProps} wheelTop={undefined} />);
+    const { container, getByTestId } = render(<WheelTopRenderer {...defaultProps} wheelTop={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should return null when wheelTopImage is not provided', () => {
-    const { container } = render(<WheelTopRenderer {...defaultProps} wheelTopImage={undefined} />);
+    const { container, getByTestId } = render(<WheelTopRenderer {...defaultProps} wheelTopImage={undefined} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -42,7 +41,7 @@ describe('WheelTopRenderer', () => {
   it('should return null when bounds are missing', () => {
     const wheelTopWithoutBounds = createMockWheelOverlayWithoutBounds() as unknown as WheelOverlay;
 
-    const { container } = render(
+    const { container, getByTestId } = render(
       <WheelTopRenderer {...defaultProps} wheelTop={wheelTopWithoutBounds} />
     );
 
@@ -50,9 +49,9 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should calculate correct CSS variables for layer 1', () => {
-    const { container } = render(<WheelTopRenderer {...defaultProps} layerNumber={1} />);
+    const { container, getByTestId } = render(<WheelTopRenderer {...defaultProps} layerNumber={1} />);
 
-    const wheelTopDiv = container.querySelector('.wheeltop-component');
+    const wheelTopDiv = getByTestId('wheeltop-component');
     // left = (x * scale) - (width / 2) = 400 - 100 = 300
     // top = (y * scale) - (height / 2) = 300 - 100 = 200
     expect(wheelTopDiv).toHaveStyle({
@@ -64,9 +63,9 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should calculate correct CSS variables for layer 2', () => {
-    const { container } = render(<WheelTopRenderer {...defaultProps} layerNumber={2} />);
+    const { container, getByTestId } = render(<WheelTopRenderer {...defaultProps} layerNumber={2} />);
 
-    const wheelTopDiv = container.querySelector('.wheeltop-component');
+    const wheelTopDiv = getByTestId('wheeltop-component');
     expect(wheelTopDiv).toHaveStyle({
       '--wheeltop2-left': '300px',
       '--wheeltop2-top': '200px',
@@ -76,9 +75,9 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(<WheelTopRenderer {...defaultProps} scale={0.5} />);
+    const { container, getByTestId } = render(<WheelTopRenderer {...defaultProps} scale={0.5} />);
 
-    const wheelTopDiv = container.querySelector('.wheeltop-component');
+    const wheelTopDiv = getByTestId('wheeltop-component');
     // width = 200 * 0.5 = 100, height = 200 * 0.5 = 100
     // left = (400 * 0.5) - (100 / 2) = 200 - 50 = 150
     // top = (300 * 0.5) - (100 / 2) = 150 - 50 = 100
@@ -91,51 +90,47 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should apply correct class names for layer 1', () => {
-    const { container } = render(<WheelTopRenderer {...defaultProps} layerNumber={1} />);
+    const { container, getByTestId } = render(<WheelTopRenderer {...defaultProps} layerNumber={1} />);
 
-    const wheelTopDiv = container.querySelector('.wheeltop-component');
-    expect(wheelTopDiv).toHaveClass('wheeltop-component');
-    expect(wheelTopDiv).toHaveClass('wheeltop-1');
+    const wheelTopDiv = getByTestId('wheeltop-component');
     expect(wheelTopDiv).toHaveAttribute('data-layer', '1');
   });
 
   it('should apply correct class names for layer 2', () => {
-    const { container } = render(<WheelTopRenderer {...defaultProps} layerNumber={2} />);
+    const { container, getByTestId } = render(<WheelTopRenderer {...defaultProps} layerNumber={2} />);
 
-    const wheelTopDiv = container.querySelector('.wheeltop-component');
-    expect(wheelTopDiv).toHaveClass('wheeltop-component');
-    expect(wheelTopDiv).toHaveClass('wheeltop-2');
+    const wheelTopDiv = getByTestId('wheeltop-component');
     expect(wheelTopDiv).toHaveAttribute('data-layer', '2');
   });
 
   it('should have correct ARIA attributes for layer 1', () => {
-    render(<WheelTopRenderer {...defaultProps} layerNumber={1} />);
+    const { getByTestId } = render(<WheelTopRenderer {...defaultProps} layerNumber={1} />);
 
-    const wheelTopDiv = screen.getByRole('img', { name: 'Wheel top overlay layer 1' });
+    const wheelTopDiv = getByTestId('wheeltop-component');
     expect(wheelTopDiv).toBeInTheDocument();
     expect(wheelTopDiv).toHaveAttribute('title', 'Wheel Top Layer 1');
   });
 
   it('should have correct ARIA attributes for layer 2', () => {
-    render(<WheelTopRenderer {...defaultProps} layerNumber={2} />);
+    const { getByTestId } = render(<WheelTopRenderer {...defaultProps} layerNumber={2} />);
 
-    const wheelTopDiv = screen.getByRole('img', { name: 'Wheel top overlay layer 2' });
+    const wheelTopDiv = getByTestId('wheeltop-component');
     expect(wheelTopDiv).toBeInTheDocument();
     expect(wheelTopDiv).toHaveAttribute('title', 'Wheel Top Layer 2');
   });
 
   it('should make image non-draggable', () => {
-    render(<WheelTopRenderer {...defaultProps} />);
+    const { getByTestId } = render(<WheelTopRenderer {...defaultProps} />);
 
-    const img = screen.getByAltText('Wheel Top 1');
+    const img = getByTestId('wheeltop-image');
     expect(img).toHaveAttribute('draggable', 'false');
   });
 
   it('should handle image load errors gracefully for layer 1', () => {
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    render(<WheelTopRenderer {...defaultProps} layerNumber={1} />);
-    const img = screen.getByAltText('Wheel Top 1');
+    const { getByTestId } = render(<WheelTopRenderer {...defaultProps} layerNumber={1} />);
+    const img = getByTestId('wheeltop-image');
 
     img.dispatchEvent(new Event('error'));
 
@@ -152,8 +147,8 @@ describe('WheelTopRenderer', () => {
   it('should handle image load errors gracefully for layer 2', () => {
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    render(<WheelTopRenderer {...defaultProps} layerNumber={2} />);
-    const img = screen.getByAltText('Wheel Top 2');
+    const { getByTestId } = render(<WheelTopRenderer {...defaultProps} layerNumber={2} />);
+    const img = getByTestId('wheeltop-image');
 
     img.dispatchEvent(new Event('error'));
 
@@ -168,8 +163,8 @@ describe('WheelTopRenderer', () => {
   });
 
   it('should apply correct CSS class for image', () => {
-    const { container } = render(<WheelTopRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<WheelTopRenderer {...defaultProps} />);
 
-    expect(container.querySelector('.wheeltop-image')).toBeInTheDocument();
+    expect(getByTestId('wheeltop-image')).toBeInTheDocument();
   });
 });

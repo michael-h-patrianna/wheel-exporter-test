@@ -9,92 +9,85 @@
  */
 
 // Main Components
-export { WheelViewer } from './components/WheelViewer';
-export { ResultViewer } from './components/ResultViewer';
 export { ErrorBoundary } from './components/ErrorBoundary';
-export type { RewardRowData, RewardRowType } from './components/ResultViewer';
+export { ResultViewer } from './components/ResultViewer';
+export type { ResultViewMode, RewardRowData, RewardRowType } from './components/ResultViewer';
+export { WheelViewer } from './components/WheelViewer';
 
 // Renderer Components (for advanced customization)
 export { BackgroundRenderer } from './components/renderers/BackgroundRenderer';
-export { HeaderRenderer } from './components/renderers/HeaderRenderer';
-export { WheelBgRenderer } from './components/renderers/WheelBgRenderer';
-export { WheelTopRenderer } from './components/renderers/WheelTopRenderer';
-export { ButtonSpinRenderer } from './components/renderers/ButtonSpinRenderer';
 export { ButtonRenderer } from './components/renderers/ButtonRenderer';
 export type { ButtonState } from './components/renderers/ButtonRenderer';
+export { ButtonSpinRenderer } from './components/renderers/ButtonSpinRenderer';
 export { CenterRenderer } from './components/renderers/CenterRenderer';
-export { SegmentRenderer } from './components/renderers/SegmentRenderer';
-export { PointerRenderer } from './components/renderers/PointerRenderer';
+export { HeaderRenderer } from './components/renderers/HeaderRenderer';
 export { LightsRenderer } from './components/renderers/LightsRenderer';
+export { PointerRenderer } from './components/renderers/PointerRenderer';
+export { SegmentRenderer } from './components/renderers/SegmentRenderer';
+export { WheelBgRenderer } from './components/renderers/WheelBgRenderer';
+export { WheelTopRenderer } from './components/renderers/WheelTopRenderer';
 
 // Utility Functions
 export {
-  colorToCSS,
-  formatNumber,
-  buildSegmentWedgePath,
-  buildSegmentRingPath,
-  computeWedgeBounds,
-  gradientTransformToString,
-  computeTemplateBounds,
-  buildGradientMatrix,
-  fillToSvgPaint,
-  createSvgGradientDef,
-  describeArcPath,
-  computeArcFontSize,
-  createDropShadowFilter,
+  MIN_TEXT_FONT_SIZE,
   SEGMENT_KINDS,
   SEGMENT_PREVIEW_INNER_RADIUS_RATIO,
-  TEXT_GRID_RADII_FACTORS,
-  MIN_TEXT_FONT_SIZE,
   TEXT_FONT_FAMILY,
+  TEXT_GRID_RADII_FACTORS,
+  buildGradientMatrix,
+  buildSegmentRingPath,
+  buildSegmentWedgePath,
+  colorToCSS,
+  computeArcFontSize,
+  computeTemplateBounds,
+  computeWedgeBounds,
+  createDropShadowFilter,
+  createSvgGradientDef,
+  describeArcPath,
+  fillToSvgPaint,
+  formatNumber,
+  gradientTransformToString,
 } from './utils/segmentUtils';
 
 // Type Definitions
 export type {
-  // Core types
-  WheelExport,
-  ExtractedAssets,
-
-  // Component state types
-  HeaderState,
+  // App state
+  AppState,
+  ButtonSpinComponent,
   ButtonSpinState,
-
-  // Segment types
-  WheelSegmentKind,
-  WheelSegmentStyles,
-  WheelSegmentTypeStyles,
-  WheelSegmentVectorStyle,
-  WheelSegmentTextStyle,
-  WheelSegmentStrokeStyle,
-
+  CenterComponent,
+  DropShadow,
+  ExtractedAssets,
   // Style types
   Fill,
   Gradient,
-  GradientStop,
-  GradientVector,
   GradientHandle,
+  GradientStop,
   GradientTransform,
-  DropShadow,
-
+  GradientVector,
   // Component types
   HeaderComponent,
-  WheelOverlay,
-  ButtonSpinComponent,
-  CenterComponent,
-  PointerComponent,
-  LightsComponent,
-
-  // Rewards types
-  RewardsComponent,
-  RewardsBackgroundStyle,
-  RewardsPrizeTextStyle,
-  RewardsPrizeImage,
-  RewardsButtonStyle,
-
+  // Component state types
+  HeaderState,
   // Bounds types
   ImageBounds,
+  LightsComponent,
+  PointerComponent,
+  RewardsBackgroundStyle,
+  RewardsButtonStyle,
+  // Rewards types
+  RewardsComponent,
+  RewardsPrizeImage,
+  RewardsPrizeTextStyle,
   WheelElementBounds,
-
-  // App state
-  AppState,
+  // Core types
+  WheelExport,
+  WheelOverlay,
+  // Segment types
+  WheelSegmentKind,
+  WheelSegmentStrokeStyle,
+  WheelSegmentStyles,
+  WheelSegmentTextStyle,
+  WheelSegmentTypeStyles,
+  WheelSegmentVectorStyle,
 } from './types';

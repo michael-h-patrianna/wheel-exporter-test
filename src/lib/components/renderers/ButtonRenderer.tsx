@@ -1,13 +1,13 @@
-import React from 'react';
 import { RewardsButtonStyle } from '@lib-types';
 import { buildGradient } from '@utils/styleBuilders';
+import React from 'react';
 
 /**
  * Helper: Build box-shadow CSS from drop shadow array
  */
 function buildDropShadows(shadows: RewardsButtonStyle['frame']['dropShadows'], scale: number): string {
   if (!shadows || shadows.length === 0) return 'none';
-  
+
   return shadows
     .map((shadow) => {
       const x = Math.round(shadow.x * scale);
@@ -42,7 +42,7 @@ function buildDropShadows(shadows: RewardsButtonStyle['frame']['dropShadows'], s
  * @example
  * ```tsx
  * const [buttonState, setButtonState] = useState<'default' | 'hover' | 'active' | 'disabled'>('default');
- * 
+ *
  * <ButtonRenderer
  *   buttonStyles={wheelData.rewards.button.stateStyles}
  *   currentState={buttonState}
@@ -144,6 +144,7 @@ export const ButtonRenderer: React.FC<ButtonRendererProps> = ({
     <button
       className={`button-renderer ${className}`.trim()}
       data-button-state={currentState}
+      data-testid="result-button"
       style={cssVariables}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -153,7 +154,7 @@ export const ButtonRenderer: React.FC<ButtonRendererProps> = ({
       title={`Button Component (${currentState.toUpperCase()})`}
       aria-label={`${text} button`}
     >
-      {text}
+      <span data-testid="button-text">{text}</span>
     </button>
   );
 };

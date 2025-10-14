@@ -3,8 +3,8 @@
  * Displays XP value with label
  */
 
+import { RewardsBackgroundStyle, RewardsComponent, RewardsPrizeTextStyle } from '@lib-types';
 import React from 'react';
-import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '@lib-types';
 
 export interface XPRowProps {
   value: string;
@@ -25,7 +25,7 @@ export const XPRow: React.FC<XPRowProps> = React.memo(
     if (!bgStyle) return null;
 
     return (
-      <div className="result-default-box result-xp-box" style={buildBoxStyle(bgStyle)}>
+      <div className="result-default-box result-xp-box" data-testid="result-default-box" style={buildBoxStyle(bgStyle)}>
         <div
           style={{
             display: 'flex',

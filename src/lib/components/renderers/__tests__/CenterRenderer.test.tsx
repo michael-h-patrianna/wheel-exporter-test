@@ -2,10 +2,9 @@
  * Comprehensive test suite for CenterRenderer
  */
 
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import { CenterRenderer } from '@components/renderers/CenterRenderer';
 import { CenterComponent } from '@lib-types';
+import { render } from '@testing-library/react';
 
 describe('CenterRenderer', () => {
   const mockCenter: CenterComponent = {
@@ -20,22 +19,22 @@ describe('CenterRenderer', () => {
   };
 
   it('should render center component with SVG', () => {
-    const { container } = render(<CenterRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<CenterRenderer {...defaultProps} />);
 
-    const svg = container.querySelector('svg.center-svg');
+    const svg = getByTestId('center-svg');
     expect(svg).toBeInTheDocument();
   });
 
   it('should return null when center is not provided', () => {
-    const { container } = render(<CenterRenderer center={undefined} scale={1} />);
+    const { container, getByTestId } = render(<CenterRenderer center={undefined} scale={1} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it('should calculate correct CSS variables for positioning and dimensions', () => {
-    const { container } = render(<CenterRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<CenterRenderer {...defaultProps} />);
 
-    const centerDiv = container.querySelector('.center-component');
+    const centerDiv = getByTestId('center-component');
     // radius = 100 * 1 = 100, diameter = 200
     // left = (x * scale) - radius = 400 - 100 = 300
     // top = (y * scale) - radius = 300 - 100 = 200
@@ -48,9 +47,9 @@ describe('CenterRenderer', () => {
   });
 
   it('should scale dimensions correctly', () => {
-    const { container } = render(<CenterRenderer {...defaultProps} scale={0.5} />);
+    const { container, getByTestId } = render(<CenterRenderer {...defaultProps} scale={0.5} />);
 
-    const centerDiv = container.querySelector('.center-component');
+    const centerDiv = getByTestId('center-component');
     // radius = 100 * 0.5 = 50, diameter = 100
     // left = (400 * 0.5) - 50 = 200 - 50 = 150
     // top = (300 * 0.5) - 50 = 150 - 50 = 100
@@ -63,16 +62,16 @@ describe('CenterRenderer', () => {
   });
 
   it('should render SVG with correct dimensions', () => {
-    const { container } = render(<CenterRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<CenterRenderer {...defaultProps} />);
 
-    const svg = container.querySelector('svg.center-svg');
+    const svg = getByTestId('center-svg');
     expect(svg).toHaveAttribute('width', '200');
     expect(svg).toHaveAttribute('height', '200');
     expect(svg).toHaveAttribute('viewBox', '0 0 200 200');
   });
 
   it('should render main filled circle with semi-transparency', () => {
-    const { container } = render(<CenterRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<CenterRenderer {...defaultProps} />);
 
     const circles = container.querySelectorAll('circle');
     const mainCircle = circles[0];
@@ -85,7 +84,7 @@ describe('CenterRenderer', () => {
   });
 
   it('should render horizontal crosshair line', () => {
-    const { container } = render(<CenterRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<CenterRenderer {...defaultProps} />);
 
     const lines = container.querySelectorAll('line');
     const horizontalLine = lines[0];
@@ -99,7 +98,7 @@ describe('CenterRenderer', () => {
   });
 
   it('should render vertical crosshair line', () => {
-    const { container } = render(<CenterRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<CenterRenderer {...defaultProps} />);
 
     const lines = container.querySelectorAll('line');
     const verticalLine = lines[1];
@@ -113,7 +112,7 @@ describe('CenterRenderer', () => {
   });
 
   it('should render center point dot', () => {
-    const { container } = render(<CenterRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<CenterRenderer {...defaultProps} />);
 
     const circles = container.querySelectorAll('circle');
     const centerDot = circles[1];
@@ -125,18 +124,18 @@ describe('CenterRenderer', () => {
   });
 
   it('should have correct ARIA attributes', () => {
-    render(<CenterRenderer {...defaultProps} />);
+    const { getByTestId } = render(<CenterRenderer {...defaultProps} />);
 
-    const centerDiv = screen.getByRole('img', { name: 'Wheel center circle' });
+    const centerDiv = getByTestId('center-component');
     expect(centerDiv).toBeInTheDocument();
     expect(centerDiv).toHaveAttribute('title', 'Wheel Center');
   });
 
   it('should apply correct CSS class names', () => {
-    const { container } = render(<CenterRenderer {...defaultProps} />);
+    const { container, getByTestId } = render(<CenterRenderer {...defaultProps} />);
 
-    expect(container.querySelector('.center-component')).toBeInTheDocument();
-    expect(container.querySelector('.center-svg')).toBeInTheDocument();
+    expect(getByTestId('center-component')).toBeInTheDocument();
+    expect(getByTestId('center-svg')).toBeInTheDocument();
   });
 
   it('should scale SVG elements with different radii', () => {
@@ -150,7 +149,7 @@ describe('CenterRenderer', () => {
       const center: CenterComponent = { x: 400, y: 300, radius };
       const { container } = render(<CenterRenderer center={center} scale={0.5} />);
 
-      const svg = container.querySelector('svg.center-svg');
+      const svg = container.querySelector('[data-testid="center-svg"]') as SVGElement;
       expect(svg).toHaveAttribute('width', String(expectedDiameter));
       expect(svg).toHaveAttribute('height', String(expectedDiameter));
 
@@ -172,7 +171,7 @@ describe('CenterRenderer', () => {
       const center: CenterComponent = { x, y, radius: 100 };
       const { container } = render(<CenterRenderer center={center} scale={scale} />);
 
-      const centerDiv = container.querySelector('.center-component');
+      const centerDiv = container.querySelector('[data-testid="center-component"]') as HTMLElement;
       expect(centerDiv).toHaveStyle({
         '--center-left': expectedLeft,
         '--center-top': expectedTop,

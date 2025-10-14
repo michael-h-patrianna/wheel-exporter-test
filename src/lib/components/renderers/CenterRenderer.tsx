@@ -1,5 +1,6 @@
-import React from 'react';
 import { CenterComponent } from '@lib-types';
+import React from 'react';
+import styles from '../WheelViewer.module.css';
 
 /**
  * CenterRenderer Component
@@ -67,7 +68,8 @@ export const CenterRenderer: React.FC<CenterRendererProps> = ({ center, scale })
 
   return (
     <div
-      className="center-component"
+      className={styles.centerComponent}
+      data-testid="center-component"
       style={cssVariables}
       title="Wheel Center"
       role="img"
@@ -75,7 +77,8 @@ export const CenterRenderer: React.FC<CenterRendererProps> = ({ center, scale })
     >
       {/* Semi-transparent filled circle */}
       <svg
-        className="center-svg"
+        className={styles.centerSvg}
+        data-testid="center-svg"
         width={diameter}
         height={diameter}
         viewBox={`0 0 ${diameter} ${diameter}`}

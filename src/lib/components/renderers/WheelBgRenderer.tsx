@@ -1,6 +1,7 @@
-import React from 'react';
 import { WheelOverlay } from '@lib-types';
 import { logger } from '@services/logger';
+import React from 'react';
+import styles from '../WheelViewer.module.css';
 
 /**
  * WheelBgRenderer Component
@@ -76,7 +77,8 @@ export const WheelBgRenderer: React.FC<WheelBgRendererProps> = ({
 
   return (
     <div
-      className="wheelbg-component"
+      className={styles.wheelbgComponent}
+      data-testid="wheelbg-component"
       style={cssVariables}
       title="Wheel Background Overlay"
       role="img"
@@ -85,7 +87,8 @@ export const WheelBgRenderer: React.FC<WheelBgRendererProps> = ({
       <img
         src={wheelBgImage}
         alt="Wheel Background"
-        className="wheelbg-image"
+        className={styles.wheelbgImage}
+        data-testid="wheelbg-image"
         draggable={false}
         onError={(_e) => {
           logger.warn('WheelBg image failed to load', {

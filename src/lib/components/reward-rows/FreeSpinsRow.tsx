@@ -3,8 +3,8 @@
  * Displays free spins value and label
  */
 
+import { RewardsBackgroundStyle, RewardsComponent, RewardsPrizeTextStyle } from '@lib-types';
 import React from 'react';
-import { RewardsComponent, RewardsPrizeTextStyle, RewardsBackgroundStyle } from '@lib-types';
 
 export interface FreeSpinsRowProps {
   value: string;
@@ -29,7 +29,7 @@ export const FreeSpinsRow: React.FC<FreeSpinsRowProps> = React.memo(
     const secondPart = labelParts[1] || 'SPINS';
 
     return (
-      <div className="result-default-box result-freespins-box" style={buildBoxStyle(bgStyle)}>
+      <div className="result-default-box result-freespins-box" data-testid="result-default-box" style={buildBoxStyle(bgStyle)}>
         <div
           style={{
             display: 'flex',
