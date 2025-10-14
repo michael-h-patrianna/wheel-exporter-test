@@ -30,9 +30,10 @@ export const FailRow: React.FC<FailRowProps> = React.memo(
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            padding: `${16 * scale}px ${8 * scale}px`,
           }}
         >
-          <span style={buildTextStyle(rewards?.prizes?.texts?.fail, 20 * scale)}>{message}</span>
+          <span data-testid="fail-message" style={buildTextStyle(rewards?.prizes?.texts?.fail, 20 * scale)}>{message}</span>
         </div>
       </div>
     );

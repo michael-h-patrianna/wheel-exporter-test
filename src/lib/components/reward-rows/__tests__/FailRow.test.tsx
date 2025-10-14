@@ -2,10 +2,9 @@
  * Tests for FailRow component
  */
 
-import React from 'react';
-import { render } from '@testing-library/react';
 import { FailRow } from '@components/reward-rows/FailRow';
 import { RewardsComponent } from '@lib-types';
+import { render } from '@testing-library/react';
 
 describe('FailRow', () => {
   const mockRewards: RewardsComponent = {
@@ -52,18 +51,20 @@ describe('FailRow', () => {
   });
 
   it('renders without crashing', () => {
-    const { container } = render(<FailRow {...defaultProps} />);
-    expect(container.querySelector('.result-fail-box')).toBeInTheDocument();
+    const { getByTestId } = render(<FailRow {...defaultProps} />);
+    expect(getByTestId('result-default-box')).toBeInTheDocument();
+    expect(getByTestId('result-default-box')).toHaveClass('result-fail-box');
   });
 
   it('displays default message when not provided', () => {
-    const { getByText } = render(<FailRow {...defaultProps} />);
-    expect(getByText('TRY AGAIN')).toBeInTheDocument();
+    const { getByTestId } = render(<FailRow {...defaultProps} />);
+    expect(getByTestId('fail-message')).toBeInTheDocument();
+    expect(getByTestId('fail-message')).toHaveTextContent('TRY AGAIN');
   });
 
   it('displays custom message when provided', () => {
-    const { getByText } = render(<FailRow {...defaultProps} message="BETTER LUCK NEXT TIME" />);
-    expect(getByText('BETTER LUCK NEXT TIME')).toBeInTheDocument();
+    const { getByTestId } = render(<FailRow {...defaultProps} message="BETTER LUCK NEXT TIME" />);
+    expect(getByTestId('fail-message')).toHaveTextContent('BETTER LUCK NEXT TIME');
   });
 
   it('calls buildBoxStyle with default background', () => {
@@ -91,14 +92,15 @@ describe('FailRow', () => {
   });
 
   it('applies proper CSS classes', () => {
-    const { container } = render(<FailRow {...defaultProps} />);
-    const box = container.querySelector('.result-default-box');
+    const { getByTestId } = render(<FailRow {...defaultProps} />);
+    const box = getByTestId('result-default-box');
     expect(box).toHaveClass('result-fail-box');
   });
 
   it('applies proper layout', () => {
-    const { container } = render(<FailRow {...defaultProps} />);
-    const content = container.querySelector('.result-fail-box > div');
+    const { getByTestId } = render(<FailRow {...defaultProps} />);
+    const box = getByTestId('result-default-box');
+    const content = box.querySelector('div');
     expect(content).toHaveStyle({
       display: 'flex',
       alignItems: 'center',

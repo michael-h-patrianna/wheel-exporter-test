@@ -236,7 +236,7 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
     { type: 'xp', value: '100', label: 'XP' },
     { type: 'rr', label: 'RANDOM REWARD' },
   ],
-  buttonText = 'COLLECT',
+  buttonText,
   buttonDisabled = false,
   onButtonClick,
   iconSize = 36,
@@ -251,11 +251,16 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
   const frameSize = wheelData.frameSize;
   const scale = Math.min(wheelWidth / frameSize.width, wheelHeight / frameSize.height);
 
+  // Set default button text based on view mode
+  const finalButtonText = buttonText ?? (viewMode === 'No Win' ? 'CLOSE' : 'COLLECT');
+
   const header = wheelData.header;
 
-  // Get header success image and bounds
-  const headerBounds = header?.stateBounds.success;
-  const headerImage = assets.headerImages?.success;
+  // Get header images and bounds based on view mode
+  const headerSuccessBounds = header?.stateBounds.success;
+  const headerSuccessImage = assets.headerImages?.success;
+  const headerFailBounds = header?.stateBounds.fail;
+  const headerFailImage = assets.headerImages?.fail;
 
   // Use memoized style builders from hook
   const { buildTextStyle, buildBoxStyle } = useRewardStyles(scale);
@@ -282,10 +287,10 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
             iconSize={iconSize}
             buildTextStyle={buildTextStyle}
             buildBoxStyle={buildBoxStyle}
-            headerImage={headerImage}
-            headerBounds={headerBounds}
+            headerImage={headerSuccessImage}
+            headerBounds={headerSuccessBounds}
             showButton={showButton}
-            buttonText={buttonText}
+            buttonText={finalButtonText}
             buttonState={buttonState}
             onButtonMouseEnter={() => !buttonDisabled && setButtonState('hover')}
             onButtonMouseLeave={() => !buttonDisabled && setButtonState('default')}
@@ -295,7 +300,22 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
       case 'Win Purchase':
         return <WinPurchaseView />;
       case 'No Win':
-        return <NoWinView />;
+        return (
+          <NoWinView
+            wheelData={wheelData}
+            scale={scale}
+            buildTextStyle={buildTextStyle}
+            buildBoxStyle={buildBoxStyle}
+            headerImage={headerFailImage}
+            headerBounds={headerFailBounds}
+            showButton={showButton}
+            buttonText={finalButtonText}
+            buttonState={buttonState}
+            onButtonMouseEnter={() => !buttonDisabled && setButtonState('hover')}
+            onButtonMouseLeave={() => !buttonDisabled && setButtonState('default')}
+            onButtonClick={onButtonClick}
+          />
+        );
       default:
         return null;
     }

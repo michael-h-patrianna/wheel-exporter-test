@@ -2,10 +2,9 @@
  * Tests for GCSCRow component
  */
 
-import React from 'react';
-import { render } from '@testing-library/react';
 import { GCSCRow } from '@components/reward-rows/GCSCRow';
 import { RewardsComponent } from '@lib-types';
+import { render } from '@testing-library/react';
 
 describe('GCSCRow', () => {
   const mockRewards: RewardsComponent = {
@@ -71,50 +70,55 @@ describe('GCSCRow', () => {
   });
 
   it('renders without crashing', () => {
-    const { container } = render(<GCSCRow {...defaultProps} />);
-    expect(container.querySelector('.result-highlight-box')).toBeInTheDocument();
+    const { getByTestId } = render(<GCSCRow {...defaultProps} />);
+    expect(getByTestId('result-highlight-box')).toBeInTheDocument();
   });
 
   it('displays GC and SC values', () => {
-    const { getByText } = render(<GCSCRow {...defaultProps} />);
-    expect(getByText('100')).toBeInTheDocument();
-    expect(getByText('50')).toBeInTheDocument();
+    const { getByTestId } = render(<GCSCRow {...defaultProps} />);
+    expect(getByTestId('gc-value')).toBeInTheDocument();
+    expect(getByTestId('gc-value')).toHaveTextContent('100');
+    expect(getByTestId('sc-value')).toBeInTheDocument();
+    expect(getByTestId('sc-value')).toHaveTextContent('50');
   });
 
   it('displays GC and SC labels', () => {
-    const { getByText } = render(<GCSCRow {...defaultProps} />);
-    expect(getByText('GC')).toBeInTheDocument();
-    expect(getByText('SC')).toBeInTheDocument();
+    const { getByTestId } = render(<GCSCRow {...defaultProps} />);
+    expect(getByTestId('gc-label')).toBeInTheDocument();
+    expect(getByTestId('gc-label')).toHaveTextContent('GC');
+    expect(getByTestId('sc-label')).toBeInTheDocument();
+    expect(getByTestId('sc-label')).toHaveTextContent('SC');
   });
 
   it('displays plus sign', () => {
-    const { getByText } = render(<GCSCRow {...defaultProps} />);
-    expect(getByText('+')).toBeInTheDocument();
+    const { getByTestId } = render(<GCSCRow {...defaultProps} />);
+    expect(getByTestId('plus-sign')).toBeInTheDocument();
+    expect(getByTestId('plus-sign')).toHaveTextContent('+');
   });
 
   it('renders GC icon when provided', () => {
-    const { container } = render(
+    const { getByTestId } = render(
       <GCSCRow {...defaultProps} gcIcon="data:image/png;base64,test-gc" />
     );
-    const gcIcon = container.querySelector('img[alt="GC"]');
+    const gcIcon = getByTestId('gc-icon');
     expect(gcIcon).toBeInTheDocument();
     expect(gcIcon).toHaveAttribute('src', 'data:image/png;base64,test-gc');
   });
 
   it('renders SC icon when provided', () => {
-    const { container } = render(
+    const { getByTestId } = render(
       <GCSCRow {...defaultProps} scIcon="data:image/png;base64,test-sc" />
     );
-    const scIcon = container.querySelector('img[alt="SC"]');
+    const scIcon = getByTestId('sc-icon');
     expect(scIcon).toBeInTheDocument();
     expect(scIcon).toHaveAttribute('src', 'data:image/png;base64,test-sc');
   });
 
   it('applies scaled icon size', () => {
-    const { container } = render(
+    const { getByTestId } = render(
       <GCSCRow {...defaultProps} gcIcon="test.png" scaledIconSize={48} />
     );
-    const icon = container.querySelector('img[alt="GC"]');
+    const icon = getByTestId('gc-icon');
     expect(icon).toHaveStyle({ width: '48px', height: '48px' });
   });
 
@@ -159,8 +163,9 @@ describe('GCSCRow', () => {
   });
 
   it('applies proper layout structure', () => {
-    const { container } = render(<GCSCRow {...defaultProps} />);
-    const content = container.querySelector('.result-highlight-content');
+    const { getByTestId } = render(<GCSCRow {...defaultProps} />);
+    const box = getByTestId('result-highlight-box');
+    const content = box.querySelector('.result-highlight-content');
     expect(content).toHaveStyle({
       display: 'flex',
       alignItems: 'center',
