@@ -20,6 +20,8 @@ export { HeaderRenderer } from './components/renderers/HeaderRenderer';
 export { WheelBgRenderer } from './components/renderers/WheelBgRenderer';
 export { WheelTopRenderer } from './components/renderers/WheelTopRenderer';
 export { ButtonSpinRenderer } from './components/renderers/ButtonSpinRenderer';
+export { ButtonRenderer } from './components/renderers/ButtonRenderer';
+export type { ButtonState } from './components/renderers/ButtonRenderer';
 export { CenterRenderer } from './components/renderers/CenterRenderer';
 export { SegmentRenderer } from './components/renderers/SegmentRenderer';
 export { PointerRenderer } from './components/renderers/PointerRenderer';

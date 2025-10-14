@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ExtractedAssets } from '@lib-types';
 import { useRewardStyles } from '@hooks/useRewardStyles';
 import { RewardRow } from './reward-rows';
 import type { RewardRowData } from './reward-rows';
+import { ButtonRenderer, ButtonState } from './renderers/ButtonRenderer';
 
 /**
  * ResultViewer Component - Renders the reward/result view using theme data from Figma plugin export
@@ -209,7 +210,7 @@ interface ResultViewerProps {
   rewardRows?: RewardRowData[];
   // Button configuration
   buttonText?: string;
-  buttonState?: 'default' | 'disabled' | 'hover' | 'active';
+  buttonDisabled?: boolean;
   onButtonClick?: () => void;
   // Display options
   iconSize?: number; // Size in pixels (will be scaled)
@@ -228,11 +229,16 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
     { type: 'rr', label: 'RANDOM REWARD' },
   ],
   buttonText = 'COLLECT',
-  buttonState = 'default',
+  buttonDisabled = false,
   onButtonClick,
   iconSize = 36,
   showButton = true,
 }) => {
+  // Button state management (follows questline-exporter-test pattern)
+  const [buttonState, setButtonState] = useState<ButtonState>(
+    buttonDisabled ? 'disabled' : 'default'
+  );
+
   const frameSize = wheelData.frameSize;
   const scale = Math.min(wheelWidth / frameSize.width, wheelHeight / frameSize.height);
 
@@ -247,7 +253,16 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
   const scaledIconSize = Math.round(iconSize * scale);
 
   // Use memoized style builders from hook
-  const { buildTextStyle, buildBoxStyle, buildButtonStyle } = useRewardStyles(scale);
+  const { buildTextStyle, buildBoxStyle } = useRewardStyles(scale);
+
+  // Update button state when disabled prop changes
+  React.useEffect(() => {
+    if (buttonDisabled) {
+      setButtonState('disabled');
+    } else if (buttonState === 'disabled') {
+      setButtonState('default');
+    }
+  }, [buttonDisabled, buttonState]);
 
   return (
     <div
@@ -299,25 +314,20 @@ export const ResultViewer: React.FC<ResultViewerProps> = ({
         ))}
 
         {/* Collect Button */}
-        {showButton && rewards?.button?.stateStyles?.[buttonState] && (
+        {showButton && rewards?.button?.stateStyles && (
           <div
             className="result-button-container"
             style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}
           >
-            <button
-              className={`result-button result-button-${buttonState}`}
-              style={
-                buildButtonStyle(rewards.button.stateStyles[buttonState], buttonState).container
-              }
+            <ButtonRenderer
+              buttonStyles={rewards.button.stateStyles}
+              currentState={buttonState}
+              text={buttonText}
+              onMouseEnter={() => !buttonDisabled && setButtonState('hover')}
+              onMouseLeave={() => !buttonDisabled && setButtonState('default')}
               onClick={onButtonClick}
-              disabled={buttonState === 'disabled'}
-            >
-              <span
-                style={buildButtonStyle(rewards.button.stateStyles[buttonState], buttonState).text}
-              >
-                {buttonText}
-              </span>
-            </button>
+              scale={scale}
+            />
           </div>
         )}
       </div>
