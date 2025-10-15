@@ -330,7 +330,11 @@ User uploads ZIP file
     ↓
 wheelLoader.loadWheelFromZip()
     ↓
-Extract positions.json (WheelExport)
+Check for positions_full.json (preferred)
+    ↓ (if not found)
+Fallback to positions.json
+    ↓
+Extract positions data (WheelExport)
     ↓
 Load all images as Blob URLs
     ↓
@@ -340,6 +344,22 @@ Pass to WheelViewer/ResultViewer
 ```
 
 **Implementation**: `src/lib/services/wheelLoader.ts:73`
+
+**Positions File Priority**:
+The loader checks for theme metadata in this order:
+1. **positions_full.json** (preferred) - Full metadata export with extended information
+2. **positions.json** (fallback) - Standard metadata export
+
+If neither file exists, a `MISSING_POSITIONS` error is thrown. The loader logs which file was used for debugging purposes.
+
+**Supported Image Formats**: The loader supports all web-compatible image formats including:
+- **PNG** - Recommended for graphics with transparency
+- **JPG/JPEG** - Best for photographs and complex images
+- **WebP** - Modern format with superior compression
+- **GIF** - Supported but not recommended for static images
+- **SVG** - For static imports in code (not from ZIP themes)
+
+All image formats are rendered using native browser capabilities via HTML `<img>` elements and SVG `<image>` elements. The loader uses `URL.createObjectURL()` which is format-agnostic and works with any binary image data extracted from the ZIP file.
 
 ### 2. Prize Session Flow
 
@@ -1301,6 +1321,13 @@ crypto.getRandomValues()
 // React Native implementation (future)
 expo-random or react-native-get-random-values
 ```
+
+**Image Format Compatibility**:
+All standard web image formats (PNG, JPG/JPEG, WebP) are supported across platforms:
+- **Web**: Native browser support via `<img>` and SVG `<image>` elements
+- **React Native**: Will use `<Image>` component which supports same formats
+- Format detection is automatic - no file extension validation required
+- Images are loaded as Blob URLs (web) or base64/URI (React Native)
 
 #### Animation Strategy
 

@@ -3,8 +3,8 @@
  * Handles ZIP extraction and asset loading with structured logging
  */
 
-import JSZip from 'jszip';
 import { ExtractedAssets, WheelExport } from '@lib-types';
+import JSZip from 'jszip';
 import { logger } from './logger';
 
 /**
@@ -81,13 +81,19 @@ export async function loadWheelFromZip(zipFile: File): Promise<ExtractedAssets> 
     const fileList = Object.keys(zipContent.files);
     wheelLogger.debug('ZIP file loaded', { fileCount: fileList.length, files: fileList });
 
-    // Extract positions.json
-    const dataFile = zipContent.file('positions.json');
+    // Extract positions data (prefer positions_full.json over positions.json)
+    let dataFile = zipContent.file('positions_full.json');
+    let positionsFileName = 'positions_full.json';
+
+    if (!dataFile) {
+      dataFile = zipContent.file('positions.json');
+      positionsFileName = 'positions.json';
+    }
 
     if (!dataFile) {
       throw new WheelLoadError(
         WheelLoadErrorType.MISSING_POSITIONS,
-        'No positions.json file found in ZIP. Please ensure your export includes the positions.json file.',
+        'No positions.json or positions_full.json file found in ZIP. Please ensure your export includes one of these files.',
         { availableFiles: fileList }
       );
     }
@@ -100,11 +106,12 @@ export async function loadWheelFromZip(zipFile: File): Promise<ExtractedAssets> 
       wheelLogger.info('Wheel data loaded', {
         wheelId: wheelData.wheelId,
         version: wheelData.metadata?.version,
+        sourceFile: positionsFileName,
       });
     } catch (error) {
       throw new WheelLoadError(
         WheelLoadErrorType.INVALID_FORMAT,
-        'Failed to parse positions.json. The file may be corrupted or in an invalid format.',
+        `Failed to parse ${positionsFileName}. The file may be corrupted or in an invalid format.`,
         { error: error instanceof Error ? error.message : String(error) }
       );
     }

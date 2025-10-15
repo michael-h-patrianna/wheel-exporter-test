@@ -3,9 +3,9 @@
  * Tests ZIP loading, asset extraction, error handling, and all error types
  */
 
-import JSZip from 'jszip';
-import { loadWheelFromZip, WheelLoadError, WheelLoadErrorType } from '@services/wheelLoader';
 import { WheelExport } from '@lib-types';
+import { loadWheelFromZip, WheelLoadError, WheelLoadErrorType } from '@services/wheelLoader';
+import JSZip from 'jszip';
 import { vi } from 'vitest';
 
 // Mock the logger module
@@ -176,8 +176,142 @@ describe('wheelLoader', () => {
     });
   });
 
+  describe('positions_full.json priority', () => {
+    it('should prefer positions_full.json over positions.json when both exist', async () => {
+      const positionsData: WheelExport = {
+        wheelId: 'positions-version',
+        frameSize: { width: 800, height: 600 },
+        background: { exportUrl: '' },
+        center: { x: 400, y: 300, radius: 250 },
+        segments: {},
+        exportedAt: new Date().toISOString(),
+        metadata: { exportFormat: 'figma-plugin-v1', version: '1.0.0' },
+      };
+
+      const positionsFullData: WheelExport = {
+        wheelId: 'positions-full-version',
+        frameSize: { width: 1000, height: 800 },
+        background: { exportUrl: '' },
+        center: { x: 500, y: 400, radius: 300 },
+        segments: {},
+        exportedAt: new Date().toISOString(),
+        metadata: { exportFormat: 'figma-plugin-v2', version: '2.0.0' },
+      };
+
+      // Add both files to ZIP
+      mockZip.file('positions.json', JSON.stringify(positionsData));
+      mockZip.file('positions_full.json', JSON.stringify(positionsFullData));
+
+      const zipBlob = await mockZip.generateAsync({ type: 'blob' });
+      const zipFile = new File([zipBlob], 'test.zip', { type: 'application/zip' });
+
+      const result = await loadWheelFromZip(zipFile);
+
+      // Should use positions_full.json data
+      expect(result.wheelData.wheelId).toBe('positions-full-version');
+      expect(result.wheelData.frameSize?.width).toBe(1000);
+      expect(result.wheelData.metadata?.version).toBe('2.0.0');
+    });
+
+    it('should use positions.json when positions_full.json does not exist', async () => {
+      const positionsData: WheelExport = {
+        wheelId: 'positions-only-version',
+        frameSize: { width: 800, height: 600 },
+        background: { exportUrl: '' },
+        center: { x: 400, y: 300, radius: 250 },
+        segments: {},
+        exportedAt: new Date().toISOString(),
+        metadata: { exportFormat: 'figma-plugin-v1', version: '1.0.0' },
+      };
+
+      // Only add positions.json
+      mockZip.file('positions.json', JSON.stringify(positionsData));
+
+      const zipBlob = await mockZip.generateAsync({ type: 'blob' });
+      const zipFile = new File([zipBlob], 'test.zip', { type: 'application/zip' });
+
+      const result = await loadWheelFromZip(zipFile);
+
+      // Should use positions.json data
+      expect(result.wheelData.wheelId).toBe('positions-only-version');
+      expect(result.wheelData.metadata?.version).toBe('1.0.0');
+    });
+
+    it('should log which file was used (positions_full.json)', async () => {
+      const positionsFullData: WheelExport = {
+        wheelId: 'test-full',
+        frameSize: { width: 800, height: 600 },
+        background: { exportUrl: '' },
+        center: { x: 400, y: 300, radius: 250 },
+        segments: {},
+        exportedAt: new Date().toISOString(),
+        metadata: { exportFormat: 'figma-plugin-v2', version: '2.0.0' },
+      };
+
+      mockZip.file('positions_full.json', JSON.stringify(positionsFullData));
+
+      const zipBlob = await mockZip.generateAsync({ type: 'blob' });
+      const zipFile = new File([zipBlob], 'test.zip', { type: 'application/zip' });
+
+      const mockLogger = {
+        debug: vi.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
+      vi.mocked(logger.withContext).mockReturnValue(mockLogger);
+
+      await loadWheelFromZip(zipFile);
+
+      // Verify logger.info was called with sourceFile
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Wheel data loaded',
+        expect.objectContaining({
+          wheelId: 'test-full',
+          sourceFile: 'positions_full.json',
+        })
+      );
+    });
+
+    it('should log which file was used (positions.json)', async () => {
+      const positionsData: WheelExport = {
+        wheelId: 'test-standard',
+        frameSize: { width: 800, height: 600 },
+        background: { exportUrl: '' },
+        center: { x: 400, y: 300, radius: 250 },
+        segments: {},
+        exportedAt: new Date().toISOString(),
+        metadata: { exportFormat: 'figma-plugin-v1', version: '1.0.0' },
+      };
+
+      mockZip.file('positions.json', JSON.stringify(positionsData));
+
+      const zipBlob = await mockZip.generateAsync({ type: 'blob' });
+      const zipFile = new File([zipBlob], 'test.zip', { type: 'application/zip' });
+
+      const mockLogger = {
+        debug: vi.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
+      vi.mocked(logger.withContext).mockReturnValue(mockLogger);
+
+      await loadWheelFromZip(zipFile);
+
+      // Verify logger.info was called with sourceFile
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Wheel data loaded',
+        expect.objectContaining({
+          wheelId: 'test-standard',
+          sourceFile: 'positions.json',
+        })
+      );
+    });
+  });
+
   describe('Missing positions.json error', () => {
-    it('should throw MISSING_POSITIONS error when positions.json is not in ZIP', async () => {
+    it('should throw MISSING_POSITIONS error when neither file is in ZIP', async () => {
       mockZip.file('some-other-file.txt', 'content');
 
       const zipBlob = await mockZip.generateAsync({ type: 'blob' });
@@ -186,7 +320,7 @@ describe('wheelLoader', () => {
       await expect(loadWheelFromZip(zipFile)).rejects.toThrow(WheelLoadError);
       await expect(loadWheelFromZip(zipFile)).rejects.toMatchObject({
         type: WheelLoadErrorType.MISSING_POSITIONS,
-        message: expect.stringContaining('No positions.json file found'),
+        message: expect.stringContaining('No positions.json or positions_full.json file found'),
       });
     });
 
@@ -218,7 +352,7 @@ describe('wheelLoader', () => {
       await expect(loadWheelFromZip(zipFile)).rejects.toThrow(WheelLoadError);
       await expect(loadWheelFromZip(zipFile)).rejects.toMatchObject({
         type: WheelLoadErrorType.INVALID_FORMAT,
-        message: expect.stringContaining('Failed to parse positions.json'),
+        message: expect.stringContaining('Failed to parse'),
       });
     });
 
