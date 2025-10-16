@@ -540,10 +540,6 @@
                 }
               ]
             }
-          },
-          "stroke": {
-            "width": 0.7663357257843018,
-            "color": "#4e187c"
           }
         }
       }
@@ -824,7 +820,7 @@
       }
     }
   },
-  "exportedAt": "2025-10-15T15:04:37.687Z",
+  "exportedAt": "2025-10-16T09:41:17.445Z",
   "metadata": {
     "exportFormat": "webp",
     "version": "0.0.1"
